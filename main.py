@@ -30,9 +30,11 @@ print("Counting to 5:")
 for i in range(1, 6):
     print(f"Count: {i}")
 
+
 # A simple function
 def greet(person):
     return f"Hello, {person}!"
+
 
 print(greet("World"))
 
