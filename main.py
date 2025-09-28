@@ -1,6 +1,6 @@
-from Analytics.data import get_price_data, get_expense_ratios
-from Analytics.performance import calculate_portfolio_returns, performance_stats
-from Analytics.reporting import plot_growth
+from analytics.data import get_price_data, get_expense_ratios
+from analytics.performance import calculate_portfolio_returns, performance_stats
+from analytics.reporting import plot_growth
 
 # Example portfolio
 portfolio = {"AAPL": 0.4, "MSFT": 0.3, "SPY": 0.3}
