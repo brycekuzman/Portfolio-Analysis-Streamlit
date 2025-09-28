@@ -12,7 +12,7 @@ def calculate_portfolio_returns(prices, weights, advisory_fee=0.0, expense_ratio
 
     # Deduct expense ratios daily
     if expense_ratios:
-        for ticker, weight in weights_dict.items():
+        for ticker, weight in weights.items():
             er = expense_ratios.get(ticker, 0.0)
             if er > 0:
                 daily_er = (1 - er) ** (1/252)
