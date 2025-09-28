@@ -1,41 +1,24 @@
-# Welcome to your Python playground!
-# This file is ready for you to experiment with Python code
+from analytics.data import get_price_data, get_expense_ratios
+from analytics.performance import calculate_portfolio_returns, performance_stats
+from analytics.reporting import plot_growth
 
-print("Hello, Python!")
-print("This is your playground file - feel free to modify anything!")
+# Example portfolio
+portfolio = {"AAPL": 0.4, "MSFT": 0.3, "SPY": 0.3}
+start, end = "2013-01-01", "2023-01-01"
+advisory_fee = 0.01  # 1%
 
-# Basic variables
-name = "Python Learner"
-age = 25
-height = 5.8
+# Load data
+prices = get_price_data(list(portfolio.keys()), start, end)
+expense_ratios = get_expense_ratios(portfolio.keys())
 
-print(f"Name: {name}")
-print(f"Age: {age}")
-print(f"Height: {height}")
+# Run analysis
+port_returns = calculate_portfolio_returns(prices, portfolio, advisory_fee, expense_ratios)
+stats, cumulative = performance_stats(port_returns)
 
-# Simple calculations
-x = 10
-y = 5
-print(f"{x} + {y} = {x + y}")
-print(f"{x} - {y} = {x - y}")
-print(f"{x} * {y} = {x * y}")
-print(f"{x} / {y} = {x / y}")
+# Print results
+print("\nPerformance Stats:")
+for k, v in stats.items():
+    print(f"{k}: {v:.2%}")
 
-# A simple list
-fruits = ["apple", "banana", "orange", "grape"]
-print("Fruits:", fruits)
-
-# A simple loop
-print("Counting to 5:")
-for i in range(1, 6):
-    print(f"Count: {i}")
-
-
-# A simple function
-def greet(person):
-    return f"Hello, {person}!"
-
-
-print(greet("World"))
-
-# Try modifying any of the code above or add your own experiments below!
+# Plot
+plot_growth(cumulative).show()
