@@ -4,13 +4,22 @@ import pandas as pd
 
 def get_price_data(tickers, start, end):
     """Download adjusted close prices for tickers."""
-    data = yf.download(tickers, start=start, end=end)
+    data = yf.download(tickers, start=start, end=end, auto_adjust=True, prepost=True, threads=True)
     
     # Handle single vs multiple tickers
     if len(tickers) == 1:
-        prices = data["Adj Close"]
+        # For single ticker, data structure is different
+        if 'Close' in data.columns:
+            prices = data['Close']
+        else:
+            prices = data
     else:
-        prices = data["Adj Close"]
+        # For multiple tickers, extract Close prices
+        if 'Close' in data.columns.get_level_values(0):
+            prices = data['Close']
+        else:
+            # Fallback to Adj Close if available
+            prices = data['Adj Close']
     
     return prices
 
