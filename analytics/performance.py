@@ -3,8 +3,8 @@ import pandas as pd
 
 def calculate_portfolio_returns(prices, weights, advisory_fee=0.0, expense_ratios=None):
     returns = prices.pct_change().dropna()
-    weights = np.array(list(weights.values()))
-    port_returns = returns.dot(weights)
+    weights_array = np.array(list(weights.values()))
+    port_returns = returns.dot(weights_array)
 
     # Deduct advisory fee daily
     daily_advisory = (1 - advisory_fee) ** (1/252)
