@@ -4,7 +4,14 @@ import pandas as pd
 
 def get_price_data(tickers, start, end):
     """Download adjusted close prices for tickers."""
-    prices = yf.download(tickers, start=start, end=end)["Adj Close"]
+    data = yf.download(tickers, start=start, end=end)
+    
+    # Handle single vs multiple tickers
+    if len(tickers) == 1:
+        prices = data["Adj Close"]
+    else:
+        prices = data["Adj Close"]
+    
     return prices
 
 
