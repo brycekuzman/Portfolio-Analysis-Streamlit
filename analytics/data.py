@@ -24,6 +24,22 @@ def get_price_data(tickers, start, end):
     return prices
 
 
+def get_current_prices(tickers):
+    """Get current prices for tickers to calculate portfolio weights."""
+    data = yf.download(tickers, period="1d", interval="1d", auto_adjust=True, prepost=True, threads=True)
+    
+    if len(tickers) == 1:
+        # For single ticker
+        current_price = data['Close'].iloc[-1]
+        return {tickers[0]: current_price}
+    else:
+        # For multiple tickers
+        current_prices = {}
+        for ticker in tickers:
+            current_prices[ticker] = data['Close'][ticker].iloc[-1]
+        return current_prices
+
+
 def get_expense_ratios(tickers):
     """Stub for now – hardcoded values, but could later fetch from API."""
     er = {
