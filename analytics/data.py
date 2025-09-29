@@ -62,9 +62,31 @@ def get_current_prices(tickers):
 
 
 def get_expense_ratios(tickers):
-    """Stub for now – hardcoded values, but could later fetch from API."""
-    er = {
-        "SPY": 0.0009,
-        "VOO": 0.0003,
-    }
-    return {t: er.get(t, 0.0) for t in tickers}
+    """Get expense ratios for ETFs, Mutual Funds, and SMAs from yfinance."""
+    expense_ratios = {}
+    
+    for ticker in tickers:
+        try:
+            stock = yf.Ticker(ticker)
+            info = stock.info
+            
+            # Try different possible keys for expense ratio
+            expense_ratio = None
+            if 'expenseRatio' in info:
+                expense_ratio = info['expenseRatio']
+            elif 'annualReportExpenseRatio' in info:
+                expense_ratio = info['annualReportExpenseRatio']
+            elif 'netExpenseRatio' in info:
+                expense_ratio = info['netExpenseRatio']
+            
+            # If found, store it; otherwise default to 0
+            if expense_ratio is not None and expense_ratio > 0:
+                expense_ratios[ticker] = expense_ratio
+            else:
+                expense_ratios[ticker] = 0.0
+                
+        except Exception as e:
+            print(f"Could not fetch expense ratio for {ticker}: {e}")
+            expense_ratios[ticker] = 0.0
+    
+    return expense_ratios

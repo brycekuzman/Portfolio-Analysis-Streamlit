@@ -18,15 +18,19 @@ for ticker, dollar_amount in portfolio_dollars.items():
     shares = dollar_amount / current_prices[ticker]
     portfolio_weights[ticker] = dollar_amount / total_value
 
+# Load expense ratios first so we can display them
+expense_ratios = get_expense_ratios(portfolio_dollars.keys())
+
 print(f"\nPortfolio allocation based on ${total_value:,.0f} investment:")
 for ticker, weight in portfolio_weights.items():
     dollar_amount = portfolio_dollars[ticker]
     shares = dollar_amount / current_prices[ticker]
-    print(f"{ticker}: ${dollar_amount:,.0f} ({weight:.1%}) - {shares:.2f} shares at ${current_prices[ticker]:.2f}")
+    er = expense_ratios[ticker]
+    er_display = f" (ER: {er:.2%})" if er > 0 else " (ER: N/A)"
+    print(f"{ticker}: ${dollar_amount:,.0f} ({weight:.1%}) - {shares:.2f} shares at ${current_prices[ticker]:.2f}{er_display}")
 
 # Load historical data
 prices = get_price_data(list(portfolio_dollars.keys()), start, end)
-expense_ratios = get_expense_ratios(portfolio_dollars.keys())
 
 # Run analysis
 port_returns = calculate_portfolio_returns(prices, portfolio_weights, advisory_fee, expense_ratios)
