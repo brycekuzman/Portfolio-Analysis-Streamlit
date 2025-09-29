@@ -3,9 +3,9 @@ from analytics.performance import calculate_portfolio_returns, performance_stats
 from analytics.reporting import plot_growth
 
 # Example portfolio with dollar amounts
-portfolio_dollars = {"AAPL": 10000, "PULS": 10000}  
-start, end = "2015-10-2", "2025-09-28"
-advisory_fee = 0.01  # 1%
+portfolio_dollars = {"AAPL": 10000, "PULS": 10000, "TSLA": 10000}  
+start, end = "2015-09-30", "2025-08-29"
+advisory_fee = 0.00  # 1%
 
 # Get current prices to calculate weights
 current_prices = get_current_prices(list(portfolio_dollars.keys()))
@@ -34,7 +34,7 @@ stats, cumulative = performance_stats(port_returns)
 individual_returns = calculate_individual_returns(prices)
 
 # Print individual asset returns
-print(f"\nIndividual Asset Returns ({prices.index[0].strftime('%Y-%m-%d')} to {prices.index[-1].strftime('%Y-%m-%d')}):")
+print(f"\nIndividual Asset Total Returns ({prices.index[0].strftime('%Y-%m-%d')} to {prices.index[-1].strftime('%Y-%m-%d')}):")
 for ticker, return_pct in individual_returns.items():
     print(f"{ticker}: {return_pct:.2%}")
 
