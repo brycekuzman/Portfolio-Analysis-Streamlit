@@ -3,8 +3,8 @@ from analytics.performance import calculate_portfolio_returns, performance_stats
 from analytics.reporting import plot_growth
 
 # Example portfolio with dollar amounts
-portfolio_dollars = {"AAPL": 10000, "MSFT": 7500, "SPY": 7500}  # $25,000 total
-start, end = "2013-01-01", "2023-01-01"
+portfolio_dollars = {"AAPL": 10000, "PULS": 1000}  
+start, end = "2015-10-2", "2025-09-28"
 advisory_fee = 0.01  # 1%
 
 # Get current prices to calculate weights
