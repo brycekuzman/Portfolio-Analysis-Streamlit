@@ -8,6 +8,9 @@ growth_rates = {
     "VNQ": 0.11    # Alternatives (REITs)
 }
 
+#Define model portfolio advisory fee
+model_fee = .0025 #.025% 
+
 # Define model portfolios with allocations
 model_portfolios = {
     "Conservative": {
