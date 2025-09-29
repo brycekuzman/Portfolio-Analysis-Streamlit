@@ -21,13 +21,18 @@ for ticker, dollar_amount in portfolio_dollars.items():
 # Load expense ratios first so we can display them
 expense_ratios = get_expense_ratios(portfolio_dollars.keys())
 
+# Calculate weighted average expense ratio
+weighted_avg_er = sum(portfolio_weights[ticker] * expense_ratios[ticker] for ticker in portfolio_weights.keys())
+
 print(f"\nPortfolio allocation based on ${total_value:,.0f} investment:")
 for ticker, weight in portfolio_weights.items():
     dollar_amount = portfolio_dollars[ticker]
     shares = dollar_amount / current_prices[ticker]
     er = expense_ratios[ticker]
-    er_display = f" (ER: {er:.2%})" if er > 0 else " (ER: N/A)"
+    er_display = f" (ER: {er:.2%})" if er > 0 else " (ER: 0.00%)"
     print(f"{ticker}: ${dollar_amount:,.0f} ({weight:.1%}) - {shares:.2f} shares at ${current_prices[ticker]:.2f}{er_display}")
+
+print(f"\nWeighted Average Expense Ratio: {weighted_avg_er:.2%}")
 
 # Load historical data
 prices = get_price_data(list(portfolio_dollars.keys()), start, end)
