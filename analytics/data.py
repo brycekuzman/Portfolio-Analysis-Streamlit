@@ -80,8 +80,9 @@ def get_expense_ratios(tickers):
                 expense_ratio = info['netExpenseRatio']
             
             # If found, store it; otherwise default to 0
+            # Convert from percentage (e.g., 0.07) to decimal (e.g., 0.0007)
             if expense_ratio is not None:
-                expense_ratios[ticker] = expense_ratio
+                expense_ratios[ticker] = expense_ratio / 100.0
             else:
                 expense_ratios[ticker] = 0.0
                 
