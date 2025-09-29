@@ -236,6 +236,50 @@ def main():
     return_difference_net = model_net_return - current_net_return
     print(f"{'Difference (Net)':<25} {return_difference_net:<18.2%} ${value_difference_net:<14,.0f} {((model_net_final/current_net_final) - 1):<15.2%}")
     
+    print(f"\n10-Year Fee Impact Breakdown:")
+    print("=" * 60)
+    
+    # Calculate the dollar impact of each fee component over 10 years
+    current_only_expense_return = current_gross_return - current_results['weighted_avg_er']
+    current_only_expense_final = total_investment * ((1 + current_only_expense_return) ** 10)
+    
+    model_only_expense_return = model_gross_return - model_results['weighted_avg_er']
+    model_only_expense_final = total_investment * ((1 + model_only_expense_return) ** 10)
+    
+    # Advisory fee impact
+    current_advisory_cost = current_gross_final - current_net_final
+    model_advisory_cost = model_gross_final - model_net_final
+    advisory_fee_difference = model_advisory_cost - current_advisory_cost
+    
+    # Expense ratio impact
+    current_expense_cost = current_gross_final - current_only_expense_final
+    model_expense_cost = model_gross_final - model_only_expense_final
+    expense_ratio_difference = model_expense_cost - current_expense_cost
+    
+    print(f"\nAdvisory Fee Impact (10-year dollar cost):")
+    print(f"Current Portfolio Advisory Fee Cost: ${current_advisory_cost:,.0f} ({current_advisory_fee:.2%} annually)")
+    print(f"{model_name} Portfolio Advisory Fee Cost: ${model_advisory_cost:,.0f} ({model_fee:.2%} annually)")
+    print(f"Advisory Fee Difference: ${advisory_fee_difference:+,.0f}")
+    
+    print(f"\nExpense Ratio Impact (10-year dollar cost):")
+    print(f"Current Portfolio Expense Ratio Cost: ${current_expense_cost:,.0f} ({current_results['weighted_avg_er']:.2%} annually)")
+    print(f"{model_name} Portfolio Expense Ratio Cost: ${model_expense_cost:,.0f} ({model_results['weighted_avg_er']:.2%} annually)")
+    print(f"Expense Ratio Difference: ${expense_ratio_difference:+,.0f}")
+    
+    print(f"\nTotal Fee Impact Summary:")
+    total_current_fees = current_advisory_cost + current_expense_cost
+    total_model_fees = model_advisory_cost + model_expense_cost
+    total_fee_difference = total_model_fees - total_current_fees
+    
+    print(f"Current Portfolio Total Fee Cost: ${total_current_fees:,.0f}")
+    print(f"{model_name} Portfolio Total Fee Cost: ${total_model_fees:,.0f}")
+    print(f"Total Fee Difference: ${total_fee_difference:+,.0f}")
+    
+    if total_fee_difference < 0:
+        print(f"💰 The {model_name} portfolio saves ${abs(total_fee_difference):,.0f} in fees over 10 years!")
+    else:
+        print(f"⚠️  The {model_name} portfolio costs ${total_fee_difference:,.0f} more in fees over 10 years.")
+    
     # Comparison summary
     print(f"\n{'='*60}")
     print("HISTORICAL PORTFOLIO COMPARISON SUMMARY")
