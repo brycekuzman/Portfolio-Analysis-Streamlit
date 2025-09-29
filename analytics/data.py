@@ -100,6 +100,12 @@ def classify_investment(ticker):
     us_equity_patterns = ['SPY', 'QQQ', 'VTI', 'VOO', 'IWM', 'DIA']
     intl_equity_patterns = ['VXUS', 'VEA', 'VWO', 'IEFA', 'IEMG', 'EFA', 'EEM']
     fixed_income_patterns = ['AGG', 'BND', 'VGIT', 'VGLT', 'TLT', 'SHY', 'IEF']
+    alternatives_patterns = [
+        'VNQ', 'RWR', 'IYR', 'FREL', 'SCHH', 'XLRE',  # REITs
+        'GLD', 'SLV', 'DJP', 'PDBC', 'COMT', 'DBA', 'USO', 'UNG',  # Commodities
+        'AMLP', 'MLPA', 'MLPX',  # MLPs
+        'QAI', 'RPAR', 'TAIL'  # Hedged strategies/alternatives
+    ]
     
     # Check for common patterns first
     if ticker in us_equity_patterns:
@@ -108,6 +114,8 @@ def classify_investment(ticker):
         return "International Equities"
     elif ticker in fixed_income_patterns:
         return "Core Fixed Income"
+    elif ticker in alternatives_patterns:
+        return "Alternatives"
     
     # Try to get info from yfinance
     try:
@@ -138,6 +146,16 @@ def classify_investment(ticker):
             return "Core Fixed Income"
         elif 'bond' in asset_class or 'fixed' in asset_class:
             return "Core Fixed Income"
+        
+        # Alternatives indicators
+        elif any(keyword in category for keyword in ['real estate', 'reit', 'commodity', 'commodities', 'mlp', 'master limited partnership', 'hedge', 'alternative', 'gold', 'silver', 'oil', 'natural gas']):
+            return "Alternatives"
+        elif 'reit' in asset_class or 'commodity' in asset_class or 'alternative' in asset_class:
+            return "Alternatives"
+        elif info.get('longBusinessSummary', '').lower().find('reit') != -1:
+            return "Alternatives"
+        elif info.get('longBusinessSummary', '').lower().find('real estate') != -1:
+            return "Alternatives"
         
         # If it's a stock (not fund), classify based on exchange/country
         elif info.get('quoteType') == 'EQUITY':
