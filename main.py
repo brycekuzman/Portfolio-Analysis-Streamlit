@@ -146,9 +146,49 @@ def main():
         model_portfolio_dollars, model_name.upper(), start, end, advisory_fee
     )
     
+    # Future projections
+    from analytics.models import growth_rates
+    from analytics.performance import project_portfolio_returns
+    
+    print(f"\n{'='*60}")
+    print("10-YEAR PORTFOLIO PROJECTIONS")
+    print(f"{'='*60}")
+    
+    # Project current portfolio
+    current_projections = project_portfolio_returns(current_asset_allocation, growth_rates, years=10)
+    model_projections = project_portfolio_returns(model_asset_allocation, growth_rates, years=10)
+    
+    print(f"\nCurrent Portfolio Asset Class Allocation:")
+    for asset_class, allocation in sorted(current_asset_allocation.items()):
+        growth_rate = growth_rates.get(asset_class, 0)
+        print(f"  {asset_class}: {allocation:.1%} (Est. Growth: {growth_rate:.1%})")
+    
+    print(f"\n{model_name} Portfolio Asset Class Allocation:")
+    for asset_class, allocation in sorted(model_asset_allocation.items()):
+        growth_rate = growth_rates.get(asset_class, 0)
+        print(f"  {asset_class}: {allocation:.1%} (Est. Growth: {growth_rate:.1%})")
+    
+    print(f"\n10-Year Projection Results:")
+    total_investment = sum(portfolio_dollars.values())
+    
+    current_weighted_return = current_projections['weighted_annual_return']
+    model_weighted_return = model_projections['weighted_annual_return']
+    
+    current_final_value = total_investment * current_projections['final_portfolio_value']
+    model_final_value = total_investment * model_projections['final_portfolio_value']
+    
+    print(f"{'Portfolio':<25} {'Est. Annual Return':<18} {'Final Value':<15} {'Total Return':<15}")
+    print("-" * 75)
+    print(f"{'Current':<25} {current_weighted_return:<18.2%} ${current_final_value:<14,.0f} {current_projections['total_projected_return']:<15.2%}")
+    print(f"{model_name:<25} {model_weighted_return:<18.2%} ${model_final_value:<14,.0f} {model_projections['total_projected_return']:<15.2%}")
+    
+    value_difference = model_final_value - current_final_value
+    return_difference = model_projections['total_projected_return'] - current_projections['total_projected_return']
+    print(f"{'Difference':<25} {model_weighted_return - current_weighted_return:<18.2%} ${value_difference:<14,.0f} {return_difference:<15.2%}")
+    
     # Comparison summary
     print(f"\n{'='*60}")
-    print("PORTFOLIO COMPARISON SUMMARY")
+    print("HISTORICAL PORTFOLIO COMPARISON SUMMARY")
     print(f"{'='*60}")
     
     print(f"\n{'Metric':<20} {'Current':<15} {model_name:<15} {'Difference':<15}")

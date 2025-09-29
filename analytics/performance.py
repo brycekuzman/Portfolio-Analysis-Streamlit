@@ -48,3 +48,46 @@ def performance_stats(port_returns, risk_free=0.02):
         "Sharpe Ratio": sharpe,
         "Max Drawdown": max_dd
     }, cumulative
+
+
+
+def project_portfolio_returns(asset_class_allocation, growth_rates, years=10):
+    """
+    Project portfolio returns based on asset class allocations and growth rates.
+    
+    Args:
+        asset_class_allocation: Dict of asset class -> weight
+        growth_rates: Dict of asset class -> annual growth rate
+        years: Number of years to project
+    
+    Returns:
+        Dict with projection results
+    """
+    # Calculate weighted average annual return
+    weighted_annual_return = sum(
+        asset_class_allocation.get(asset_class, 0) * growth_rate
+        for asset_class, growth_rate in growth_rates.items()
+    )
+    
+    # Calculate total return over the projection period
+    total_projected_return = (1 + weighted_annual_return) ** years - 1
+    
+    # Calculate year-by-year projections
+    yearly_projections = []
+    portfolio_value = 1.0  # Start with $1
+    
+    for year in range(1, years + 1):
+        portfolio_value *= (1 + weighted_annual_return)
+        yearly_projections.append({
+            'year': year,
+            'portfolio_value': portfolio_value,
+            'annual_return': weighted_annual_return,
+            'cumulative_return': portfolio_value - 1
+        })
+    
+    return {
+        'weighted_annual_return': weighted_annual_return,
+        'total_projected_return': total_projected_return,
+        'final_portfolio_value': portfolio_value,
+        'yearly_projections': yearly_projections
+    }

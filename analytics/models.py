@@ -2,10 +2,10 @@
 
 # Define projected annual growth rates for each asset class
 growth_rates = {
-    "VOO": 0.10,   # US Equity
-    "VXUS": 0.08,  # International Equity
-    "BND": 0.04,   # Bonds
-    "VNQ": 0.11    # Alternatives (REITs)
+    "US Equities": 0.10,           # 10% annual growth
+    "International Equities": 0.08, # 8% annual growth
+    "Core Fixed Income": 0.04,      # 4% annual growth
+    "Alternatives": 0.11            # 11% annual growth
 }
 
 #Define model portfolio advisory fee
