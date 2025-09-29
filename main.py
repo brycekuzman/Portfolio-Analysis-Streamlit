@@ -153,7 +153,7 @@ def main():
     model_name, model_allocations = get_model_portfolio_choice()
     
     start, end = "2015-09-30", "2025-08-29"
-    current_advisory_fee = 0.00  # 0%
+    current_advisory_fee = 0.01  # 0%
     
     # Analyze current portfolio first to get actual start date
     current_results = analyze_portfolio(
