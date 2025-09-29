@@ -84,6 +84,9 @@ def analyze_portfolio(portfolio_dollars, portfolio_name, start, end, advisory_fe
         print(f"{ticker}: ${dollar_amount:,.0f} ({weight:.1%}) - {shares:.2f} shares at ${current_prices[ticker]:.2f}{er_display} [{classification}]")
     
     print(f"\nWeighted Average Expense Ratio: {weighted_avg_er:.2%}")
+    if advisory_fee > 0:
+        print(f"Advisory Fee: {advisory_fee:.2%}")
+        print(f"Total Annual Fees: {weighted_avg_er + advisory_fee:.2%}")
     
     # Calculate allocation by asset class
     asset_class_allocation = {}
@@ -102,9 +105,13 @@ def analyze_portfolio(portfolio_dollars, portfolio_name, start, end, advisory_fe
     # Load historical data
     prices = get_price_data(list(portfolio_dollars.keys()), start, end)
     
-    # Run analysis
-    port_returns = calculate_portfolio_returns(prices, portfolio_weights, advisory_fee, expense_ratios)
-    stats, cumulative = performance_stats(port_returns)
+    # Run analysis with and without advisory fees
+    port_returns_with_fees = calculate_portfolio_returns(prices, portfolio_weights, advisory_fee, expense_ratios)
+    port_returns_no_advisory = calculate_portfolio_returns(prices, portfolio_weights, 0.0, expense_ratios)
+    
+    stats_with_fees, cumulative_with_fees = performance_stats(port_returns_with_fees)
+    stats_no_advisory, cumulative_no_advisory = performance_stats(port_returns_no_advisory)
+    
     individual_returns = calculate_individual_returns(prices)
     
     # Print individual asset returns
@@ -113,14 +120,32 @@ def analyze_portfolio(portfolio_dollars, portfolio_name, start, end, advisory_fe
         print(f"{ticker}: {return_pct:.2%}")
     
     # Print portfolio results
-    print(f"\n{portfolio_name} Portfolio Performance Stats:")
-    for k, v in stats.items():
+    print(f"\n{portfolio_name} Portfolio Performance Stats (After All Fees):")
+    for k, v in stats_with_fees.items():
         if k == "Sharpe Ratio":
             print(f"{k}: {v:.2f}")
         else:
             print(f"{k}: {v:.2%}")
     
-    return stats, cumulative, portfolio_weights, asset_class_allocation
+    if advisory_fee > 0:
+        print(f"\n{portfolio_name} Portfolio Performance Stats (Before Advisory Fee):")
+        for k, v in stats_no_advisory.items():
+            if k == "Sharpe Ratio":
+                print(f"{k}: {v:.2f}")
+            else:
+                print(f"{k}: {v:.2%}")
+    
+    return {
+        'stats_with_fees': stats_with_fees,
+        'stats_no_advisory': stats_no_advisory,
+        'cumulative_with_fees': cumulative_with_fees,
+        'cumulative_no_advisory': cumulative_no_advisory,
+        'portfolio_weights': portfolio_weights,
+        'asset_class_allocation': asset_class_allocation,
+        'weighted_avg_er': weighted_avg_er,
+        'actual_start_date': prices.index[0].strftime('%Y-%m-%d'),
+        'actual_end_date': prices.index[-1].strftime('%Y-%m-%d')
+    }
 
 def main():
     # Get user inputs
@@ -128,12 +153,15 @@ def main():
     model_name, model_allocations = get_model_portfolio_choice()
     
     start, end = "2015-09-30", "2025-08-29"
-    advisory_fee = 0.00  # 0%
+    current_advisory_fee = 0.00  # 0%
     
-    # Analyze current portfolio
-    current_stats, current_cumulative, current_weights, current_asset_allocation = analyze_portfolio(
-        portfolio_dollars, "CURRENT", start, end, advisory_fee
+    # Analyze current portfolio first to get actual start date
+    current_results = analyze_portfolio(
+        portfolio_dollars, "CURRENT", start, end, current_advisory_fee
     )
+    
+    # Use the actual start date from current portfolio for model portfolio analysis
+    actual_start_date = current_results['actual_start_date']
     
     # Convert model portfolio allocations to dollar amounts
     total_investment = sum(portfolio_dollars.values())
@@ -141,9 +169,12 @@ def main():
     for ticker, weight in model_allocations.items():
         model_portfolio_dollars[ticker] = total_investment * weight
     
-    # Analyze model portfolio
-    model_stats, model_cumulative, model_weights, model_asset_allocation = analyze_portfolio(
-        model_portfolio_dollars, model_name.upper(), start, end, advisory_fee
+    # Import model advisory fee
+    from analytics.models import model_fee
+    
+    # Analyze model portfolio using the same start date
+    model_results = analyze_portfolio(
+        model_portfolio_dollars, model_name.upper(), actual_start_date, end, model_fee
     )
     
     # Future projections
@@ -155,48 +186,82 @@ def main():
     print(f"{'='*60}")
     
     # Project current portfolio
-    current_projections = project_portfolio_returns(current_asset_allocation, growth_rates, years=10)
-    model_projections = project_portfolio_returns(model_asset_allocation, growth_rates, years=10)
+    current_projections = project_portfolio_returns(current_results['asset_class_allocation'], growth_rates, years=10)
+    model_projections = project_portfolio_returns(model_results['asset_class_allocation'], growth_rates, years=10)
+    
+    print(f"\nFee Comparison:")
+    print(f"Current Portfolio - Weighted Avg Expense Ratio: {current_results['weighted_avg_er']:.2%}, Advisory Fee: {current_advisory_fee:.2%}, Total: {current_results['weighted_avg_er'] + current_advisory_fee:.2%}")
+    print(f"{model_name} Portfolio - Weighted Avg Expense Ratio: {model_results['weighted_avg_er']:.2%}, Advisory Fee: {model_fee:.2%}, Total: {model_results['weighted_avg_er'] + model_fee:.2%}")
+    fee_difference = (model_results['weighted_avg_er'] + model_fee) - (current_results['weighted_avg_er'] + current_advisory_fee)
+    print(f"Fee Difference: {fee_difference:+.2%}")
     
     print(f"\nCurrent Portfolio Asset Class Allocation:")
-    for asset_class, allocation in sorted(current_asset_allocation.items()):
+    for asset_class, allocation in sorted(current_results['asset_class_allocation'].items()):
         growth_rate = growth_rates.get(asset_class, 0)
         print(f"  {asset_class}: {allocation:.1%} (Est. Growth: {growth_rate:.1%})")
     
     print(f"\n{model_name} Portfolio Asset Class Allocation:")
-    for asset_class, allocation in sorted(model_asset_allocation.items()):
+    for asset_class, allocation in sorted(model_results['asset_class_allocation'].items()):
         growth_rate = growth_rates.get(asset_class, 0)
         print(f"  {asset_class}: {allocation:.1%} (Est. Growth: {growth_rate:.1%})")
     
-    print(f"\n10-Year Projection Results:")
+    # Calculate projections with and without advisory fees
+    current_gross_return = current_projections['weighted_annual_return']
+    model_gross_return = model_projections['weighted_annual_return']
+    
+    current_net_return = current_gross_return - current_results['weighted_avg_er'] - current_advisory_fee
+    model_net_return = model_gross_return - model_results['weighted_avg_er'] - model_fee
+    
+    print(f"\n10-Year Projection Results (Before Advisory Fees):")
     total_investment = sum(portfolio_dollars.values())
     
-    current_weighted_return = current_projections['weighted_annual_return']
-    model_weighted_return = model_projections['weighted_annual_return']
-    
-    current_final_value = total_investment * current_projections['final_portfolio_value']
-    model_final_value = total_investment * model_projections['final_portfolio_value']
+    current_gross_final = total_investment * ((1 + current_gross_return) ** 10)
+    model_gross_final = total_investment * ((1 + model_gross_return) ** 10)
     
     print(f"{'Portfolio':<25} {'Est. Annual Return':<18} {'Final Value':<15} {'Total Return':<15}")
     print("-" * 75)
-    print(f"{'Current':<25} {current_weighted_return:<18.2%} ${current_final_value:<14,.0f} {current_projections['total_projected_return']:<15.2%}")
-    print(f"{model_name:<25} {model_weighted_return:<18.2%} ${model_final_value:<14,.0f} {model_projections['total_projected_return']:<15.2%}")
+    print(f"{'Current (Gross)':<25} {current_gross_return:<18.2%} ${current_gross_final:<14,.0f} {((current_gross_final/total_investment) - 1):<15.2%}")
+    print(f"{model_name + ' (Gross)':<25} {model_gross_return:<18.2%} ${model_gross_final:<14,.0f} {((model_gross_final/total_investment) - 1):<15.2%}")
     
-    value_difference = model_final_value - current_final_value
-    return_difference = model_projections['total_projected_return'] - current_projections['total_projected_return']
-    print(f"{'Difference':<25} {model_weighted_return - current_weighted_return:<18.2%} ${value_difference:<14,.0f} {return_difference:<15.2%}")
+    print(f"\n10-Year Projection Results (After All Fees):")
+    current_net_final = total_investment * ((1 + current_net_return) ** 10)
+    model_net_final = total_investment * ((1 + model_net_return) ** 10)
+    
+    print(f"{'Portfolio':<25} {'Est. Annual Return':<18} {'Final Value':<15} {'Total Return':<15}")
+    print("-" * 75)
+    print(f"{'Current (Net)':<25} {current_net_return:<18.2%} ${current_net_final:<14,.0f} {((current_net_final/total_investment) - 1):<15.2%}")
+    print(f"{model_name + ' (Net)':<25} {model_net_return:<18.2%} ${model_net_final:<14,.0f} {((model_net_final/total_investment) - 1):<15.2%}")
+    
+    value_difference_net = model_net_final - current_net_final
+    return_difference_net = model_net_return - current_net_return
+    print(f"{'Difference (Net)':<25} {return_difference_net:<18.2%} ${value_difference_net:<14,.0f} {((model_net_final/current_net_final) - 1):<15.2%}")
     
     # Comparison summary
     print(f"\n{'='*60}")
     print("HISTORICAL PORTFOLIO COMPARISON SUMMARY")
     print(f"{'='*60}")
+    print(f"Analysis Period: {current_results['actual_start_date']} to {current_results['actual_end_date']}")
+    
+    print(f"\nFee Impact on Historical Returns:")
+    print(f"Current Portfolio:")
+    print(f"  After All Fees: {current_results['stats_with_fees']['Annualized Return']:.2%}")
+    if current_advisory_fee > 0:
+        print(f"  Before Advisory Fee: {current_results['stats_no_advisory']['Annualized Return']:.2%}")
+        advisory_impact = current_results['stats_no_advisory']['Annualized Return'] - current_results['stats_with_fees']['Annualized Return']
+        print(f"  Advisory Fee Impact: -{advisory_impact:.2%}")
+    
+    print(f"\n{model_name} Portfolio:")
+    print(f"  After All Fees: {model_results['stats_with_fees']['Annualized Return']:.2%}")
+    print(f"  Before Advisory Fee: {model_results['stats_no_advisory']['Annualized Return']:.2%}")
+    model_advisory_impact = model_results['stats_no_advisory']['Annualized Return'] - model_results['stats_with_fees']['Annualized Return']
+    print(f"  Advisory Fee Impact: -{model_advisory_impact:.2%}")
     
     print(f"\n{'Metric':<20} {'Current':<15} {model_name:<15} {'Difference':<15}")
     print("-" * 65)
     
     for metric in ["Total Return", "Annualized Return", "Volatility", "Max Drawdown"]:
-        current_val = current_stats[metric]
-        model_val = model_stats[metric]
+        current_val = current_results['stats_with_fees'][metric]
+        model_val = model_results['stats_with_fees'][metric]
         diff = model_val - current_val
         
         if metric == "Sharpe Ratio":
@@ -205,17 +270,17 @@ def main():
             print(f"{metric:<20} {current_val:<15.2%} {model_val:<15.2%} {diff:<15.2%}")
     
     # Sharpe ratio comparison
-    current_sharpe = current_stats["Sharpe Ratio"]
-    model_sharpe = model_stats["Sharpe Ratio"]
+    current_sharpe = current_results['stats_with_fees']["Sharpe Ratio"]
+    model_sharpe = model_results['stats_with_fees']["Sharpe Ratio"]
     sharpe_diff = model_sharpe - current_sharpe
     print(f"{'Sharpe Ratio':<20} {current_sharpe:<15.2f} {model_sharpe:<15.2f} {sharpe_diff:<15.2f}")
     
     # Plot both portfolios
     import matplotlib.pyplot as plt
     plt.figure(figsize=(12, 8))
-    plt.plot(current_cumulative.index, current_cumulative.values, label='Current Portfolio', linewidth=2)
-    plt.plot(model_cumulative.index, model_cumulative.values, label=f'{model_name} Model', linewidth=2)
-    plt.title('Portfolio Growth Comparison')
+    plt.plot(current_results['cumulative_with_fees'].index, current_results['cumulative_with_fees'].values, label='Current Portfolio (After Fees)', linewidth=2)
+    plt.plot(model_results['cumulative_with_fees'].index, model_results['cumulative_with_fees'].values, label=f'{model_name} Model (After Fees)', linewidth=2)
+    plt.title('Portfolio Growth Comparison (After All Fees)')
     plt.ylabel('Portfolio Value ($)')
     plt.xlabel('Date')
     plt.legend()
