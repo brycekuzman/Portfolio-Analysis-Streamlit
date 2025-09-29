@@ -1,0 +1,43 @@
+# models.py
+
+# Define projected annual growth rates for each asset class
+growth_rates = {
+    "VOO": 0.10,   # US Equity
+    "VXUS": 0.08,  # International Equity
+    "BND": 0.04,   # Bonds
+    "VNQ": 0.11    # Alternatives (REITs)
+}
+
+# Define model portfolios with allocations
+model_portfolios = {
+    "Conservative": {
+        "VOO": 0.25,
+        "VXUS": 0.20,
+        "BND": 0.50,
+        "VNQ": 0.05
+    },
+    "Moderately Conservative": {
+        "VOO": 0.30,
+        "VXUS": 0.25,
+        "BND": 0.35,
+        "VNQ": 0.10
+    },
+    "Balanced": {
+        "VOO": 0.35,
+        "VXUS": 0.30,
+        "BND": 0.25,
+        "VNQ": 0.10
+    },
+    "Moderately Aggressive": {
+        "VOO": 0.40,
+        "VXUS": 0.35,
+        "BND": 0.15,
+        "VNQ": 0.10
+    },
+    "Aggressive": {
+        "VOO": 0.45,
+        "VXUS": 0.35,
+        "BND": 0.10,
+        "VNQ": 0.10
+    }
+}
