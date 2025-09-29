@@ -2,9 +2,30 @@ import yfinance as yf
 import pandas as pd
 
 
+def get_available_date_range(tickers, start, end):
+    """Find the common date range where all tickers have data."""
+    latest_start = start
+    
+    for ticker in tickers:
+        # Get a small sample to find actual start date
+        sample = yf.download(ticker, start=start, end=end, auto_adjust=True, prepost=True, threads=True)
+        if not sample.empty:
+            actual_start = sample.index[0].strftime('%Y-%m-%d')
+            if actual_start > latest_start:
+                latest_start = actual_start
+    
+    return latest_start, end
+
+
 def get_price_data(tickers, start, end):
     """Download adjusted close prices for tickers."""
-    data = yf.download(tickers, start=start, end=end, auto_adjust=True, prepost=True, threads=True)
+    # Find common date range
+    actual_start, actual_end = get_available_date_range(tickers, start, end)
+    
+    if actual_start != start:
+        print(f"Note: Adjusted start date from {start} to {actual_start} due to limited data availability")
+    
+    data = yf.download(tickers, start=actual_start, end=actual_end, auto_adjust=True, prepost=True, threads=True)
     
     # Handle single vs multiple tickers
     if len(tickers) == 1:
