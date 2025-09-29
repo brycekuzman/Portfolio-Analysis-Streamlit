@@ -41,7 +41,10 @@ for ticker, return_pct in individual_returns.items():
 # Print portfolio results
 print("\nPortfolio Performance Stats:")
 for k, v in stats.items():
-    print(f"{k}: {v:.2%}")
+    if k == "Sharpe Ratio":
+        print(f"{k}: {v:.2f}")
+    else:
+        print(f"{k}: {v:.2%}")
 
 # Plot
 plot_growth(cumulative).show()
