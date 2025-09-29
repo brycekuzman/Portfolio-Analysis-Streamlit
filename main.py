@@ -1,5 +1,5 @@
 from analytics.data import get_price_data, get_expense_ratios, get_current_prices
-from analytics.performance import calculate_portfolio_returns, performance_stats
+from analytics.performance import calculate_portfolio_returns, performance_stats, calculate_individual_returns
 from analytics.reporting import plot_growth
 
 # Example portfolio with dollar amounts
@@ -31,9 +31,15 @@ expense_ratios = get_expense_ratios(portfolio_dollars.keys())
 # Run analysis
 port_returns = calculate_portfolio_returns(prices, portfolio_weights, advisory_fee, expense_ratios)
 stats, cumulative = performance_stats(port_returns)
+individual_returns = calculate_individual_returns(prices)
 
-# Print results
-print("\nPerformance Stats:")
+# Print individual asset returns
+print(f"\nIndividual Asset Returns ({prices.index[0].strftime('%Y-%m-%d')} to {prices.index[-1].strftime('%Y-%m-%d')}):")
+for ticker, return_pct in individual_returns.items():
+    print(f"{ticker}: {return_pct:.2%}")
+
+# Print portfolio results
+print("\nPortfolio Performance Stats:")
 for k, v in stats.items():
     print(f"{k}: {v:.2%}")
 

@@ -20,6 +20,19 @@ def calculate_portfolio_returns(prices, weights, advisory_fee=0.0, expense_ratio
 
     return port_returns
 
+def calculate_individual_returns(prices):
+    """Calculate total return for each individual asset."""
+    individual_returns = {}
+    
+    for ticker in prices.columns:
+        start_price = prices[ticker].iloc[0]
+        end_price = prices[ticker].iloc[-1]
+        total_return = (end_price - start_price) / start_price
+        individual_returns[ticker] = total_return
+    
+    return individual_returns
+
+
 def performance_stats(port_returns, risk_free=0.02):
     cumulative = (1 + port_returns).cumprod()
     total_return = cumulative.iloc[-1] - 1
