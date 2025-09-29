@@ -1,4 +1,4 @@
-from analytics.data import get_price_data, get_expense_ratios, get_current_prices
+from analytics.data import get_price_data, get_expense_ratios, get_current_prices, get_investment_classifications
 from analytics.performance import calculate_portfolio_returns, performance_stats, calculate_individual_returns
 from analytics.reporting import plot_growth
 
@@ -18,8 +18,9 @@ for ticker, dollar_amount in portfolio_dollars.items():
     shares = dollar_amount / current_prices[ticker]
     portfolio_weights[ticker] = dollar_amount / total_value
 
-# Load expense ratios first so we can display them
+# Load expense ratios and classifications
 expense_ratios = get_expense_ratios(portfolio_dollars.keys())
+classifications = get_investment_classifications(portfolio_dollars.keys())
 
 # Calculate weighted average expense ratio
 weighted_avg_er = sum(portfolio_weights[ticker] * expense_ratios[ticker] for ticker in portfolio_weights.keys())
@@ -29,10 +30,25 @@ for ticker, weight in portfolio_weights.items():
     dollar_amount = portfolio_dollars[ticker]
     shares = dollar_amount / current_prices[ticker]
     er = expense_ratios[ticker]
+    classification = classifications[ticker]
     er_display = f" (ER: {er:.2%})" if er > 0 else " (ER: 0.00%)"
-    print(f"{ticker}: ${dollar_amount:,.0f} ({weight:.1%}) - {shares:.2f} shares at ${current_prices[ticker]:.2f}{er_display}")
+    print(f"{ticker}: ${dollar_amount:,.0f} ({weight:.1%}) - {shares:.2f} shares at ${current_prices[ticker]:.2f}{er_display} [{classification}]")
 
 print(f"\nWeighted Average Expense Ratio: {weighted_avg_er:.2%}")
+
+# Calculate allocation by asset class
+asset_class_allocation = {}
+for ticker, weight in portfolio_weights.items():
+    asset_class = classifications[ticker]
+    if asset_class in asset_class_allocation:
+        asset_class_allocation[asset_class] += weight
+    else:
+        asset_class_allocation[asset_class] = weight
+
+print(f"\nAsset Class Allocation:")
+for asset_class, allocation in sorted(asset_class_allocation.items()):
+    dollar_amount = allocation * total_value
+    print(f"{asset_class}: ${dollar_amount:,.0f} ({allocation:.1%})")
 
 # Load historical data
 prices = get_price_data(list(portfolio_dollars.keys()), start, end)
