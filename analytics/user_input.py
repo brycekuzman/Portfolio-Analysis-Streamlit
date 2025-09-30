@@ -6,7 +6,7 @@ def get_user_portfolio():
     """Get user's current portfolio input."""
     print("Enter your current portfolio (ticker: dollar_amount):")
     print("Example: AAPL:10000,MSFT:5000")
-    print("Or press Enter to use default: AAPL:10000,PULS:10000")
+    print("Or press Enter to use default: AAPL:10000,PULS:10000,VOO:20000")
     
     user_input = input("Portfolio: ").strip()
     
@@ -21,7 +21,7 @@ def get_user_portfolio():
         return portfolio
     except ValueError:
         print("Invalid format. Using default portfolio.")
-        return {"AAPL": 10000, "PULS": 10000}
+        return {"AAPL": 10000, "PULS": 10000, "VOO": 20000}
 
 
 def get_model_portfolio_choice():
