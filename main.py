@@ -13,7 +13,7 @@ def get_user_portfolio():
     user_input = input("Portfolio: ").strip()
     
     if not user_input:
-        return {"AAPL": 10000, "PULS": 10000}
+        return {"AAPL": 10000, "PULS": 10000, "VOO":20000}
     
     portfolio = {}
     try:
