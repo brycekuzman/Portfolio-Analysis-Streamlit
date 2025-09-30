@@ -100,7 +100,7 @@ def print_projection_comparison(current_portfolio, model_portfolio, current_proj
 
 
 def print_fee_breakdown(current_portfolio, model_portfolio, total_investment):
-    """Print detailed fee breakdown for 10-year projections."""
+    """Print detailed fee breakdown for 10-year projections and current year savings."""
     current_projections = current_portfolio.project_future_returns(10)
     model_projections = model_portfolio.project_future_returns(10)
     
@@ -119,49 +119,53 @@ def print_fee_breakdown(current_portfolio, model_portfolio, total_investment):
     current_net_final = total_investment * ((1 + current_net_return) ** 10)
     model_net_final = total_investment * ((1 + model_net_return) ** 10)
     
-    print(f"\n10-Year Fee Impact Breakdown:")
+    print(f"\n10-Year Fee Savings Analysis:")
     print("=" * 60)
     
-    # Calculate the dollar impact of each fee component over 10 years
-    current_only_expense_return = current_gross_return - current_summary['weighted_avg_er']
-    current_only_expense_final = total_investment * ((1 + current_only_expense_return) ** 10)
+    # Calculate fee savings (current minus model)
+    advisory_fee_savings = (current_summary['advisory_fee'] - model_summary['advisory_fee']) * total_investment * 10
+    expense_ratio_savings = (current_summary['weighted_avg_er'] - model_summary['weighted_avg_er']) * total_investment * 10
+    total_fee_savings = advisory_fee_savings + expense_ratio_savings
     
-    model_only_expense_return = model_gross_return - model_summary['weighted_avg_er']
-    model_only_expense_final = total_investment * ((1 + model_only_expense_return) ** 10)
+    print(f"\nAdvisory Fee Savings (10-year):")
+    print(f"Current Portfolio Advisory Fee: {current_summary['advisory_fee']:.2%} annually")
+    print(f"{model_summary['name']} Portfolio Advisory Fee: {model_summary['advisory_fee']:.2%} annually")
+    print(f"Advisory Fee Savings: ${advisory_fee_savings:+,.0f}")
     
-    # Advisory fee impact
-    current_advisory_cost = current_gross_final - current_net_final
-    model_advisory_cost = model_gross_final - model_net_final
-    advisory_fee_difference = model_advisory_cost - current_advisory_cost
+    print(f"\nManager Fee (Expense Ratio) Savings (10-year):")
+    print(f"Current Portfolio Weighted Avg Expense Ratio: {current_summary['weighted_avg_er']:.2%} annually")
+    print(f"{model_summary['name']} Portfolio Weighted Avg Expense Ratio: {model_summary['weighted_avg_er']:.2%} annually")
+    print(f"Manager Fee Savings: ${expense_ratio_savings:+,.0f}")
     
-    # Expense ratio impact
-    current_expense_cost = current_gross_final - current_only_expense_final
-    model_expense_cost = model_gross_final - model_only_expense_final
-    expense_ratio_difference = model_expense_cost - current_expense_cost
+    print(f"\nTotal Fee Savings Summary (10-year):")
+    print(f"Total Fee Savings: ${total_fee_savings:+,.0f}")
     
-    print(f"\nAdvisory Fee Impact (10-year dollar cost):")
-    print(f"Current Portfolio Advisory Fee Cost: ${current_advisory_cost:,.0f} ({current_summary['advisory_fee']:.2%} annually)")
-    print(f"{model_summary['name']} Portfolio Advisory Fee Cost: ${model_advisory_cost:,.0f} ({model_summary['advisory_fee']:.2%} annually)")
-    print(f"Advisory Fee Difference: ${advisory_fee_difference:+,.0f}")
-    
-    print(f"\nExpense Ratio Impact (10-year dollar cost):")
-    print(f"Current Portfolio Expense Ratio Cost: ${current_expense_cost:,.0f} ({current_summary['weighted_avg_er']:.2%} annually)")
-    print(f"{model_summary['name']} Portfolio Expense Ratio Cost: ${model_expense_cost:,.0f} ({model_summary['weighted_avg_er']:.2%} annually)")
-    print(f"Expense Ratio Difference: ${expense_ratio_difference:+,.0f}")
-    
-    print(f"\nTotal Fee Impact Summary:")
-    total_current_fees = current_advisory_cost + current_expense_cost
-    total_model_fees = model_advisory_cost + model_expense_cost
-    total_fee_difference = total_model_fees - total_current_fees
-    
-    print(f"Current Portfolio Total Fee Cost: ${total_current_fees:,.0f}")
-    print(f"{model_summary['name']} Portfolio Total Fee Cost: ${total_model_fees:,.0f}")
-    print(f"Total Fee Difference: ${total_fee_difference:+,.0f}")
-    
-    if total_fee_difference < 0:
-        print(f"💰 The {model_summary['name']} portfolio saves ${abs(total_fee_difference):,.0f} in fees over 10 years!")
+    if total_fee_savings > 0:
+        print(f"💰 The {model_summary['name']} portfolio saves ${total_fee_savings:,.0f} in fees over 10 years!")
+    elif total_fee_savings < 0:
+        print(f"⚠️  The {model_summary['name']} portfolio costs ${abs(total_fee_savings):,.0f} more in fees over 10 years.")
     else:
-        print(f"⚠️  The {model_summary['name']} portfolio costs ${total_fee_difference:,.0f} more in fees over 10 years.")
+        print(f"The {model_summary['name']} portfolio has similar fees to your current portfolio.")
+    
+    # Current Year Fee Savings Analysis
+    print(f"\nCurrent Year Fee Savings Analysis:")
+    print("=" * 60)
+    
+    current_year_advisory_savings = (current_summary['advisory_fee'] - model_summary['advisory_fee']) * total_investment
+    current_year_expense_savings = (current_summary['weighted_avg_er'] - model_summary['weighted_avg_er']) * total_investment
+    current_year_total_savings = current_year_advisory_savings + current_year_expense_savings
+    
+    print(f"\nIn the past year, you would have saved:")
+    print(f"Advisory Fee Savings: ${current_year_advisory_savings:+,.0f}")
+    print(f"Manager Fee Savings: ${current_year_expense_savings:+,.0f}")
+    print(f"Total Fee Savings: ${current_year_total_savings:+,.0f}")
+    
+    if current_year_total_savings > 0:
+        print(f"💰 You could have saved ${current_year_total_savings:,.0f} in fees in the past year with the {model_summary['name']} portfolio!")
+    elif current_year_total_savings < 0:
+        print(f"⚠️  The {model_summary['name']} portfolio would have cost ${abs(current_year_total_savings):,.0f} more in fees in the past year.")
+    else:
+        print(f"The fee difference would have been minimal in the past year.")
 
 
 def plot_portfolio_comparison(current_results, model_results, model_name):
