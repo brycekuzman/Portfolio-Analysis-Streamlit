@@ -11,13 +11,15 @@ import matplotlib.pyplot as plt
 def main():
     # Get user inputs
     portfolio_dollars = get_user_portfolio()
-    model_name, model_allocations = get_model_portfolio_choice()
-
+    
     start, end = "2015-09-30", "2025-08-29"
     current_advisory_fee = 0.01  # 1%
 
     # Create portfolio objects
     current_portfolio = Portfolio(portfolio_dollars, "CURRENT", current_advisory_fee)
+
+    # Get the best matching model portfolio based on current asset allocation
+    model_name, model_allocations = get_model_portfolio_choice(current_portfolio.asset_class_allocation)
 
     # Analyze current portfolio first to get actual start date
     print_portfolio_summary(current_portfolio)
