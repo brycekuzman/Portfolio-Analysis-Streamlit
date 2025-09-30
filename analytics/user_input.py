@@ -60,12 +60,12 @@ def get_user_portfolio():
     """Get user's current portfolio input."""
     print("Enter your current portfolio (ticker: dollar_amount):")
     print("Example: AAPL:10000,MSFT:5000")
-    print("Or press Enter to use default: AAPL:10000,PULS:10000,VOO:20000")
+    print("Or press Enter to use default: IEFA:10000,PULS:10000,VOO:20000,JRE:20000")
     
     user_input = input("Portfolio: ").strip()
     
     if not user_input:
-        return {"AAPL": 10000, "PULS": 10000, "VOO": 20000}
+        return {"IEFA": 10000, "PULS": 10000, "VOO": 20000, "JRE": 20000}
     
     portfolio = {}
     try:
