@@ -220,7 +220,7 @@ st.markdown("""
 
 # Initialize session state
 if 'portfolio' not in st.session_state:
-    st.session_state.portfolio = {"VOO": 20000, "VXUS": 10000, "BND": 10000}
+    st.session_state.portfolio = {"IEUR": 20000, "VOO": 10000, "PULS": 10000}
 if 'analyzed' not in st.session_state:
     st.session_state.analyzed = False
 
