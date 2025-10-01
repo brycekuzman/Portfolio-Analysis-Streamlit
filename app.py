@@ -225,8 +225,8 @@ if st.session_state.analyzed:
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
     )
     
-    fig_proj.update_xaxis(showgrid=True, gridwidth=1, gridcolor='#E5E5E5')
-    fig_proj.update_yaxis(showgrid=True, gridwidth=1, gridcolor='#E5E5E5', tickformat='$,.0f')
+    fig_proj.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#E5E5E5')
+    fig_proj.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#E5E5E5', tickformat='$,.0f')
     
     st.plotly_chart(fig_proj, use_container_width=True)
     
@@ -291,7 +291,7 @@ if st.session_state.analyzed:
             font=dict(family="Arial, sans-serif", size=12)
         )
         
-        fig_annual.update_yaxis(showgrid=True, gridwidth=1, gridcolor='#E5E5E5', tickformat='$,.0f')
+        fig_annual.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#E5E5E5', tickformat='$,.0f')
         
         st.plotly_chart(fig_annual, use_container_width=True)
         
@@ -320,7 +320,7 @@ if st.session_state.analyzed:
             font=dict(family="Arial, sans-serif", size=12)
         )
         
-        fig_cumulative.update_yaxis(showgrid=True, gridwidth=1, gridcolor='#E5E5E5', tickformat='$,.0f')
+        fig_cumulative.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#E5E5E5', tickformat='$,.0f')
         
         st.plotly_chart(fig_cumulative, use_container_width=True)
         
@@ -408,8 +408,8 @@ if st.session_state.analyzed:
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
     )
     
-    fig_hist.update_xaxis(showgrid=True, gridwidth=1, gridcolor='#E5E5E5')
-    fig_hist.update_yaxis(showgrid=True, gridwidth=1, gridcolor='#E5E5E5', tickformat='$,.0f')
+    fig_hist.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#E5E5E5')
+    fig_hist.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#E5E5E5', tickformat='$,.0f')
     
     st.plotly_chart(fig_hist, use_container_width=True)
     
