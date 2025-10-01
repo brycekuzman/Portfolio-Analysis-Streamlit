@@ -142,6 +142,18 @@ st.markdown("""
         background-color: #f0f0f0 !important;
     }
     
+    /* Force number input text area to be white */
+    .stNumberInput input[type="number"] {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    
+    /* Target all input elements within number input containers */
+    div[data-baseweb="input"] input {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    
     /* Dataframes */
     .stDataFrame {
         background-color: #ffffff;
