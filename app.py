@@ -15,51 +15,150 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for clean, minimalist design
+# Custom CSS for modern minimalist design with white background
 st.markdown("""
     <style>
-    .main {
-        padding: 2rem;
+    /* Force light theme */
+    .stApp {
+        background-color: #ffffff;
+        color: #000000;
     }
+    
+    /* Main content area */
+    .main {
+        padding: 2rem 3rem;
+        background-color: #ffffff;
+        color: #000000;
+    }
+    
+    /* Typography */
     h1 {
         font-weight: 300;
-        font-size: 2.5rem;
+        font-size: 2.8rem;
         margin-bottom: 0.5rem;
+        color: #000000;
+        letter-spacing: -0.02em;
     }
     h2 {
         font-weight: 300;
-        font-size: 1.8rem;
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-        color: #333;
+        font-size: 1.9rem;
+        margin-top: 3rem;
+        margin-bottom: 1.5rem;
+        color: #1a1a1a;
+        border-bottom: 1px solid #e5e5e5;
+        padding-bottom: 0.5rem;
     }
     h3 {
         font-weight: 400;
-        font-size: 1.3rem;
-        margin-top: 1.5rem;
-        color: #555;
+        font-size: 1.4rem;
+        margin-top: 2rem;
+        color: #2a2a2a;
     }
+    
+    /* Buttons */
     .stButton>button {
-        background-color: #4CAF50;
-        color: white;
-        border-radius: 8px;
-        padding: 0.5rem 2rem;
+        background-color: #000000;
+        color: #ffffff;
+        border-radius: 6px;
+        padding: 0.6rem 2.5rem;
         font-weight: 500;
         border: none;
-        transition: all 0.3s;
+        transition: all 0.2s ease;
+        font-size: 0.95rem;
+        letter-spacing: 0.02em;
     }
     .stButton>button:hover {
-        background-color: #45a049;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        background-color: #2a2a2a;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
+    
+    /* Primary button styling */
+    .stButton>button[kind="primary"] {
+        background-color: #000000;
+        color: #ffffff;
+    }
+    
+    /* Metrics */
     div[data-testid="stMetricValue"] {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
+        color: #000000;
+        font-weight: 600;
     }
+    div[data-testid="stMetricLabel"] {
+        color: #4a4a4a;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    div[data-testid="stMetricDelta"] {
+        font-size: 0.85rem;
+    }
+    
+    /* Metric cards */
     .metric-card {
+        background-color: #fafafa;
+        padding: 1.8rem;
+        border-radius: 8px;
+        border-left: 3px solid #000000;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    /* Input fields */
+    .stTextInput>div>div>input {
+        background-color: #ffffff;
+        color: #000000;
+        border: 1px solid #d0d0d0;
+        border-radius: 4px;
+    }
+    .stNumberInput>div>div>input {
+        background-color: #ffffff;
+        color: #000000;
+        border: 1px solid #d0d0d0;
+        border-radius: 4px;
+    }
+    
+    /* Dataframes */
+    .stDataFrame {
+        background-color: #ffffff;
+    }
+    
+    /* Sidebar (if used) */
+    .css-1d391kg {
         background-color: #f8f9fa;
-        padding: 1.5rem;
-        border-radius: 10px;
-        border-left: 4px solid #4CAF50;
+    }
+    
+    /* Expander */
+    .streamlit-expanderHeader {
+        background-color: #f8f9fa;
+        border: 1px solid #e5e5e5;
+        color: #000000;
+    }
+    
+    /* Clean spacing */
+    .element-container {
+        margin-bottom: 1rem;
+    }
+    
+    /* Remove any dark theme remnants */
+    div[data-testid="stSidebar"] {
+        background-color: #f8f9fa;
+    }
+    
+    /* Caption text */
+    .caption {
+        color: #6a6a6a;
+        font-size: 0.85rem;
+    }
+    
+    /* Headers with better spacing */
+    .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+        margin-top: 2rem;
+    }
+    
+    /* Remove button outlines on focus */
+    .stButton>button:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
     }
     </style>
     """, unsafe_allow_html=True)
