@@ -156,21 +156,40 @@ st.markdown("""
     
     /* Dataframes */
     .stDataFrame {
-        background-color: #ffffff;
-        color: #000000;
+        background-color: #ffffff !important;
+        color: #000000 !important;
     }
     .stDataFrame table {
-        background-color: #ffffff;
-        color: #000000;
+        background-color: #ffffff !important;
+        color: #000000 !important;
     }
     .stDataFrame th {
-        background-color: #f0f0f0;
-        color: #000000;
+        background-color: #f0f0f0 !important;
+        color: #000000 !important;
         font-weight: 600;
     }
     .stDataFrame td {
-        background-color: #ffffff;
-        color: #000000;
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    
+    /* Additional dataframe selectors */
+    div[data-testid="stDataFrame"] {
+        background-color: #ffffff !important;
+    }
+    div[data-testid="stDataFrame"] table {
+        background-color: #ffffff !important;
+    }
+    div[data-testid="stDataFrame"] tbody tr {
+        background-color: #ffffff !important;
+    }
+    div[data-testid="stDataFrame"] tbody td {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    div[data-testid="stDataFrame"] thead th {
+        background-color: #f0f0f0 !important;
+        color: #000000 !important;
     }
     
     /* Sidebar (if used) */
