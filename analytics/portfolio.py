@@ -2,7 +2,7 @@
 import numpy as np
 from .data import get_current_prices, get_expense_ratios, get_investment_classifications, get_price_data
 from .performance import calculate_portfolio_returns, performance_stats, calculate_individual_returns, project_portfolio_returns
-from .models import growth_rates
+from .models import growth_rates, asset_volatility
 
 
 class Portfolio:
@@ -73,6 +73,34 @@ class Portfolio:
     def project_future_returns(self, years=10):
         """Project future portfolio returns."""
         return project_portfolio_returns(self.asset_class_allocation, growth_rates, years)
+    
+    def calculate_forward_metrics(self, risk_free_rate=0.02):
+        """Calculate estimated forward volatility and Sharpe ratio."""
+        # Calculate weighted expected return
+        expected_return = sum(
+            self.asset_class_allocation.get(asset_class, 0) * growth_rate
+            for asset_class, growth_rate in growth_rates.items()
+        )
+        
+        # Calculate portfolio volatility using asset class volatilities
+        portfolio_variance = 0
+        for asset_class, weight in self.asset_class_allocation.items():
+            volatility = asset_volatility.get(asset_class, 0)
+            portfolio_variance += (weight ** 2) * (volatility ** 2)
+        
+        # For simplicity, we're not considering correlations between asset classes
+        # In practice, you'd want to include a correlation matrix
+        portfolio_volatility = portfolio_variance ** 0.5
+        
+        # Calculate Sharpe ratio
+        excess_return = expected_return - risk_free_rate
+        sharpe_ratio = excess_return / portfolio_volatility if portfolio_volatility > 0 else 0
+        
+        return {
+            'expected_return': expected_return,
+            'portfolio_volatility': portfolio_volatility,
+            'sharpe_ratio': sharpe_ratio
+        }
     
     def get_portfolio_summary(self):
         """Get a summary of portfolio composition."""

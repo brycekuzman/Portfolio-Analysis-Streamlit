@@ -85,18 +85,45 @@ def print_projection_comparison(current_portfolio, model_portfolio, current_proj
     fee_difference = model_summary['total_fees'] - current_summary['total_fees']
     print(f"Fee Difference: {fee_difference:+.2%}")
     
+    # Forward-looking metrics
+    current_forward = current_portfolio.calculate_forward_metrics()
+    model_forward = model_portfolio.calculate_forward_metrics()
+    
+    print(f"\nEstimated Forward Performance Metrics:")
+    print(f"Current Portfolio:")
+    print(f"  Expected Return: {current_forward['expected_return']:.2%}")
+    print(f"  Estimated Volatility: {current_forward['portfolio_volatility']:.2%}")
+    print(f"  Estimated Sharpe Ratio: {current_forward['sharpe_ratio']:.2f}")
+    
+    print(f"\n{model_summary['name']} Portfolio:")
+    print(f"  Expected Return: {model_forward['expected_return']:.2%}")
+    print(f"  Estimated Volatility: {model_forward['portfolio_volatility']:.2%}")
+    print(f"  Estimated Sharpe Ratio: {model_forward['sharpe_ratio']:.2f}")
+    
+    # Differences
+    return_diff = model_forward['expected_return'] - current_forward['expected_return']
+    vol_diff = model_forward['portfolio_volatility'] - current_forward['portfolio_volatility']
+    sharpe_diff = model_forward['sharpe_ratio'] - current_forward['sharpe_ratio']
+    
+    print(f"\nForward Metrics Differences:")
+    print(f"  Expected Return Difference: {return_diff:+.2%}")
+    print(f"  Volatility Difference: {vol_diff:+.2%}")
+    print(f"  Sharpe Ratio Difference: {sharpe_diff:+.2f}")
+    
     # Asset class allocations
-    from .models import growth_rates
+    from .models import growth_rates, asset_volatility
     
     print(f"\nCurrent Portfolio Asset Class Allocation:")
     for asset_class, allocation in sorted(current_summary['asset_class_allocation'].items()):
         growth_rate = growth_rates.get(asset_class, 0)
-        print(f"  {asset_class}: {allocation:.1%} (Est. Growth: {growth_rate:.1%})")
+        volatility = asset_volatility.get(asset_class, 0)
+        print(f"  {asset_class}: {allocation:.1%} (Est. Growth: {growth_rate:.1%}, Est. Vol: {volatility:.1%})")
     
     print(f"\n{model_summary['name']} Portfolio Asset Class Allocation:")
     for asset_class, allocation in sorted(model_summary['asset_class_allocation'].items()):
         growth_rate = growth_rates.get(asset_class, 0)
-        print(f"  {asset_class}: {allocation:.1%} (Est. Growth: {growth_rate:.1%})")
+        volatility = asset_volatility.get(asset_class, 0)
+        print(f"  {asset_class}: {allocation:.1%} (Est. Growth: {growth_rate:.1%}, Est. Vol: {volatility:.1%})")
 
 
 def print_fee_breakdown(current_portfolio, model_portfolio, total_investment):
