@@ -400,9 +400,9 @@ if st.button("🔍 Analyze Portfolio", use_container_width=False, type="primary"
                     advisory_fee,
                     st.session_state.asset_class_overrides
                 )
-            
-            # Find best matching model
-            best_match, similarity = find_best_matching_model(current_portfolio.asset_class_allocation)
+                
+                # Find best matching model
+                best_match, similarity = find_best_matching_model(current_portfolio.asset_class_allocation)
             model_name, model_allocations = best_match
             
             # Create model portfolio
