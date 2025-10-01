@@ -597,13 +597,10 @@ if st.session_state.analyzed:
         st.subheader("Your Portfolio")
         current_allocation = st.session_state.current_portfolio.asset_class_allocation
         
-        # Create color list based on asset classes
-        colors = [asset_class_colors.get(asset_class, '#6B7280') for asset_class in current_allocation.keys()]
-        
         fig_current = px.pie(
             values=list(current_allocation.values()),
             names=list(current_allocation.keys()),
-            color_discrete_sequence=colors
+            color_discrete_map=asset_class_colors
         )
         fig_current.update_traces(
             textposition='inside', 
@@ -627,13 +624,10 @@ if st.session_state.analyzed:
         st.subheader(f"{st.session_state.model_name} Portfolio")
         model_allocation = st.session_state.model_portfolio.asset_class_allocation
         
-        # Create color list based on asset classes (same colors for consistency)
-        colors = [asset_class_colors.get(asset_class, '#6B7280') for asset_class in model_allocation.keys()]
-        
         fig_model = px.pie(
             values=list(model_allocation.values()),
             names=list(model_allocation.keys()),
-            color_discrete_sequence=colors
+            color_discrete_map=asset_class_colors
         )
         fig_model.update_traces(
             textposition='inside', 
