@@ -6,7 +6,7 @@ from .models import growth_rates, asset_volatility
 
 
 class Portfolio:
-    def __init__(self, portfolio_dollars, name, advisory_fee=0.0):
+    def __init__(self, portfolio_dollars, name, advisory_fee=0.0, asset_class_overrides=None):
         self.portfolio_dollars = portfolio_dollars
         self.name = name
         self.advisory_fee = advisory_fee
@@ -16,7 +16,7 @@ class Portfolio:
         self.current_prices = get_current_prices(list(portfolio_dollars.keys()))
         self.portfolio_weights = self._calculate_weights()
         self.expense_ratios = get_expense_ratios(portfolio_dollars.keys())
-        self.classifications = get_investment_classifications(portfolio_dollars.keys())
+        self.classifications = get_investment_classifications(portfolio_dollars.keys(), asset_class_overrides)
         self.weighted_avg_er = self._calculate_weighted_avg_er()
         self.asset_class_allocation = self._calculate_asset_class_allocation()
     

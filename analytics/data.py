@@ -45,6 +45,40 @@ def get_price_data(tickers, start, end):
     return prices
 
 
+def validate_ticker(ticker):
+    """Validate if a ticker exists and return its info."""
+    try:
+        stock = yf.Ticker(ticker)
+        info = stock.info
+        
+        # Check if we got valid data
+        if not info or 'symbol' not in info:
+            return False, None
+        
+        return True, info
+    except Exception as e:
+        return False, None
+
+
+def get_investment_name(ticker):
+    """Get the full name of an investment."""
+    try:
+        stock = yf.Ticker(ticker)
+        info = stock.info
+        
+        # Try different possible keys for the name
+        if 'longName' in info:
+            return info['longName']
+        elif 'shortName' in info:
+            return info['shortName']
+        elif 'name' in info:
+            return info['name']
+        else:
+            return ticker
+    except Exception as e:
+        return ticker
+
+
 def get_current_prices(tickers):
     """Get current prices for tickers to calculate portfolio weights."""
     data = yf.download(tickers, period="1d", interval="1d", auto_adjust=True, prepost=True, threads=True)
@@ -94,28 +128,23 @@ def get_expense_ratios(tickers):
 
 
 def classify_investment(ticker):
-    """Classify investment into US Equities, International Equities, Core Fixed Income, or Alternatives."""
+    """Classify investment into US Stock, International Stock, US Bond, or International Bond."""
     
     # Common patterns for automatic classification
-    us_equity_patterns = ['SPY', 'QQQ', 'VTI', 'VOO', 'IWM', 'DIA']
+    us_equity_patterns = ['SPY', 'QQQ', 'VTI', 'VOO', 'IWM', 'DIA', 'IEUR', 'PULS', 'VNQ']
     intl_equity_patterns = ['VXUS', 'VEA', 'VWO', 'IEFA', 'IEMG', 'EFA', 'EEM']
-    fixed_income_patterns = ['AGG', 'BND', 'VGIT', 'VGLT', 'TLT', 'SHY', 'IEF']
-    alternatives_patterns = [
-        'VNQ', 'RWR', 'IYR', 'FREL', 'SCHH', 'XLRE',  # REITs
-        'GLD', 'SLV', 'DJP', 'PDBC', 'COMT', 'DBA', 'USO', 'UNG',  # Commodities
-        'AMLP', 'MLPA', 'MLPX',  # MLPs
-        'QAI', 'RPAR', 'TAIL'  # Hedged strategies/alternatives
-    ]
+    us_bond_patterns = ['AGG', 'BND', 'VGIT', 'VGLT', 'TLT', 'SHY', 'IEF']
+    intl_bond_patterns = ['BNDX', 'IAGG', 'BWX']
     
     # Check for common patterns first
     if ticker in us_equity_patterns:
-        return "US Equities"
+        return "US Stock"
     elif ticker in intl_equity_patterns:
-        return "International Equities"
-    elif ticker in fixed_income_patterns:
-        return "Core Fixed Income"
-    elif ticker in alternatives_patterns:
-        return "Alternatives"
+        return "International Stock"
+    elif ticker in us_bond_patterns:
+        return "US Bond"
+    elif ticker in intl_bond_patterns:
+        return "International Bond"
     
     # Try to get info from yfinance
     try:
@@ -129,41 +158,36 @@ def classify_investment(ticker):
         
         # US Equity indicators
         if any(keyword in category for keyword in ['large blend', 'large growth', 'large value', 'mid blend', 'mid growth', 'mid value', 'small blend', 'small growth', 'small value']):
-            return "US Equities"
+            return "US Stock"
         elif 'equity' in category and ('us' in category or 'domestic' in category):
-            return "US Equities"
+            return "US Stock"
+        elif 'reit' in category.lower() or 'real estate' in category.lower():
+            return "US Stock"
         elif ticker.endswith('.TO') or ticker.endswith('.L') or ticker.endswith('.F'):
-            return "International Equities"
+            return "International Stock"
         
         # International Equity indicators
         elif any(keyword in category for keyword in ['foreign', 'international', 'emerging', 'developed', 'europe', 'asia', 'pacific']):
-            return "International Equities"
+            return "International Stock"
         elif 'equity' in category and any(keyword in category for keyword in ['intl', 'global', 'world']):
-            return "International Equities"
+            return "International Stock"
         
-        # Fixed Income indicators
+        # Bond indicators - check if international
         elif any(keyword in category for keyword in ['bond', 'fixed', 'treasury', 'corporate bond', 'government']):
-            return "Core Fixed Income"
+            if any(keyword in category for keyword in ['international', 'global', 'foreign', 'world']):
+                return "International Bond"
+            else:
+                return "US Bond"
         elif 'bond' in asset_class or 'fixed' in asset_class:
-            return "Core Fixed Income"
-        
-        # Alternatives indicators
-        elif any(keyword in category for keyword in ['real estate', 'reit', 'commodity', 'commodities', 'mlp', 'master limited partnership', 'hedge', 'alternative', 'gold', 'silver', 'oil', 'natural gas']):
-            return "Alternatives"
-        elif 'reit' in asset_class or 'commodity' in asset_class or 'alternative' in asset_class:
-            return "Alternatives"
-        elif info.get('longBusinessSummary', '').lower().find('reit') != -1:
-            return "Alternatives"
-        elif info.get('longBusinessSummary', '').lower().find('real estate') != -1:
-            return "Alternatives"
+            return "US Bond"
         
         # If it's a stock (not fund), classify based on exchange/country
         elif info.get('quoteType') == 'EQUITY':
             country = info.get('country', '').lower()
             if country in ['united states', 'usa', 'us']:
-                return "US Equities"
+                return "US Stock"
             elif country and country not in ['united states', 'usa', 'us']:
-                return "International Equities"
+                return "International Stock"
         
     except Exception as e:
         print(f"Could not fetch classification info for {ticker}: {e}")
@@ -172,44 +196,22 @@ def classify_investment(ticker):
     return None
 
 
-def get_investment_classifications(tickers):
-    """Get classifications for all investments, prompting user for unknown ones."""
+def get_investment_classifications(tickers, overrides=None):
+    """Get classifications for all investments, using overrides if provided."""
     classifications = {}
+    overrides = overrides or {}
     
     for ticker in tickers:
-        auto_classification = classify_investment(ticker)
-        
-        if auto_classification:
-            classifications[ticker] = auto_classification
+        # Check if user has overridden the classification
+        if ticker in overrides:
+            classifications[ticker] = overrides[ticker]
         else:
-            # Prompt user for classification
-            print(f"\nCould not automatically classify {ticker}.")
-            print("Please select the classification:")
-            print("1. US Equities")
-            print("2. International Equities") 
-            print("3. Core Fixed Income")
-            print("4. Alternatives")
+            auto_classification = classify_investment(ticker)
             
-            while True:
-                try:
-                    choice = input(f"Enter choice (1-4) for {ticker}: ").strip()
-                    if choice == '1':
-                        classifications[ticker] = "US Equities"
-                        break
-                    elif choice == '2':
-                        classifications[ticker] = "International Equities"
-                        break
-                    elif choice == '3':
-                        classifications[ticker] = "Core Fixed Income"
-                        break
-                    elif choice == '4':
-                        classifications[ticker] = "Alternatives"
-                        break
-                    else:
-                        print("Invalid choice. Please enter 1, 2, 3, or 4.")
-                except KeyboardInterrupt:
-                    print(f"\nDefaulting {ticker} to 'Alternatives'")
-                    classifications[ticker] = "Alternatives"
-                    break
+            if auto_classification:
+                classifications[ticker] = auto_classification
+            else:
+                # Default to US Stock if cannot classify
+                classifications[ticker] = "US Stock"
     
     return classifications

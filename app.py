@@ -269,26 +269,89 @@ st.markdown("Compare your investment portfolio against optimized model portfolio
 st.markdown("---")
 st.header("Your Portfolio")
 
+# Initialize session state for asset class overrides
+if 'asset_class_overrides' not in st.session_state:
+    st.session_state.asset_class_overrides = {}
+
 col1, col2 = st.columns([2, 1])
 
 with col1:
     st.subheader("Holdings")
     
+    # Import validation and name functions
+    from analytics.data import validate_ticker, get_investment_name, classify_investment
+    
     # Display current holdings
     for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
-        cols = st.columns([2, 3, 1])
+        # Validate ticker
+        is_valid, ticker_info = validate_ticker(ticker)
+        
+        # Create columns for ticker, name, amount, asset class, and delete button
+        cols = st.columns([1.5, 2, 2, 2, 0.5])
+        
         with cols[0]:
             new_ticker = st.text_input(f"Ticker", value=ticker, key=f"ticker_{i}", label_visibility="collapsed")
+        
         with cols[1]:
-            new_amount = st.number_input(f"Amount", value=float(amount), min_value=0.0, step=1000.0, key=f"amount_{i}", label_visibility="collapsed", format="%.2f")
+            if is_valid:
+                investment_name = get_investment_name(ticker)
+                st.text_input(f"Name", value=investment_name, key=f"name_{i}", label_visibility="collapsed", disabled=True)
+            else:
+                st.text_input(f"Name", value="⚠️ Invalid Ticker", key=f"name_{i}", label_visibility="collapsed", disabled=True)
+        
         with cols[2]:
+            new_amount = st.number_input(f"Amount", value=float(amount), min_value=0.0, step=1000.0, key=f"amount_{i}", label_visibility="collapsed", format="%.2f")
+        
+        with cols[3]:
+            if is_valid:
+                # Get automatic classification
+                auto_classification = classify_investment(ticker)
+                
+                # Check if user has overridden the classification
+                if ticker in st.session_state.asset_class_overrides:
+                    default_class = st.session_state.asset_class_overrides[ticker]
+                elif auto_classification:
+                    default_class = auto_classification
+                else:
+                    default_class = "US Stock"
+                
+                # Asset class options
+                asset_classes = ["US Stock", "International Stock", "US Bond", "International Bond"]
+                default_index = asset_classes.index(default_class) if default_class in asset_classes else 0
+                
+                selected_class = st.selectbox(
+                    f"Asset Class",
+                    options=asset_classes,
+                    index=default_index,
+                    key=f"asset_class_{i}",
+                    label_visibility="collapsed"
+                )
+                
+                # Store the override if user changed it
+                if auto_classification and selected_class != auto_classification:
+                    st.session_state.asset_class_overrides[ticker] = selected_class
+                elif ticker in st.session_state.asset_class_overrides and selected_class == auto_classification:
+                    # Remove override if user changed back to automatic classification
+                    del st.session_state.asset_class_overrides[ticker]
+            else:
+                st.text_input(f"Asset Class", value="N/A", key=f"asset_class_{i}", label_visibility="collapsed", disabled=True)
+        
+        with cols[4]:
             if st.button("🗑️", key=f"remove_{i}"):
                 del st.session_state.portfolio[ticker]
+                if ticker in st.session_state.asset_class_overrides:
+                    del st.session_state.asset_class_overrides[ticker]
                 st.rerun()
         
+        # Show warning if ticker is invalid
+        if not is_valid:
+            st.warning(f"⚠️ '{ticker}' is not a valid investment symbol. Please correct it or remove this holding.")
+        
         # Update portfolio
-        if new_ticker != ticker:
+        if new_ticker.upper() != ticker:
             del st.session_state.portfolio[ticker]
+            if ticker in st.session_state.asset_class_overrides:
+                st.session_state.asset_class_overrides[new_ticker.upper()] = st.session_state.asset_class_overrides.pop(ticker)
             st.session_state.portfolio[new_ticker.upper()] = new_amount
         else:
             st.session_state.portfolio[ticker] = new_amount
@@ -317,10 +380,26 @@ with col2:
 # Analyze Button
 st.markdown("")
 if st.button("🔍 Analyze Portfolio", use_container_width=False, type="primary"):
-    with st.spinner("Analyzing your portfolio..."):
-        try:
-            # Create current portfolio
-            current_portfolio = Portfolio(st.session_state.portfolio, "Current", advisory_fee)
+    # Validate all tickers before analysis
+    from analytics.data import validate_ticker
+    invalid_tickers = []
+    for ticker in st.session_state.portfolio.keys():
+        is_valid, _ = validate_ticker(ticker)
+        if not is_valid:
+            invalid_tickers.append(ticker)
+    
+    if invalid_tickers:
+        st.error(f"❌ Cannot analyze portfolio. Please correct or remove these invalid tickers: {', '.join(invalid_tickers)}")
+    else:
+        with st.spinner("Analyzing your portfolio..."):
+            try:
+                # Create current portfolio with asset class overrides
+                current_portfolio = Portfolio(
+                    st.session_state.portfolio, 
+                    "Current", 
+                    advisory_fee,
+                    st.session_state.asset_class_overrides
+                )
             
             # Find best matching model
             best_match, similarity = find_best_matching_model(current_portfolio.asset_class_allocation)
