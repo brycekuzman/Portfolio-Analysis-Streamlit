@@ -57,7 +57,7 @@ st.markdown("""
     
     /* Buttons */
     .stButton>button {
-        background-color: #000000;
+        background-color: #4A90E2;
         color: #ffffff;
         border-radius: 6px;
         padding: 0.6rem 2.5rem;
@@ -68,15 +68,18 @@ st.markdown("""
         letter-spacing: 0.02em;
     }
     .stButton>button:hover {
-        background-color: #2a2a2a;
+        background-color: #357ABD;
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
     }
     
     /* Primary button styling */
     .stButton>button[kind="primary"] {
-        background-color: #000000;
+        background-color: #4A90E2;
         color: #ffffff;
+    }
+    .stButton>button[kind="primary"]:hover {
+        background-color: #357ABD;
     }
     
     /* Metrics */
@@ -108,13 +111,29 @@ st.markdown("""
         background-color: #ffffff;
         color: #000000;
         border: 1px solid #d0d0d0;
-        border-radius: 4px;
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: border-color 0.2s ease;
+    }
+    .stTextInput>div>div>input:focus {
+        border-color: #4A90E2;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
     }
     .stNumberInput>div>div>input {
         background-color: #ffffff;
         color: #000000;
         border: 1px solid #d0d0d0;
-        border-radius: 4px;
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: border-color 0.2s ease;
+    }
+    .stNumberInput>div>div>input:focus {
+        border-color: #4A90E2;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
     }
     
     /* Dataframes */
