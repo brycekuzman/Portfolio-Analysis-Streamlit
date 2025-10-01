@@ -172,28 +172,44 @@ def classify_investment(ticker):
     return None
 
 
-def get_investment_classifications(tickers, overrides=None):
-    """Get classifications for all investments, with optional overrides.
-    
-    Args:
-        tickers: List of ticker symbols
-        overrides: Dict mapping ticker -> asset class override
-    """
+def get_investment_classifications(tickers):
+    """Get classifications for all investments, prompting user for unknown ones."""
     classifications = {}
-    overrides = overrides or {}
     
     for ticker in tickers:
-        # Check for override first
-        if ticker in overrides:
-            classifications[ticker] = overrides[ticker]
-            continue
-        
         auto_classification = classify_investment(ticker)
         
         if auto_classification:
             classifications[ticker] = auto_classification
         else:
-            # Default to US Equities for web interface (no interactive prompt)
-            classifications[ticker] = "US Stock"
+            # Prompt user for classification
+            print(f"\nCould not automatically classify {ticker}.")
+            print("Please select the classification:")
+            print("1. US Equities")
+            print("2. International Equities") 
+            print("3. Core Fixed Income")
+            print("4. Alternatives")
+            
+            while True:
+                try:
+                    choice = input(f"Enter choice (1-4) for {ticker}: ").strip()
+                    if choice == '1':
+                        classifications[ticker] = "US Equities"
+                        break
+                    elif choice == '2':
+                        classifications[ticker] = "International Equities"
+                        break
+                    elif choice == '3':
+                        classifications[ticker] = "Core Fixed Income"
+                        break
+                    elif choice == '4':
+                        classifications[ticker] = "Alternatives"
+                        break
+                    else:
+                        print("Invalid choice. Please enter 1, 2, 3, or 4.")
+                except KeyboardInterrupt:
+                    print(f"\nDefaulting {ticker} to 'Alternatives'")
+                    classifications[ticker] = "Alternatives"
+                    break
     
-    return classifications</old_str>
+    return classifications

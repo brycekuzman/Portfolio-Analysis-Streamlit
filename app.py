@@ -260,44 +260,10 @@ if 'portfolio' not in st.session_state:
     st.session_state.portfolio = {"IEUR": 20000, "VOO": 10000, "PULS": 10000}
 if 'analyzed' not in st.session_state:
     st.session_state.analyzed = False
-if 'invalid_tickers' not in st.session_state:
-    st.session_state.invalid_tickers = set()
-if 'ticker_info' not in st.session_state:
-    st.session_state.ticker_info = {}
-if 'asset_class_overrides' not in st.session_state:
-    st.session_state.asset_class_overrides = {}
-
-# Helper function to validate and get ticker info
-def get_ticker_info(ticker):
-    """Validate ticker and get its name and classification."""
-    import yfinance as yf
-    from analytics.data import classify_investment
-    
-    try:
-        stock = yf.Ticker(ticker)
-        info = stock.info
-        
-        # Check if ticker is valid by looking for basic info
-        if not info or 'symbol' not in info:
-            return None
-        
-        # Get name
-        name = info.get('longName') or info.get('shortName') or ticker
-        
-        # Get classification
-        classification = classify_investment(ticker)
-        
-        return {
-            'name': name,
-            'classification': classification,
-            'valid': True
-        }
-    except:
-        return None
 
 # Header
 st.title("Portfolio Analysis Dashboard")
-st.markdown("Compare your investment portfolio against optimized model portfolios")</old_str>
+st.markdown("Compare your investment portfolio against optimized model portfolios")
 
 # Portfolio Input Section
 st.markdown("---")
@@ -310,139 +276,29 @@ with col1:
     
     # Display current holdings
     for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
-        # Validate ticker and get info
-        ticker_upper = ticker.upper()
-        
-        # Check cache first
-        if ticker_upper not in st.session_state.ticker_info:
-            info = get_ticker_info(ticker_upper)
-            if info:
-                st.session_state.ticker_info[ticker_upper] = info
-                st.session_state.invalid_tickers.discard(ticker_upper)
-            else:
-                st.session_state.invalid_tickers.add(ticker_upper)
-                st.session_state.ticker_info[ticker_upper] = None
-        
-        ticker_info = st.session_state.ticker_info.get(ticker_upper)
-        is_invalid = ticker_upper in st.session_state.invalid_tickers
-        
-        # Create columns: Ticker | Name | Amount | Asset Class | Delete
-        cols = st.columns([1.5, 2.5, 2, 2, 0.5])
-        
+        cols = st.columns([2, 3, 1])
         with cols[0]:
-            new_ticker = st.text_input(
-                f"Ticker", 
-                value=ticker, 
-                key=f"ticker_{i}", 
-                label_visibility="collapsed",
-                placeholder="Symbol"
-            )
-            if is_invalid:
-                st.error("⚠️ Invalid symbol")
-        
+            new_ticker = st.text_input(f"Ticker", value=ticker, key=f"ticker_{i}", label_visibility="collapsed")
         with cols[1]:
-            if ticker_info and not is_invalid:
-                st.text_input(
-                    "Name",
-                    value=ticker_info['name'],
-                    key=f"name_{i}",
-                    label_visibility="collapsed",
-                    disabled=True
-                )
-            else:
-                st.text_input(
-                    "Name",
-                    value="Unknown" if is_invalid else "Loading...",
-                    key=f"name_{i}",
-                    label_visibility="collapsed",
-                    disabled=True
-                )
-        
+            new_amount = st.number_input(f"Amount", value=float(amount), min_value=0.0, step=1000.0, key=f"amount_{i}", label_visibility="collapsed", format="%.2f")
         with cols[2]:
-            new_amount = st.number_input(
-                f"Amount", 
-                value=float(amount), 
-                min_value=0.0, 
-                step=1000.0, 
-                key=f"amount_{i}", 
-                label_visibility="collapsed", 
-                format="%.2f"
-            )
-        
-        with cols[3]:
-            if ticker_info and not is_invalid:
-                asset_classes = ["US Stock", "International Stock", "US Bond", "International Bond"]
-                current_class = st.session_state.asset_class_overrides.get(
-                    ticker_upper, 
-                    ticker_info['classification']
-                )
-                
-                # Map classifications to display names
-                class_map = {
-                    "US Equities": "US Stock",
-                    "International Equities": "International Stock",
-                    "Core Fixed Income": "US Bond",
-                    "Alternatives": "International Bond"
-                }
-                reverse_map = {v: k for k, v in class_map.items()}
-                
-                display_class = class_map.get(current_class, current_class)
-                if display_class not in asset_classes:
-                    display_class = "US Stock"
-                
-                selected_class = st.selectbox(
-                    "Asset Class",
-                    asset_classes,
-                    index=asset_classes.index(display_class) if display_class in asset_classes else 0,
-                    key=f"class_{i}",
-                    label_visibility="collapsed"
-                )
-                
-                # Store override
-                mapped_class = reverse_map.get(selected_class, selected_class)
-                st.session_state.asset_class_overrides[ticker_upper] = mapped_class
-            else:
-                st.text_input(
-                    "Asset Class",
-                    value="N/A",
-                    key=f"class_{i}",
-                    label_visibility="collapsed",
-                    disabled=True
-                )
-        
-        with cols[4]:
             if st.button("🗑️", key=f"remove_{i}"):
                 del st.session_state.portfolio[ticker]
-                st.session_state.invalid_tickers.discard(ticker_upper)
-                if ticker_upper in st.session_state.ticker_info:
-                    del st.session_state.ticker_info[ticker_upper]
-                if ticker_upper in st.session_state.asset_class_overrides:
-                    del st.session_state.asset_class_overrides[ticker_upper]
                 st.rerun()
         
         # Update portfolio
-        new_ticker_upper = new_ticker.upper()
-        if new_ticker_upper != ticker:
+        if new_ticker != ticker:
             del st.session_state.portfolio[ticker]
-            st.session_state.portfolio[new_ticker_upper] = new_amount
-            # Clear cache for new ticker to trigger validation
-            if new_ticker_upper in st.session_state.ticker_info:
-                del st.session_state.ticker_info[new_ticker_upper]
-            st.session_state.invalid_tickers.discard(ticker_upper)
-            st.rerun()
+            st.session_state.portfolio[new_ticker.upper()] = new_amount
         else:
             st.session_state.portfolio[ticker] = new_amount
-    
-    # Show warning if any invalid tickers
-    if st.session_state.invalid_tickers:
-        st.warning(f"⚠️ Please correct or remove invalid symbols: {', '.join(st.session_state.invalid_tickers)}")
     
     # Add new holding
     col_add1, col_add2 = st.columns([1, 3])
     with col_add1:
         if st.button("➕ Add Holding", use_container_width=True):
             st.session_state.portfolio[f"NEW{len(st.session_state.portfolio)}"] = 1000.0
-            st.rerun()</old_str>
+            st.rerun()
 
 with col2:
     st.subheader("Settings")
@@ -460,20 +316,11 @@ with col2:
 
 # Analyze Button
 st.markdown("")
-analyze_disabled = len(st.session_state.invalid_tickers) > 0
-if st.button("🔍 Analyze Portfolio", use_container_width=False, type="primary", disabled=analyze_disabled):
-    if st.session_state.invalid_tickers:
-        st.error("Cannot analyze portfolio with invalid symbols. Please correct them first.")
-    else:
-        with st.spinner("Analyzing your portfolio..."):
+if st.button("🔍 Analyze Portfolio", use_container_width=False, type="primary"):
+    with st.spinner("Analyzing your portfolio..."):
         try:
-            # Create current portfolio with asset class overrides
-            current_portfolio = Portfolio(
-                st.session_state.portfolio, 
-                "Current", 
-                advisory_fee,
-                st.session_state.asset_class_overrides
-            )</old_str>
+            # Create current portfolio
+            current_portfolio = Portfolio(st.session_state.portfolio, "Current", advisory_fee)
             
             # Find best matching model
             best_match, similarity = find_best_matching_model(current_portfolio.asset_class_allocation)
@@ -509,10 +356,6 @@ if st.button("🔍 Analyze Portfolio", use_container_width=False, type="primary"
         except Exception as e:
             st.error(f"Error during analysis: {str(e)}")
             st.session_state.analyzed = False
-
-# Show disabled button message
-if analyze_disabled:
-    st.info("💡 Fix invalid symbols to enable analysis")</old_str>
 
 # Results Section
 if st.session_state.analyzed:
