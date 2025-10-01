@@ -122,18 +122,24 @@ st.markdown("""
         box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
     }
     .stNumberInput>div>div>input {
-        background-color: #ffffff;
-        color: #000000;
-        border: 1px solid #d0d0d0;
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: 1px solid #d0d0d0 !important;
         border-radius: 6px;
         padding: 0.75rem 1rem;
         font-size: 0.95rem;
         transition: border-color 0.2s ease;
     }
     .stNumberInput>div>div>input:focus {
-        border-color: #4A90E2;
+        border-color: #4A90E2 !important;
         outline: none;
         box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+    }
+    
+    /* Force number input controls to be visible */
+    .stNumberInput button {
+        color: #000000 !important;
+        background-color: #f0f0f0 !important;
     }
     
     /* Dataframes */
