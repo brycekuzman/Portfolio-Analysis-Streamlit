@@ -120,17 +120,36 @@ st.markdown("""
     /* Dataframes */
     .stDataFrame {
         background-color: #ffffff;
+        color: #000000;
+    }
+    .stDataFrame table {
+        background-color: #ffffff;
+        color: #000000;
+    }
+    .stDataFrame th {
+        background-color: #f0f0f0;
+        color: #000000;
+        font-weight: 600;
+    }
+    .stDataFrame td {
+        background-color: #ffffff;
+        color: #000000;
     }
     
     /* Sidebar (if used) */
     .css-1d391kg {
         background-color: #f8f9fa;
+        color: #000000;
     }
     
     /* Expander */
     .streamlit-expanderHeader {
         background-color: #f8f9fa;
         border: 1px solid #e5e5e5;
+        color: #000000;
+    }
+    .streamlit-expanderContent {
+        background-color: #ffffff;
         color: #000000;
     }
     
@@ -142,6 +161,12 @@ st.markdown("""
     /* Remove any dark theme remnants */
     div[data-testid="stSidebar"] {
         background-color: #f8f9fa;
+        color: #000000;
+    }
+    
+    /* All text elements */
+    .stMarkdown, .stMarkdown p, .stMarkdown div {
+        color: #000000;
     }
     
     /* Caption text */
@@ -153,12 +178,23 @@ st.markdown("""
     /* Headers with better spacing */
     .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
         margin-top: 2rem;
+        color: #000000;
     }
     
     /* Remove button outlines on focus */
     .stButton>button:focus {
         outline: none;
         box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+    }
+    
+    /* Fix all text to be black */
+    * {
+        color: #000000 !important;
+    }
+    
+    /* Override plotly defaults */
+    .js-plotly-plot {
+        background-color: #ffffff !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -469,7 +505,15 @@ if st.session_state.analyzed:
     }
     
     df_metrics = pd.DataFrame(metrics_data)
-    st.dataframe(df_metrics, hide_index=True, use_container_width=True)
+    
+    # Style the dataframe
+    styled_df = df_metrics.style.set_table_styles([
+        {'selector': 'thead th', 'props': [('background-color', '#f0f0f0'), ('color', '#000000'), ('font-weight', '600')]},
+        {'selector': 'tbody td', 'props': [('background-color', '#ffffff'), ('color', '#000000')]},
+        {'selector': 'table', 'props': [('background-color', '#ffffff'), ('border-collapse', 'collapse')]},
+    ])
+    
+    st.dataframe(styled_df, hide_index=True, use_container_width=True)
     
     st.caption(f"*Historical period: {current_res['actual_start_date']} to {current_res['actual_end_date']}*")
     
@@ -503,8 +547,11 @@ if st.session_state.analyzed:
         hovermode='x unified',
         plot_bgcolor='white',
         paper_bgcolor='white',
-        font=dict(family="Arial, sans-serif", size=12),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+        font=dict(family="Arial, sans-serif", size=12, color='black'),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, font=dict(color='black')),
+        title_font=dict(color='black'),
+        xaxis=dict(title_font=dict(color='black'), tickfont=dict(color='black')),
+        yaxis=dict(title_font=dict(color='black'), tickfont=dict(color='black'))
     )
     
     fig_hist.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#E5E5E5')
@@ -519,17 +566,39 @@ if st.session_state.analyzed:
     
     col1, col2 = st.columns(2)
     
+    # Define consistent colors for asset classes
+    asset_class_colors = {
+        'US Stock': '#3B82F6',      # Blue
+        'International Stock': '#10B981',  # Green
+        'US Bond': '#F59E0B',       # Orange
+        'International Bond': '#8B5CF6'    # Purple
+    }
+    
     with col1:
         st.subheader("Your Portfolio")
         current_allocation = st.session_state.current_portfolio.asset_class_allocation
         
+        # Create color list based on asset classes
+        colors = [asset_class_colors.get(asset_class, '#6B7280') for asset_class in current_allocation.keys()]
+        
         fig_current = px.pie(
             values=list(current_allocation.values()),
             names=list(current_allocation.keys()),
-            color_discrete_sequence=px.colors.sequential.Blues_r
+            color_discrete_sequence=colors
         )
-        fig_current.update_traces(textposition='inside', textinfo='percent+label', textfont_size=12)
-        fig_current.update_layout(showlegend=False, height=400)
+        fig_current.update_traces(
+            textposition='inside', 
+            textinfo='percent+label', 
+            textfont_size=12,
+            textfont_color='white'
+        )
+        fig_current.update_layout(
+            showlegend=False, 
+            height=400,
+            plot_bgcolor='white',
+            paper_bgcolor='white',
+            font=dict(color='black')
+        )
         st.plotly_chart(fig_current, use_container_width=True)
         
         for asset_class, allocation in current_allocation.items():
@@ -539,13 +608,27 @@ if st.session_state.analyzed:
         st.subheader(f"{st.session_state.model_name} Portfolio")
         model_allocation = st.session_state.model_portfolio.asset_class_allocation
         
+        # Create color list based on asset classes (same colors for consistency)
+        colors = [asset_class_colors.get(asset_class, '#6B7280') for asset_class in model_allocation.keys()]
+        
         fig_model = px.pie(
             values=list(model_allocation.values()),
             names=list(model_allocation.keys()),
-            color_discrete_sequence=px.colors.sequential.Greens_r
+            color_discrete_sequence=colors
         )
-        fig_model.update_traces(textposition='inside', textinfo='percent+label', textfont_size=12)
-        fig_model.update_layout(showlegend=False, height=400)
+        fig_model.update_traces(
+            textposition='inside', 
+            textinfo='percent+label', 
+            textfont_size=12,
+            textfont_color='white'
+        )
+        fig_model.update_layout(
+            showlegend=False, 
+            height=400,
+            plot_bgcolor='white',
+            paper_bgcolor='white',
+            font=dict(color='black')
+        )
         st.plotly_chart(fig_model, use_container_width=True)
         
         for asset_class, allocation in model_allocation.items():
