@@ -677,14 +677,17 @@ if st.session_state.analyzed:
     
     df_metrics = pd.DataFrame(metrics_data)
     
-    # Style the dataframe
-    styled_df = df_metrics.style.set_table_styles([
-        {'selector': 'thead th', 'props': [('background-color', '#f0f0f0'), ('color', '#000000'), ('font-weight', '600')]},
-        {'selector': 'tbody td', 'props': [('background-color', '#ffffff'), ('color', '#000000')]},
-        {'selector': 'table', 'props': [('background-color', '#ffffff'), ('border-collapse', 'collapse')]},
-    ])
-    
-    st.dataframe(styled_df, hide_index=True, use_container_width=True)
+    # Display the dataframe with Streamlit's native styling
+    st.dataframe(
+        df_metrics, 
+        hide_index=True, 
+        use_container_width=True,
+        column_config={
+            'Metric': st.column_config.TextColumn('Metric', width='medium'),
+            'Your Portfolio': st.column_config.TextColumn('Your Portfolio', width='medium'),
+            st.session_state.model_name: st.column_config.TextColumn(st.session_state.model_name, width='medium')
+        }
+    )
     
     st.caption(f"*Historical period: {current_res['actual_start_date']} to {current_res['actual_end_date']}*")
     
