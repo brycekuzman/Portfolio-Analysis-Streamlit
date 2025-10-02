@@ -400,41 +400,41 @@ if st.button("🔍 Analyze Portfolio", use_container_width=False, type="primary"
                     advisory_fee,
                     st.session_state.asset_class_overrides
                 )
-                
-                # Find best matching model
-                best_match, similarity = find_best_matching_model(current_portfolio.asset_class_allocation)
-                model_name, model_allocations = best_match
-                
-                # Create model portfolio
-                model_portfolio_dollars = {ticker: total_value * weight for ticker, weight in model_allocations.items()}
-                model_portfolio = Portfolio(model_portfolio_dollars, model_name, model_fee)
+            
+            # Find best matching model
+            best_match, similarity = find_best_matching_model(current_portfolio.asset_class_allocation)
+            model_name, model_allocations = best_match
+            
+            # Create model portfolio
+            model_portfolio_dollars = {ticker: total_value * weight for ticker, weight in model_allocations.items()}
+            model_portfolio = Portfolio(model_portfolio_dollars, model_name, model_fee)
             
             # Historical analysis
-                start_date, end_date = "2015-09-30", "2025-08-29"
-                current_results = current_portfolio.analyze_historical_performance(start_date, end_date)
-                model_results = model_portfolio.analyze_historical_performance(current_results['actual_start_date'], end_date)
-                
-                # Future projections
-                current_projections = current_portfolio.project_future_returns(10)
-                model_projections = model_portfolio.project_future_returns(10)
-                
-                # Store in session state
-                st.session_state.current_portfolio = current_portfolio
-                st.session_state.model_portfolio = model_portfolio
-                st.session_state.model_name = model_name
-                st.session_state.similarity = similarity
-                st.session_state.current_results = current_results
-                st.session_state.model_results = model_results
-                st.session_state.current_projections = current_projections
-                st.session_state.model_projections = model_projections
-                st.session_state.analyzed = True
-                
-                st.success(f"Analysis complete! Best match: **{model_name}** Portfolio ({similarity:.1%} similarity)")
-                st.rerun()
-                
-            except Exception as e:
-                st.error(f"Error during analysis: {str(e)}")
-                st.session_state.analyzed = False
+            start_date, end_date = "2015-09-30", "2025-08-29"
+            current_results = current_portfolio.analyze_historical_performance(start_date, end_date)
+            model_results = model_portfolio.analyze_historical_performance(current_results['actual_start_date'], end_date)
+            
+            # Future projections
+            current_projections = current_portfolio.project_future_returns(10)
+            model_projections = model_portfolio.project_future_returns(10)
+            
+            # Store in session state
+            st.session_state.current_portfolio = current_portfolio
+            st.session_state.model_portfolio = model_portfolio
+            st.session_state.model_name = model_name
+            st.session_state.similarity = similarity
+            st.session_state.current_results = current_results
+            st.session_state.model_results = model_results
+            st.session_state.current_projections = current_projections
+            st.session_state.model_projections = model_projections
+            st.session_state.analyzed = True
+            
+            st.success(f"Analysis complete! Best match: **{model_name}** Portfolio ({similarity:.1%} similarity)")
+            st.rerun()
+            
+        except Exception as e:
+            st.error(f"Error during analysis: {str(e)}")
+            st.session_state.analyzed = False
 
 # Results Section
 if st.session_state.analyzed:
