@@ -307,14 +307,14 @@ st.markdown("Compare your investment portfolio against optimized model portfolio
 
 # Portfolio Input Section
 st.markdown("---")
-st.header("Your Portfolio")
+st.header("Enter Portfolio Information")
 
 # Initialize session state for asset class overrides
 if 'asset_class_overrides' not in st.session_state:
     st.session_state.asset_class_overrides = {}
 
 # Settings Section
-st.subheader("Settings")
+st.subheader("Advisory Fee")
 col_settings1, col_settings2, col_settings3 = st.columns([1, 1, 2])
 
 with col_settings1:
@@ -598,7 +598,7 @@ if st.session_state.analyzed:
     with col3:
         difference = model_values[-1] - current_values[-1]
         st.metric(
-            "Potential Difference", 
+            "Potential Cumulative Difference", 
             f"${difference:,.0f}",
             f"{(difference/current_values[-1]*100):+.1f}%"
         )
