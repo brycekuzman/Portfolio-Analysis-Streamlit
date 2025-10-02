@@ -176,6 +176,26 @@ st.markdown("""
         color: #000000 !important;
     }
     
+    /* Dropdown menu options */
+    div[data-baseweb="popover"] {
+        background-color: #ffffff !important;
+    }
+    ul[role="listbox"] {
+        background-color: #ffffff !important;
+    }
+    ul[role="listbox"] li {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    ul[role="listbox"] li:hover {
+        background-color: #f0f0f0 !important;
+        color: #000000 !important;
+    }
+    ul[role="listbox"] li[aria-selected="true"] {
+        background-color: #e5f2ff !important;
+        color: #000000 !important;
+    }
+    
     /* Disabled input styling */
     input[disabled], input:disabled {
         background-color: #f5f5f5 !important;
