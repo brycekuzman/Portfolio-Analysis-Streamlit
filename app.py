@@ -331,6 +331,19 @@ st.subheader("Holdings")
 # Import validation and name functions
 from analytics.data import validate_ticker, get_investment_name, classify_investment
 
+# Add column headers
+header_cols = st.columns([1.5, 2, 2, 2, 0.5])
+with header_cols[0]:
+    st.markdown("**Investment Symbol**")
+with header_cols[1]:
+    st.markdown("**Investment Name**")
+with header_cols[2]:
+    st.markdown("**Current Market Value ($)**")
+with header_cols[3]:
+    st.markdown("**Asset Class**")
+with header_cols[4]:
+    st.markdown("**Delete**")
+
 # Display current holdings
 for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
     # Validate ticker
