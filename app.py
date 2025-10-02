@@ -205,6 +205,25 @@ st.markdown("""
         color: #000000 !important;
     }
     
+    /* Force all table elements to have white background and black text */
+    table, table * {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    thead, thead * {
+        background-color: #f0f0f0 !important;
+        color: #000000 !important;
+    }
+    
+    /* Target styled dataframes specifically */
+    [data-testid="stDataFrame"] div[class*="glideDataEditor"] {
+        background-color: #ffffff !important;
+    }
+    [data-testid="stDataFrame"] div[class*="glideDataEditor"] * {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    
     /* Sidebar (if used) */
     .css-1d391kg {
         background-color: #f8f9fa;
