@@ -176,6 +176,22 @@ st.markdown("""
         color: #000000 !important;
     }
     
+    /* Selected value text in dropdown */
+    div[data-baseweb="select"] div[class*="SingleValue"] {
+        color: #000000 !important;
+    }
+    div[data-baseweb="select"] div {
+        color: #000000 !important;
+    }
+    
+    /* Ensure all selectbox text is visible */
+    .stSelectbox label {
+        color: #000000 !important;
+    }
+    .stSelectbox span {
+        color: #000000 !important;
+    }
+    
     /* Dropdown menu options */
     div[data-baseweb="popover"] {
         background-color: #ffffff !important;
