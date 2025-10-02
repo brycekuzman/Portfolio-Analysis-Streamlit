@@ -275,6 +275,15 @@ st.markdown("""
         box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
     }
 
+    /* Delete button sizing to match input fields */
+    .stButton button[kind="secondary"] {
+        height: 38px !important;
+        min-height: 38px !important;
+        max-height: 38px !important;
+        padding: 0.5rem 0.75rem !important;
+        line-height: 1 !important;
+    }
+
     /* Fix all text to be black */
     * {
         color: #000000 !important;
@@ -400,8 +409,8 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
             st.text_input(f"Asset Class", value="N/A", key=f"asset_class_{i}", label_visibility="collapsed", disabled=True)
 
     with cols[4]:
-        st.markdown(f'<style>button[data-testid="baseButton-secondary"][key="remove_{i}"] {{ height: 38px !important; padding: 0.5rem 0.75rem !important; }}</style>', unsafe_allow_html=True)
-        if st.button("🗑️", key=f"remove_{i}"):
+        # Use markdown with custom CSS to create a properly sized delete button
+        if st.button("🗑️", key=f"remove_{i}", help="Remove this holding"):
             del st.session_state.portfolio[ticker]
             if ticker in st.session_state.asset_class_overrides:
                 del st.session_state.asset_class_overrides[ticker]
