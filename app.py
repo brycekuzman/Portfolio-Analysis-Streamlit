@@ -23,14 +23,14 @@ st.markdown("""
         background-color: #ffffff;
         color: #000000;
     }
-    
+
     /* Main content area */
     .main {
         padding: 2rem 3rem;
         background-color: #ffffff;
         color: #000000;
     }
-    
+
     /* Typography */
     h1 {
         font-weight: 300;
@@ -54,7 +54,7 @@ st.markdown("""
         margin-top: 2rem;
         color: #2a2a2a;
     }
-    
+
     /* Buttons */
     .stButton>button {
         background-color: #4A90E2;
@@ -72,7 +72,7 @@ st.markdown("""
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
     }
-    
+
     /* Primary button styling */
     .stButton>button[kind="primary"] {
         background-color: #4A90E2;
@@ -81,7 +81,7 @@ st.markdown("""
     .stButton>button[kind="primary"]:hover {
         background-color: #357ABD;
     }
-    
+
     /* Metrics */
     div[data-testid="stMetricValue"] {
         font-size: 1.6rem;
@@ -96,7 +96,7 @@ st.markdown("""
     div[data-testid="stMetricDelta"] {
         font-size: 0.85rem;
     }
-    
+
     /* Metric cards */
     .metric-card {
         background-color: #fafafa;
@@ -105,7 +105,7 @@ st.markdown("""
         border-left: 3px solid #000000;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
-    
+
     /* Input fields */
     .stTextInput>div>div>input {
         background-color: #ffffff;
@@ -135,25 +135,25 @@ st.markdown("""
         outline: none;
         box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
     }
-    
+
     /* Force number input controls to be visible */
     .stNumberInput button {
         color: #000000 !important;
         background-color: #f0f0f0 !important;
     }
-    
+
     /* Force number input text area to be white */
     .stNumberInput input[type="number"] {
         background-color: #ffffff !important;
         color: #000000 !important;
     }
-    
+
     /* Target all input elements within number input containers */
     div[data-baseweb="input"] input {
         background-color: #ffffff !important;
         color: #000000 !important;
     }
-    
+
     /* Fix selectbox/dropdown background */
     div[data-baseweb="select"] {
         background-color: #ffffff !important;
@@ -166,7 +166,7 @@ st.markdown("""
         background-color: #ffffff !important;
         color: #000000 !important;
     }
-    
+
     /* Dataframes */
     .stDataFrame {
         background-color: #ffffff !important;
@@ -185,7 +185,7 @@ st.markdown("""
         background-color: #ffffff !important;
         color: #000000 !important;
     }
-    
+
     /* Additional dataframe selectors */
     div[data-testid="stDataFrame"] {
         background-color: #ffffff !important;
@@ -204,7 +204,7 @@ st.markdown("""
         background-color: #f0f0f0 !important;
         color: #000000 !important;
     }
-    
+
     /* Force all table elements to have white background and black text */
     table, table * {
         background-color: #ffffff !important;
@@ -214,7 +214,7 @@ st.markdown("""
         background-color: #f0f0f0 !important;
         color: #000000 !important;
     }
-    
+
     /* Target styled dataframes specifically */
     [data-testid="stDataFrame"] div[class*="glideDataEditor"] {
         background-color: #ffffff !important;
@@ -223,13 +223,13 @@ st.markdown("""
         background-color: #ffffff !important;
         color: #000000 !important;
     }
-    
+
     /* Sidebar (if used) */
     .css-1d391kg {
         background-color: #f8f9fa;
         color: #000000;
     }
-    
+
     /* Expander */
     .streamlit-expanderHeader {
         background-color: #f8f9fa;
@@ -240,46 +240,46 @@ st.markdown("""
         background-color: #ffffff;
         color: #000000;
     }
-    
+
     /* Clean spacing */
     .element-container {
         margin-bottom: 1rem;
     }
-    
+
     /* Remove any dark theme remnants */
     div[data-testid="stSidebar"] {
         background-color: #f8f9fa;
         color: #000000;
     }
-    
+
     /* All text elements */
     .stMarkdown, .stMarkdown p, .stMarkdown div {
         color: #000000;
     }
-    
+
     /* Caption text */
     .caption {
         color: #6a6a6a;
         font-size: 0.85rem;
     }
-    
+
     /* Headers with better spacing */
     .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
         margin-top: 2rem;
         color: #000000;
     }
-    
+
     /* Remove button outlines on focus */
     .stButton>button:focus {
         outline: none;
         box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
     }
-    
+
     /* Fix all text to be black */
     * {
         color: #000000 !important;
     }
-    
+
     /* Override plotly defaults */
     .js-plotly-plot {
         background-color: #ffffff !important;
@@ -348,28 +348,28 @@ with header_cols[4]:
 for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
     # Validate ticker
     is_valid, ticker_info = validate_ticker(ticker)
-    
+
     # Create columns for ticker, name, amount, asset class, and delete button
     cols = st.columns([1.5, 2, 2, 2, 0.5])
-    
+
     with cols[0]:
         new_ticker = st.text_input(f"Ticker", value=ticker, key=f"ticker_{i}", label_visibility="collapsed")
-    
+
     with cols[1]:
         if is_valid:
             investment_name = get_investment_name(ticker)
             st.markdown(f'<input type="text" value="{investment_name}" disabled style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #d0d0d0; border-radius: 6px; background-color: #f5f5f5; color: #000000; font-size: 0.95rem;">', unsafe_allow_html=True)
         else:
             st.text_input(f"Name", value="⚠️ Invalid Ticker", key=f"name_{i}", label_visibility="collapsed", disabled=True)
-    
+
     with cols[2]:
         new_amount = st.number_input(f"Amount", value=float(amount), min_value=0.0, step=1000.0, key=f"amount_{i}", label_visibility="collapsed", format="%.2f")
-    
+
     with cols[3]:
         if is_valid:
             # Get automatic classification
             auto_classification = classify_investment(ticker)
-            
+
             # Check if user has overridden the classification
             if ticker in st.session_state.asset_class_overrides:
                 default_class = st.session_state.asset_class_overrides[ticker]
@@ -377,11 +377,11 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
                 default_class = auto_classification
             else:
                 default_class = "US Stock"
-            
+
             # Asset class options
             asset_classes = ["US Stock", "International Stock", "US Bond", "International Bond"]
             default_index = asset_classes.index(default_class) if default_class in asset_classes else 0
-            
+
             selected_class = st.selectbox(
                 f"Asset Class",
                 options=asset_classes,
@@ -389,7 +389,7 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
                 key=f"asset_class_{i}",
                 label_visibility="collapsed"
             )
-            
+
             # Store the override if user changed it
             if auto_classification and selected_class != auto_classification:
                 st.session_state.asset_class_overrides[ticker] = selected_class
@@ -398,18 +398,18 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
                 del st.session_state.asset_class_overrides[ticker]
         else:
             st.text_input(f"Asset Class", value="N/A", key=f"asset_class_{i}", label_visibility="collapsed", disabled=True)
-    
+
     with cols[4]:
         if st.button("🗑️", key=f"remove_{i}"):
             del st.session_state.portfolio[ticker]
             if ticker in st.session_state.asset_class_overrides:
                 del st.session_state.asset_class_overrides[ticker]
             st.rerun()
-    
+
     # Show warning if ticker is invalid
     if not is_valid:
         st.warning(f"⚠️ '{ticker}' is not a valid investment symbol. Please correct it or remove this holding.")
-    
+
     # Update portfolio
     if new_ticker.upper() != ticker:
         del st.session_state.portfolio[ticker]
@@ -420,15 +420,19 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
         st.session_state.portfolio[ticker] = new_amount
 
 # Add new holding
-col_add1, col_add2 = st.columns([1, 3])
-with col_add1:
-    if st.button("➕ Add Holding", use_container_width=True):
-        st.session_state.portfolio[f"NEW{len(st.session_state.portfolio)}"] = 1000.0
-        st.rerun()
+st.markdown("")
+if st.button("➕ Add Holding", use_container_width=True):
+    st.session_state.portfolio[f"NEW{len(st.session_state.portfolio)}"] = 1000.0
+    st.rerun()
+
+# Analyze Portfolio button below
+st.markdown("")
+analyze_clicked = st.button("🔍 Analyze Portfolio", use_container_width=True, type="primary")
+
+st.markdown("")
 
 # Analyze Button
-st.markdown("")
-if st.button("🔍 Analyze Portfolio", use_container_width=False, type="primary"):
+if analyze_clicked:
     # Validate all tickers before analysis
     from analytics.data import validate_ticker
     invalid_tickers = []
@@ -436,7 +440,7 @@ if st.button("🔍 Analyze Portfolio", use_container_width=False, type="primary"
         is_valid, _ = validate_ticker(ticker)
         if not is_valid:
             invalid_tickers.append(ticker)
-    
+
     if invalid_tickers:
         st.error(f"❌ Cannot analyze portfolio. Please correct or remove these invalid tickers: {', '.join(invalid_tickers)}")
     else:
@@ -449,24 +453,24 @@ if st.button("🔍 Analyze Portfolio", use_container_width=False, type="primary"
                     advisory_fee,
                     st.session_state.asset_class_overrides
                 )
-                
+
                 # Find best matching model
                 best_match, similarity = find_best_matching_model(current_portfolio.asset_class_allocation)
                 model_name, model_allocations = best_match
-                
+
                 # Create model portfolio
                 model_portfolio_dollars = {ticker: total_value * weight for ticker, weight in model_allocations.items()}
                 model_portfolio = Portfolio(model_portfolio_dollars, model_name, model_fee)
-            
+
             # Historical analysis
                 start_date, end_date = "2015-09-30", "2025-08-29"
                 current_results = current_portfolio.analyze_historical_performance(start_date, end_date)
                 model_results = model_portfolio.analyze_historical_performance(current_results['actual_start_date'], end_date)
-                
+
                 # Future projections
                 current_projections = current_portfolio.project_future_returns(10)
                 model_projections = model_portfolio.project_future_returns(10)
-                
+
                 # Store in session state
                 st.session_state.current_portfolio = current_portfolio
                 st.session_state.model_portfolio = model_portfolio
@@ -477,10 +481,10 @@ if st.button("🔍 Analyze Portfolio", use_container_width=False, type="primary"
                 st.session_state.current_projections = current_projections
                 st.session_state.model_projections = model_projections
                 st.session_state.analyzed = True
-                
+
                 st.success(f"Analysis complete! Best match: **{model_name}** Portfolio ({similarity:.1%} similarity)")
                 st.rerun()
-                
+
             except Exception as e:
                 st.error(f"Error during analysis: {str(e)}")
                 st.session_state.analyzed = False
@@ -488,32 +492,32 @@ if st.button("🔍 Analyze Portfolio", use_container_width=False, type="primary"
 # Results Section
 if st.session_state.analyzed:
     st.markdown("---")
-    
+
     # Model Portfolio Info
     st.header(f"Recommended: {st.session_state.model_name} Portfolio")
     st.markdown(f"*Asset allocation similarity: {st.session_state.similarity:.1%}*")
-    
+
     # Display model allocations
     cols = st.columns(5)
     for i, (ticker, weight) in enumerate(st.session_state.model_portfolio.portfolio_weights.items()):
         with cols[i % 5]:
             st.metric(ticker, f"{weight:.1%}")
-    
+
     st.markdown("---")
-    
+
     # Forward Projections Chart
     st.header("📈 10-Year Forward Projections")
-    
+
     current_proj = st.session_state.current_projections
     model_proj = st.session_state.model_projections
-    
+
     # Create projection data
     years = [0] + [p['year'] for p in current_proj['yearly_projections']]
     current_values = [total_value] + [p['portfolio_value'] * total_value for p in current_proj['yearly_projections']]
     model_values = [total_value] + [p['portfolio_value'] * total_value for p in model_proj['yearly_projections']]
-    
+
     fig_proj = go.Figure()
-    
+
     fig_proj.add_trace(go.Scatter(
         x=years,
         y=current_values,
@@ -522,7 +526,7 @@ if st.session_state.analyzed:
         line=dict(color='#2E86AB', width=3),
         marker=dict(size=8)
     ))
-    
+
     fig_proj.add_trace(go.Scatter(
         x=years,
         y=model_values,
@@ -531,7 +535,7 @@ if st.session_state.analyzed:
         line=dict(color='#06A77D', width=3),
         marker=dict(size=8)
     ))
-    
+
     fig_proj.update_layout(
         title="Projected Portfolio Growth Over 10 Years",
         xaxis_title="Years",
@@ -543,12 +547,12 @@ if st.session_state.analyzed:
         font=dict(family="Arial, sans-serif", size=12),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
     )
-    
+
     fig_proj.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#E5E5E5')
     fig_proj.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#E5E5E5', tickformat='$,.0f')
-    
+
     st.plotly_chart(fig_proj, use_container_width=True)
-    
+
     # Show projection details
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -570,27 +574,27 @@ if st.session_state.analyzed:
             f"${difference:,.0f}",
             f"{(difference/current_values[-1]*100):+.1f}%"
         )
-    
+
     st.markdown("---")
-    
+
     # Fee Comparison
     st.header("💰 Fee Comparison & Savings")
-    
+
     current_annual_fee = (st.session_state.current_portfolio.weighted_avg_er + st.session_state.current_portfolio.advisory_fee) * total_value
     model_annual_fee = (st.session_state.model_portfolio.weighted_avg_er + st.session_state.model_portfolio.advisory_fee) * total_value
     annual_savings = current_annual_fee - model_annual_fee
-    
+
     # Calculate 10-year cumulative fees
     current_cumulative_fees = current_annual_fee * 10
     model_cumulative_fees = model_annual_fee * 10
     cumulative_savings = current_cumulative_fees - model_cumulative_fees
-    
+
     col1, col2 = st.columns(2)
-    
+
     with col1:
         # Annual Fees Bar Chart
         fig_annual = go.Figure()
-        
+
         fig_annual.add_trace(go.Bar(
             x=['Your Portfolio', st.session_state.model_name],
             y=[current_annual_fee, model_annual_fee],
@@ -599,7 +603,7 @@ if st.session_state.analyzed:
             textposition='outside',
             textfont=dict(size=14, color='black')
         ))
-        
+
         fig_annual.update_layout(
             title="Annual Fees Comparison",
             yaxis_title="Annual Fees ($)",
@@ -609,17 +613,17 @@ if st.session_state.analyzed:
             showlegend=False,
             font=dict(family="Arial, sans-serif", size=12)
         )
-        
+
         fig_annual.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#E5E5E5', tickformat='$,.0f')
-        
+
         st.plotly_chart(fig_annual, use_container_width=True)
-        
+
         st.metric("Annual Savings", f"${annual_savings:,.0f}", f"{(annual_savings/current_annual_fee*100):.1f}% reduction")
-    
+
     with col2:
         # 10-Year Cumulative Fees Bar Chart
         fig_cumulative = go.Figure()
-        
+
         fig_cumulative.add_trace(go.Bar(
             x=['Your Portfolio', st.session_state.model_name],
             y=[current_cumulative_fees, model_cumulative_fees],
@@ -628,7 +632,7 @@ if st.session_state.analyzed:
             textposition='outside',
             textfont=dict(size=14, color='black')
         ))
-        
+
         fig_cumulative.update_layout(
             title="10-Year Cumulative Fees",
             yaxis_title="Total Fees ($)",
@@ -638,37 +642,37 @@ if st.session_state.analyzed:
             showlegend=False,
             font=dict(family="Arial, sans-serif", size=12)
         )
-        
+
         fig_cumulative.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#E5E5E5', tickformat='$,.0f')
-        
+
         st.plotly_chart(fig_cumulative, use_container_width=True)
-        
+
         st.metric("10-Year Savings", f"${cumulative_savings:,.0f}", f"{(cumulative_savings/current_cumulative_fees*100):.1f}% reduction")
-    
+
     # Fee breakdown details
     with st.expander("📊 Detailed Fee Breakdown"):
         col1, col2 = st.columns(2)
-        
+
         with col1:
             st.subheader("Your Portfolio")
             st.write(f"**Weighted Avg Expense Ratio:** {st.session_state.current_portfolio.weighted_avg_er:.3%}")
             st.write(f"**Advisory Fee:** {st.session_state.current_portfolio.advisory_fee:.3%}")
             st.write(f"**Total Annual Fee Rate:** {(st.session_state.current_portfolio.weighted_avg_er + st.session_state.current_portfolio.advisory_fee):.3%}")
-        
+
         with col2:
             st.subheader(f"{st.session_state.model_name} Portfolio")
             st.write(f"**Weighted Avg Expense Ratio:** {st.session_state.model_portfolio.weighted_avg_er:.3%}")
             st.write(f"**Advisory Fee:** {st.session_state.model_portfolio.advisory_fee:.3%}")
             st.write(f"**Total Annual Fee Rate:** {(st.session_state.model_portfolio.weighted_avg_er + st.session_state.model_portfolio.advisory_fee):.3%}")
-    
+
     st.markdown("---")
-    
+
     # Historical Performance
     st.header("📊 Historical Performance")
-    
+
     current_res = st.session_state.current_results
     model_res = st.session_state.model_results
-    
+
     # Performance Metrics Table
     metrics_data = {
         'Metric': ['Total Return', 'Annualized Return', 'Volatility', 'Sharpe Ratio', 'Max Drawdown'],
@@ -687,9 +691,9 @@ if st.session_state.analyzed:
             f"{model_res['stats_with_fees']['Max Drawdown']:.2%}"
         ]
     }
-    
+
     df_metrics = pd.DataFrame(metrics_data)
-    
+
     # Display the dataframe with Streamlit's native styling
     st.dataframe(
         df_metrics, 
@@ -701,15 +705,15 @@ if st.session_state.analyzed:
             st.session_state.model_name: st.column_config.TextColumn(st.session_state.model_name, width='medium')
         }
     )
-    
+
     st.caption(f"*Historical period: {current_res['actual_start_date']} to {current_res['actual_end_date']}*")
-    
+
     # Historical Growth Chart
     fig_hist = go.Figure()
-    
+
     current_cumulative = current_res['cumulative_with_fees']
     model_cumulative = model_res['cumulative_with_fees']
-    
+
     fig_hist.add_trace(go.Scatter(
         x=current_cumulative.index,
         y=current_cumulative * total_value,
@@ -717,7 +721,7 @@ if st.session_state.analyzed:
         name='Your Portfolio',
         line=dict(color='#2E86AB', width=2)
     ))
-    
+
     fig_hist.add_trace(go.Scatter(
         x=model_cumulative.index,
         y=model_cumulative * total_value,
@@ -725,7 +729,7 @@ if st.session_state.analyzed:
         name=f'{st.session_state.model_name} Model',
         line=dict(color='#06A77D', width=2)
     ))
-    
+
     fig_hist.update_layout(
         title="Historical Portfolio Growth",
         xaxis_title="Date",
@@ -740,19 +744,19 @@ if st.session_state.analyzed:
         xaxis=dict(title_font=dict(color='black'), tickfont=dict(color='black')),
         yaxis=dict(title_font=dict(color='black'), tickfont=dict(color='black'))
     )
-    
+
     fig_hist.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#E5E5E5')
     fig_hist.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#E5E5E5', tickformat='$,.0f')
-    
+
     st.plotly_chart(fig_hist, use_container_width=True)
-    
+
     st.markdown("---")
-    
+
     # Asset Allocation
     st.header("🎯 Asset Allocation")
-    
+
     col1, col2 = st.columns(2)
-    
+
     # Define consistent colors for asset classes
     asset_class_colors = {
         'US Stock': '#3B82F6',      # Blue
@@ -760,11 +764,11 @@ if st.session_state.analyzed:
         'US Bond': '#F59E0B',       # Orange
         'International Bond': '#8B5CF6'    # Purple
     }
-    
+
     with col1:
         st.subheader("Your Portfolio")
         current_allocation = st.session_state.current_portfolio.asset_class_allocation
-        
+
         fig_current = px.pie(
             values=list(current_allocation.values()),
             names=list(current_allocation.keys()),
@@ -784,14 +788,14 @@ if st.session_state.analyzed:
             font=dict(color='black')
         )
         st.plotly_chart(fig_current, use_container_width=True)
-        
+
         for asset_class, allocation in current_allocation.items():
             st.write(f"**{asset_class}:** {allocation:.1%} (${allocation * total_value:,.0f})")
-    
+
     with col2:
         st.subheader(f"{st.session_state.model_name} Portfolio")
         model_allocation = st.session_state.model_portfolio.asset_class_allocation
-        
+
         fig_model = px.pie(
             values=list(model_allocation.values()),
             names=list(model_allocation.keys()),
@@ -811,23 +815,23 @@ if st.session_state.analyzed:
             font=dict(color='black')
         )
         st.plotly_chart(fig_model, use_container_width=True)
-        
+
         for asset_class, allocation in model_allocation.items():
             st.write(f"**{asset_class}:** {allocation:.1%} (${allocation * total_value:,.0f})")
-    
+
     st.markdown("---")
-    
+
     # All Model Portfolios Reference
     with st.expander("📚 View All Model Portfolios"):
         st.subheader("Available Model Portfolios")
-        
+
         for name, allocations in model_portfolios.items():
             indicator = " ⭐ (Recommended)" if name == st.session_state.model_name else ""
             st.markdown(f"### {name}{indicator}")
-            
+
             cols = st.columns(len(allocations))
             for i, (ticker, weight) in enumerate(allocations.items()):
                 with cols[i]:
                     st.metric(ticker, f"{weight:.0%}")
-            
+
             st.markdown("")
