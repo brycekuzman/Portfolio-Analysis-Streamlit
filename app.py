@@ -446,15 +446,18 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
     else:
         st.session_state.portfolio[ticker] = new_amount
 
-# Add new holding and Analyze buttons with same width
+# Add new holding button
 st.markdown("")
-col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 2])
+col_btn1, col_btn2 = st.columns([1, 3])
 with col_btn1:
     if st.button("➕ Add Holding", use_container_width=True):
         st.session_state.portfolio[f"NEW{len(st.session_state.portfolio)}"] = 1000.0
         st.rerun()
 
-with col_btn2:
+# Analyze Portfolio button below
+st.markdown("")
+col_btn3, col_btn4 = st.columns([1, 3])
+with col_btn3:
     analyze_clicked = st.button("🔍 Analyze Portfolio", use_container_width=True, type="primary")
 
 st.markdown("")
