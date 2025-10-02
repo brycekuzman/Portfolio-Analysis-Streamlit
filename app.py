@@ -110,11 +110,13 @@ st.markdown("""
     .stTextInput>div>div>input {
         background-color: #ffffff;
         color: #000000;
-        border: 1px solid #d0d0d0;
+        border: 1px solid #a0a0a0;
         border-radius: 6px;
-        padding: 0.75rem 1rem;
+        padding: 0.6rem 1rem;
         font-size: 0.95rem;
         transition: border-color 0.2s ease;
+        height: 42px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
     .stTextInput>div>div>input:focus {
         border-color: #4A90E2;
@@ -124,11 +126,13 @@ st.markdown("""
     .stNumberInput>div>div>input {
         background-color: #ffffff !important;
         color: #000000 !important;
-        border: 1px solid #d0d0d0 !important;
+        border: 1px solid #a0a0a0 !important;
         border-radius: 6px;
-        padding: 0.75rem 1rem;
+        padding: 0.6rem 1rem;
         font-size: 0.95rem;
         transition: border-color 0.2s ease;
+        height: 42px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
     .stNumberInput>div>div>input:focus {
         border-color: #4A90E2 !important;
@@ -161,10 +165,33 @@ st.markdown("""
     div[data-baseweb="select"] > div {
         background-color: #ffffff !important;
         color: #000000 !important;
+        border: 1px solid #a0a0a0 !important;
+        border-radius: 6px;
+        padding: 0.6rem 1rem;
+        height: 42px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
     .stSelectbox > div > div {
         background-color: #ffffff !important;
         color: #000000 !important;
+    }
+    
+    /* Disabled input styling */
+    input[disabled], input:disabled {
+        background-color: #f5f5f5 !important;
+        color: #000000 !important;
+        border: 1px solid #a0a0a0 !important;
+        border-radius: 6px !important;
+        padding: 0.6rem 1rem !important;
+        height: 42px !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+    }
+    
+    /* Delete button styling */
+    .stButton>button[key*="remove"] {
+        height: 42px;
+        padding: 0.3rem 0.8rem;
+        font-size: 1rem;
     }
     
     /* Dataframes */
@@ -331,6 +358,19 @@ st.subheader("Holdings")
 # Import validation and name functions
 from analytics.data import validate_ticker, get_investment_name, classify_investment
 
+# Add headers
+header_cols = st.columns([1.5, 2, 2, 2, 0.5])
+with header_cols[0]:
+    st.markdown("**Investment Symbol**")
+with header_cols[1]:
+    st.markdown("**Investment Name**")
+with header_cols[2]:
+    st.markdown("**Current Market Value ($)**")
+with header_cols[3]:
+    st.markdown("**Asset Class**")
+with header_cols[4]:
+    st.markdown("**Delete**")
+
 # Display current holdings
 for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
     # Validate ticker
@@ -345,7 +385,7 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
     with cols[1]:
         if is_valid:
             investment_name = get_investment_name(ticker)
-            st.markdown(f'<input type="text" value="{investment_name}" disabled style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #d0d0d0; border-radius: 6px; background-color: #f5f5f5; color: #000000; font-size: 0.95rem;">', unsafe_allow_html=True)
+            st.markdown(f'<input type="text" value="{investment_name}" disabled style="width: 100%; padding: 0.6rem 1rem; border: 1px solid #a0a0a0; border-radius: 6px; background-color: #f5f5f5; color: #000000; font-size: 0.95rem; height: 42px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); box-sizing: border-box;">', unsafe_allow_html=True)
         else:
             st.text_input(f"Name", value="⚠️ Invalid Ticker", key=f"name_{i}", label_visibility="collapsed", disabled=True)
     
@@ -406,16 +446,19 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
     else:
         st.session_state.portfolio[ticker] = new_amount
 
-# Add new holding
-col_add1, col_add2 = st.columns([1, 3])
-with col_add1:
+# Add new holding and Analyze buttons with same width
+st.markdown("")
+col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 2])
+with col_btn1:
     if st.button("➕ Add Holding", use_container_width=True):
         st.session_state.portfolio[f"NEW{len(st.session_state.portfolio)}"] = 1000.0
         st.rerun()
 
-# Analyze Button
+with col_btn2:
+    analyze_clicked = st.button("🔍 Analyze Portfolio", use_container_width=True, type="primary")
+
 st.markdown("")
-if st.button("🔍 Analyze Portfolio", use_container_width=False, type="primary"):
+if analyze_clicked:
     # Validate all tickers before analysis
     from analytics.data import validate_ticker
     invalid_tickers = []
