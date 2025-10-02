@@ -323,20 +323,42 @@ with st.sidebar:
     st.metric("Total Value", f"${total_value:,.0f}")
     st.metric("Holdings", len([t for t in st.session_state.portfolio.keys() if t.strip()]))
 
-# Header
-st.title("Portfolio Analysis Dashboard")
-st.markdown("Compare your investment portfolio against optimized model portfolios")
+# Professional Header
+st.markdown("""
+    <div style="text-align: center; padding: 2rem 0 1rem 0; border-bottom: 2px solid #4A90E2;">
+        <h1 style="font-size: 3rem; font-weight: 300; margin-bottom: 0.5rem; color: #1a1a1a;">
+            📊 Portfolio Analyzer
+        </h1>
+        <p style="font-size: 1.2rem; color: #6a6a6a; margin-top: 0;">
+            Professional Investment Portfolio Analysis & Optimization
+        </p>
+    </div>
+""", unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 # Portfolio Input Section
-st.markdown("---")
-st.header("Enter Portfolio Information")
+st.markdown("""
+    <div style="margin-top: 2rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
+        <h2 style="font-size: 1.8rem; font-weight: 400; color: #1a1a1a; margin: 0;">
+            📝 Portfolio Input
+        </h2>
+        <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
+            Enter your current holdings and advisory fee information
+        </p>
+    </div>
+""", unsafe_allow_html=True)
 
 # Initialize session state for asset class overrides
 if 'asset_class_overrides' not in st.session_state:
     st.session_state.asset_class_overrides = {}
 
 # Settings Section
-st.subheader("Advisory Fee")
+st.markdown("""
+    <h3 style="font-size: 1.3rem; font-weight: 500; color: #2a2a2a; margin-top: 1.5rem; margin-bottom: 1rem;">
+        ⚙️ Fee Settings
+    </h3>
+""", unsafe_allow_html=True)
 col_settings1, col_settings2, col_settings3 = st.columns([1, 1, 2])
 
 with col_settings1:
@@ -353,10 +375,14 @@ with col_settings2:
     total_value = sum(st.session_state.portfolio.values())
     st.metric("Total Portfolio Value", f"${total_value:,.0f}")
 
-st.markdown("")
+st.markdown("<br>", unsafe_allow_html=True)
 
 # Holdings Section
-st.subheader("Holdings")
+st.markdown("""
+    <h3 style="font-size: 1.3rem; font-weight: 500; color: #2a2a2a; margin-top: 1.5rem; margin-bottom: 1rem;">
+        💼 Current Holdings
+    </h3>
+""", unsafe_allow_html=True)
 
 # Import validation and name functions
 from analytics.data import validate_ticker, get_investment_name, classify_investment
@@ -541,11 +567,25 @@ if analyze_clicked:
 
 # Results Section
 if st.session_state.analyzed:
-    st.markdown("---")
+    st.markdown("""
+        <div style="margin-top: 3rem; padding: 2rem 0 1rem 0; border-top: 3px solid #4A90E2; background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);">
+            <h2 style="font-size: 2rem; font-weight: 400; color: #1a1a1a; text-align: center; margin-bottom: 0.5rem;">
+                🎯 Analysis Results
+            </h2>
+        </div>
+    """, unsafe_allow_html=True)
 
     # Model Portfolio Info
-    st.header(f"Recommended: {st.session_state.model_name} Portfolio")
-    st.markdown(f"*Asset allocation similarity: {st.session_state.similarity:.1%}*")
+    st.markdown(f"""
+        <div style="text-align: center; margin: 2rem 0 1.5rem 0;">
+            <h3 style="font-size: 1.6rem; font-weight: 500; color: #2a2a2a; margin-bottom: 0.5rem;">
+                Recommended: {st.session_state.model_name} Portfolio
+            </h3>
+            <p style="color: #6a6a6a; font-size: 0.95rem;">
+                Asset allocation similarity: {st.session_state.similarity:.1%}
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
 
     # Display model allocations
     cols = st.columns(5)
@@ -553,10 +593,16 @@ if st.session_state.analyzed:
         with cols[i % 5]:
             st.metric(ticker, f"{weight:.1%}")
 
-    st.markdown("---")
-
-    # Forward Projections Chart
-    st.header("📈 10-Year Forward Projections")
+    st.markdown("""
+        <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
+            <h2 style="font-size: 1.8rem; font-weight: 400; color: #1a1a1a; margin: 0;">
+                📈 10-Year Forward Projections
+            </h2>
+            <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
+                Projected growth comparison based on historical performance and fees
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
 
     current_proj = st.session_state.current_projections
     model_proj = st.session_state.model_projections
@@ -625,10 +671,16 @@ if st.session_state.analyzed:
             f"{(difference/current_values[-1]*100):+.1f}%"
         )
 
-    st.markdown("---")
-
-    # Fee Comparison
-    st.header("💰 Fee Comparison & Savings")
+    st.markdown("""
+        <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
+            <h2 style="font-size: 1.8rem; font-weight: 400; color: #1a1a1a; margin: 0;">
+                💰 Fee Comparison & Savings
+            </h2>
+            <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
+                Annual and cumulative fee analysis
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
 
     current_annual_fee = (st.session_state.current_portfolio.weighted_avg_er + st.session_state.current_portfolio.advisory_fee) * total_value
     model_annual_fee = (st.session_state.model_portfolio.weighted_avg_er + st.session_state.model_portfolio.advisory_fee) * total_value
@@ -715,10 +767,16 @@ if st.session_state.analyzed:
             st.write(f"**Advisory Fee:** {st.session_state.model_portfolio.advisory_fee:.3%}")
             st.write(f"**Total Annual Fee Rate:** {(st.session_state.model_portfolio.weighted_avg_er + st.session_state.model_portfolio.advisory_fee):.3%}")
 
-    st.markdown("---")
-
-    # Historical Performance
-    st.header("📊 Historical Performance")
+    st.markdown("""
+        <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
+            <h2 style="font-size: 1.8rem; font-weight: 400; color: #1a1a1a; margin: 0;">
+                📊 Historical Performance
+            </h2>
+            <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
+                Actual performance comparison using historical market data
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
 
     current_res = st.session_state.current_results
     model_res = st.session_state.model_results
@@ -800,10 +858,16 @@ if st.session_state.analyzed:
 
     st.plotly_chart(fig_hist, use_container_width=True)
 
-    st.markdown("---")
-
-    # Asset Allocation
-    st.header("🎯 Asset Allocation")
+    st.markdown("""
+        <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
+            <h2 style="font-size: 1.8rem; font-weight: 400; color: #1a1a1a; margin: 0;">
+                🎯 Asset Allocation
+            </h2>
+            <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
+                Portfolio composition by asset class
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
 
@@ -885,3 +949,15 @@ if st.session_state.analyzed:
                     st.metric(ticker, f"{weight:.0%}")
 
             st.markdown("")
+
+    # Footer
+    st.markdown("""
+        <div style="margin-top: 4rem; padding: 2rem 0 1rem 0; border-top: 2px solid #e5e5e5; text-align: center;">
+            <p style="color: #6a6a6a; font-size: 0.85rem; margin-bottom: 0.5rem;">
+                <strong>Disclaimer:</strong> This analysis is for informational purposes only and does not constitute financial advice.
+            </p>
+            <p style="color: #999; font-size: 0.8rem;">
+                Past performance does not guarantee future results. Please consult with a qualified financial advisor before making investment decisions.
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
