@@ -358,7 +358,7 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
     with cols[1]:
         if is_valid:
             investment_name = get_investment_name(ticker)
-            st.markdown(f'<input type="text" value="{investment_name}" disabled style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #d0d0d0; border-radius: 6px; background-color: #f5f5f5; color: #000000; font-size: 0.95rem;">', unsafe_allow_html=True)
+            st.markdown(f'<input type="text" value="{investment_name}" disabled style="width: 100%; padding: 0.5rem 1rem; border: 1px solid #d0d0d0; border-radius: 6px; background-color: #f5f5f5; color: #000000; font-size: 0.95rem; height: 38px; box-sizing: border-box;">', unsafe_allow_html=True)
         else:
             st.text_input(f"Name", value="⚠️ Invalid Ticker", key=f"name_{i}", label_visibility="collapsed", disabled=True)
 
@@ -400,6 +400,7 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
             st.text_input(f"Asset Class", value="N/A", key=f"asset_class_{i}", label_visibility="collapsed", disabled=True)
 
     with cols[4]:
+        st.markdown(f'<style>button[data-testid="baseButton-secondary"][key="remove_{i}"] {{ height: 38px !important; padding: 0.5rem 0.75rem !important; }}</style>', unsafe_allow_html=True)
         if st.button("🗑️", key=f"remove_{i}"):
             del st.session_state.portfolio[ticker]
             if ticker in st.session_state.asset_class_overrides:
