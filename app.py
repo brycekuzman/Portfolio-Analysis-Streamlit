@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 from analytics.portfolio import Portfolio
@@ -362,17 +361,17 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
     cols = st.columns([1.5, 2, 2, 2, 0.5])
 
     with cols[0]:
-        new_ticker = st.text_input(f"Ticker", value=ticker, key=f"ticker_{i}", label_visibility="collapsed")
+        new_ticker = st.text_input("Ticker", value=ticker, key=f"ticker_{i}", label_visibility="collapsed")
 
     with cols[1]:
         if is_valid:
             investment_name = get_investment_name(ticker)
             st.markdown(f'<input type="text" value="{investment_name}" disabled style="width: 100%; padding: 0.5rem 1rem; border: 1px solid #d0d0d0; border-radius: 6px; background-color: #f5f5f5; color: #000000; font-size: 0.95rem; height: 38px; box-sizing: border-box;">', unsafe_allow_html=True)
         else:
-            st.text_input(f"Name", value="⚠️ Invalid Ticker", key=f"name_{i}", label_visibility="collapsed", disabled=True)
+            st.text_input("Name", value="⚠️ Invalid Ticker", key=f"name_{i}", label_visibility="collapsed", disabled=True)
 
     with cols[2]:
-        new_amount = st.number_input(f"Amount", value=float(amount), min_value=0.0, step=1000.0, key=f"amount_{i}", label_visibility="collapsed", format="%.0f")
+        new_amount = st.number_input("Amount", value=float(amount), min_value=0.0, step=1000.0, key=f"amount_{i}", label_visibility="collapsed", format="%.0f")
 
     with cols[3]:
         if is_valid:
@@ -392,7 +391,7 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
             default_index = asset_classes.index(default_class) if default_class in asset_classes else 0
 
             selected_class = st.selectbox(
-                f"Asset Class",
+                "Asset Class",
                 options=asset_classes,
                 index=default_index,
                 key=f"asset_class_{i}",
@@ -406,7 +405,7 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
                 # Remove override if user changed back to automatic classification
                 del st.session_state.asset_class_overrides[ticker]
         else:
-            st.text_input(f"Asset Class", value="N/A", key=f"asset_class_{i}", label_visibility="collapsed", disabled=True)
+            st.text_input("Asset Class", value="N/A", key=f"asset_class_{i}", label_visibility="collapsed", disabled=True)
 
     with cols[4]:
         # Use markdown with custom CSS to create a properly sized delete button
