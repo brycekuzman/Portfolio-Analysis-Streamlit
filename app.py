@@ -11,7 +11,7 @@ st.set_page_config(
     page_title="Portfolio Analysis",
     page_icon="📊",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 # Custom CSS for modern minimalist design with white background
@@ -300,6 +300,28 @@ if 'portfolio' not in st.session_state:
     st.session_state.portfolio = {"IEUR": 20000, "VOO": 10000, "PULS": 10000}
 if 'analyzed' not in st.session_state:
     st.session_state.analyzed = False
+
+# Sidebar Navigation
+with st.sidebar:
+    st.title("Navigation")
+    st.markdown("### Quick Links")
+    
+    # Navigation links
+    st.markdown("[📝 Portfolio Input](#enter-portfolio-information)")
+    
+    if st.session_state.analyzed:
+        st.markdown("[🎯 Recommended Portfolio](#recommended-" + st.session_state.model_name.lower().replace(" ", "-") + "-portfolio)")
+        st.markdown("[📈 10-Year Projections](#10-year-forward-projections)")
+        st.markdown("[💰 Fee Comparison](#fee-comparison-savings)")
+        st.markdown("[📊 Historical Performance](#historical-performance)")
+        st.markdown("[🎯 Asset Allocation](#asset-allocation)")
+        st.markdown("[📚 All Model Portfolios](#view-all-model-portfolios)")
+    
+    st.markdown("---")
+    st.markdown("### Portfolio Summary")
+    total_value = sum(st.session_state.portfolio.values())
+    st.metric("Total Value", f"${total_value:,.0f}")
+    st.metric("Holdings", len([t for t in st.session_state.portfolio.keys() if t.strip()]))
 
 # Header
 st.title("Portfolio Analysis Dashboard")
