@@ -372,7 +372,7 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
             st.text_input(f"Name", value="⚠️ Invalid Ticker", key=f"name_{i}", label_visibility="collapsed", disabled=True)
 
     with cols[2]:
-        new_amount = st.number_input(f"Amount", value=float(amount), min_value=0.0, step=1000.0, key=f"amount_{i}", label_visibility="collapsed", format="%.2f")
+        new_amount = st.number_input(f"Amount", value=float(amount), min_value=0.0, step=1000.0, key=f"amount_{i}", label_visibility="collapsed", format="$%,.0f")
 
     with cols[3]:
         if is_valid:
