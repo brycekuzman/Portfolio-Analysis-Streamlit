@@ -131,9 +131,9 @@ def classify_investment(ticker):
     """Classify investment into US Stock, International Stock, US Bond, or International Bond."""
     
     # Common patterns for automatic classification
-    us_equity_patterns = ['SPY', 'QQQ', 'VTI', 'VOO', 'IWM', 'DIA', 'IEUR', 'PULS', 'VNQ']
-    intl_equity_patterns = ['VXUS', 'VEA', 'VWO', 'IEFA', 'IEMG', 'EFA', 'EEM']
-    us_bond_patterns = ['AGG', 'BND', 'VGIT', 'VGLT', 'TLT', 'SHY', 'IEF']
+    us_equity_patterns = ['SPY', 'QQQ', 'VTI', 'VOO', 'IWM', 'DIA', 'VNQ']
+    intl_equity_patterns = ['VXUS', 'VEA', 'VWO', 'IEFA', 'IEMG', 'EFA', 'EEM', 'IEUR']
+    us_bond_patterns = ['AGG', 'BND', 'VGIT', 'VGLT', 'TLT', 'SHY', 'IEF', 'PULS']
     intl_bond_patterns = ['BNDX', 'IAGG', 'BWX']
     
     # Check for common patterns first

@@ -154,6 +154,19 @@ st.markdown("""
         color: #000000 !important;
     }
     
+    /* Fix selectbox/dropdown background */
+    div[data-baseweb="select"] {
+        background-color: #ffffff !important;
+    }
+    div[data-baseweb="select"] > div {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    .stSelectbox > div > div {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    
     /* Dataframes */
     .stDataFrame {
         background-color: #ffffff !important;
@@ -273,7 +286,7 @@ st.header("Your Portfolio")
 if 'asset_class_overrides' not in st.session_state:
     st.session_state.asset_class_overrides = {}
 
-col1, col2 = st.columns([2, 1])
+col1, col2 = st.columns([3, 1])
 
 with col1:
     st.subheader("Holdings")
@@ -295,7 +308,7 @@ with col1:
         with cols[1]:
             if is_valid:
                 investment_name = get_investment_name(ticker)
-                st.text_input(f"Name", value=investment_name, key=f"name_{i}", label_visibility="collapsed", disabled=True)
+                st.markdown(f'<input type="text" value="{investment_name}" disabled style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #d0d0d0; border-radius: 6px; background-color: #f5f5f5; color: #000000; font-size: 0.95rem;">', unsafe_allow_html=True)
             else:
                 st.text_input(f"Name", value="⚠️ Invalid Ticker", key=f"name_{i}", label_visibility="collapsed", disabled=True)
         
