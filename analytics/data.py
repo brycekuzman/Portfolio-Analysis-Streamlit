@@ -19,16 +19,23 @@ def get_available_date_range(tickers, start, end):
 
 def get_price_data(tickers, start, end):
     """Download adjusted close prices for tickers."""
+    # Filter out any invalid tickers (like asset class names)
+    asset_class_names = ['US Equities', 'International Equities', 'Core Fixed Income', 'Alternatives']
+    valid_tickers = [t for t in tickers if t not in asset_class_names and t.strip()]
+    
+    if not valid_tickers:
+        raise ValueError("No valid tickers provided for price data")
+    
     # Find common date range
-    actual_start, actual_end = get_available_date_range(tickers, start, end)
+    actual_start, actual_end = get_available_date_range(valid_tickers, start, end)
     
     if actual_start != start:
         print(f"Note: Adjusted start date from {start} to {actual_start} due to limited data availability")
     
-    data = yf.download(tickers, start=actual_start, end=actual_end, auto_adjust=True, prepost=True, threads=True)
+    data = yf.download(valid_tickers, start=actual_start, end=actual_end, auto_adjust=True, prepost=True, threads=True)
     
     # Handle single vs multiple tickers
-    if len(tickers) == 1:
+    if len(valid_tickers) == 1:
         # For single ticker, data structure is different
         if 'Close' in data.columns:
             prices = data['Close']
