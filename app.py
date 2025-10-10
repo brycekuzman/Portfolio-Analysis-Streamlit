@@ -898,10 +898,10 @@ if st.session_state.analyzed:
 
     # Define consistent colors for asset classes
     asset_class_colors = {
-        'US Stock': '#3B82F6',      # Blue
-        'International Stock': '#10B981',  # Green
-        'US Bond': '#F59E0B',       # Orange
-        'International Bond': '#8B5CF6'    # Purple
+        'US Equities': '#3B82F6',           # Blue
+        'International Equities': '#10B981', # Green
+        'Core Fixed Income': '#F59E0B',      # Orange
+        'Alternatives': '#8B5CF6'            # Purple
     }
 
     with col1:
