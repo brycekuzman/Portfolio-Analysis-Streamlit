@@ -2,17 +2,17 @@
 
 # Define projected annual growth rates for each asset class
 growth_rates = {
-    "US Stock": 0.09,              # 9% annual growth
-    "International Stock": 0.08,   # 8% annual growth
-    "US Bond": 0.035,              # 3.5% annual growth
-    "International Bond": 0.04     # 4% annual growth
+    "US Equities": 0.09,              # 9% annual growth
+    "International Equities": 0.08,   # 8% annual growth
+    "Core Fixed Income": 0.035,       # 3.5% annual growth
+    "Alternatives": 0.07              # 7% annual growth (real estate, commodities, MLPs, hedged strategies)
 }
 
 asset_volatility = {
-    "US Stock": 0.15,              # 15% volatility
-    "International Stock": 0.16,   # 16% volatility
-    "US Bond": 0.04,               # 4% volatility
-    "International Bond": 0.05     # 5% volatility
+    "US Equities": 0.15,              # 15% volatility
+    "International Equities": 0.16,   # 16% volatility
+    "Core Fixed Income": 0.04,        # 4% volatility
+    "Alternatives": 0.12              # 12% volatility
 }
 
 #Define model portfolio advisory fee

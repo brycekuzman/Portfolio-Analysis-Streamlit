@@ -128,23 +128,23 @@ def get_expense_ratios(tickers):
 
 
 def classify_investment(ticker):
-    """Classify investment into US Stock, International Stock, US Bond, or International Bond."""
+    """Classify investment into US Equities, International Equities, Core Fixed Income, or Alternatives."""
     
     # Common patterns for automatic classification
-    us_equity_patterns = ['SPY', 'QQQ', 'VTI', 'VOO', 'IWM', 'DIA', 'VNQ']
+    us_equity_patterns = ['SPY', 'QQQ', 'VTI', 'VOO', 'IWM', 'DIA']
     intl_equity_patterns = ['VXUS', 'VEA', 'VWO', 'IEFA', 'IEMG', 'EFA', 'EEM', 'IEUR']
-    us_bond_patterns = ['AGG', 'BND', 'VGIT', 'VGLT', 'TLT', 'SHY', 'IEF', 'PULS']
-    intl_bond_patterns = ['BNDX', 'IAGG', 'BWX']
+    fixed_income_patterns = ['AGG', 'BND', 'VGIT', 'VGLT', 'TLT', 'SHY', 'IEF', 'PULS', 'BNDX', 'IAGG', 'BWX']
+    alternatives_patterns = ['VNQ', 'VNQI', 'REM', 'DBC', 'DBA', 'GLD', 'SLV', 'USO', 'AMLP', 'QAI', 'PUTW', 'TAIL']
     
     # Check for common patterns first
     if ticker in us_equity_patterns:
-        return "US Stock"
+        return "US Equities"
     elif ticker in intl_equity_patterns:
-        return "International Stock"
-    elif ticker in us_bond_patterns:
-        return "US Bond"
-    elif ticker in intl_bond_patterns:
-        return "International Bond"
+        return "International Equities"
+    elif ticker in fixed_income_patterns:
+        return "Core Fixed Income"
+    elif ticker in alternatives_patterns:
+        return "Alternatives"
     
     # Try to get info from yfinance
     try:
@@ -156,38 +156,39 @@ def classify_investment(ticker):
         fund_family = info.get('fundFamily', '').lower()
         asset_class = info.get('assetClass', '').lower()
         
+        # Alternatives indicators (real estate, commodities, MLPs, hedged strategies)
+        if any(keyword in category for keyword in ['reit', 'real estate', 'commodity', 'commodities', 'mlp', 'master limited partnership', 'hedge', 'managed futures', 'long-short', 'market neutral']):
+            return "Alternatives"
+        elif 'real estate' in fund_family or 'reit' in fund_family:
+            return "Alternatives"
+        
         # US Equity indicators
-        if any(keyword in category for keyword in ['large blend', 'large growth', 'large value', 'mid blend', 'mid growth', 'mid value', 'small blend', 'small growth', 'small value']):
-            return "US Stock"
+        elif any(keyword in category for keyword in ['large blend', 'large growth', 'large value', 'mid blend', 'mid growth', 'mid value', 'small blend', 'small growth', 'small value']):
+            return "US Equities"
         elif 'equity' in category and ('us' in category or 'domestic' in category):
-            return "US Stock"
-        elif 'reit' in category.lower() or 'real estate' in category.lower():
-            return "US Stock"
+            return "US Equities"
         elif ticker.endswith('.TO') or ticker.endswith('.L') or ticker.endswith('.F'):
-            return "International Stock"
+            return "International Equities"
         
         # International Equity indicators
         elif any(keyword in category for keyword in ['foreign', 'international', 'emerging', 'developed', 'europe', 'asia', 'pacific']):
-            return "International Stock"
+            return "International Equities"
         elif 'equity' in category and any(keyword in category for keyword in ['intl', 'global', 'world']):
-            return "International Stock"
+            return "International Equities"
         
-        # Bond indicators - check if international
+        # Bond/Fixed Income indicators
         elif any(keyword in category for keyword in ['bond', 'fixed', 'treasury', 'corporate bond', 'government']):
-            if any(keyword in category for keyword in ['international', 'global', 'foreign', 'world']):
-                return "International Bond"
-            else:
-                return "US Bond"
+            return "Core Fixed Income"
         elif 'bond' in asset_class or 'fixed' in asset_class:
-            return "US Bond"
+            return "Core Fixed Income"
         
         # If it's a stock (not fund), classify based on exchange/country
         elif info.get('quoteType') == 'EQUITY':
             country = info.get('country', '').lower()
             if country in ['united states', 'usa', 'us']:
-                return "US Stock"
+                return "US Equities"
             elif country and country not in ['united states', 'usa', 'us']:
-                return "International Stock"
+                return "International Equities"
         
     except Exception as e:
         print(f"Could not fetch classification info for {ticker}: {e}")
@@ -211,7 +212,7 @@ def get_investment_classifications(tickers, overrides=None):
             if auto_classification:
                 classifications[ticker] = auto_classification
             else:
-                # Default to US Stock if cannot classify
-                classifications[ticker] = "US Stock"
+                # Default to US Equities if cannot classify
+                classifications[ticker] = "US Equities"
     
     return classifications

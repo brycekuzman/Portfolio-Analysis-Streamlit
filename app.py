@@ -465,7 +465,7 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
                 default_class = "US Stock"
 
             # Asset class options
-            asset_classes = ["US Stock", "International Stock", "US Bond", "International Bond"]
+            asset_classes = ["US Equities", "International Equities", "Core Fixed Income", "Alternatives"]
             default_index = asset_classes.index(default_class) if default_class in asset_classes else 0
 
             selected_class = st.selectbox(
