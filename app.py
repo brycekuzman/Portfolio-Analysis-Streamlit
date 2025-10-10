@@ -465,7 +465,7 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
                 default_class = "US Stock"
 
             # Asset class options
-            asset_classes = ["US Stock", "International Stock", "US Bond", "International Bond"]
+            asset_classes = ["US Equities", "International Equities", "Core Fixed Income", "Alternatives"]
             default_index = asset_classes.index(default_class) if default_class in asset_classes else 0
 
             selected_class = st.selectbox(
@@ -525,9 +525,10 @@ st.markdown("")
 # Analyze Button
 if analyze_clicked:
     # Validate all tickers before analysis
-    from analytics.data import validate_ticker
+    from analytics.data import validate_ticker, classify_investment
     invalid_tickers = []
     empty_tickers = []
+    unclassified_tickers = []
     
     for ticker in st.session_state.portfolio.keys():
         if not ticker.strip():
@@ -536,13 +537,21 @@ if analyze_clicked:
             is_valid, _ = validate_ticker(ticker)
             if not is_valid:
                 invalid_tickers.append(ticker)
+            else:
+                # Check if ticker needs manual classification
+                if ticker not in st.session_state.asset_class_overrides:
+                    auto_class = classify_investment(ticker)
+                    if auto_class is None:
+                        unclassified_tickers.append(ticker)
 
-    if empty_tickers or invalid_tickers:
+    if empty_tickers or invalid_tickers or unclassified_tickers:
         error_msg = "❌ Cannot analyze portfolio. "
         if empty_tickers:
             error_msg += f"Please enter ticker symbols for {len(empty_tickers)} empty holding(s). "
         if invalid_tickers:
-            error_msg += f"Please correct or remove these invalid tickers: {', '.join(invalid_tickers)}"
+            error_msg += f"Please correct or remove these invalid tickers: {', '.join(invalid_tickers)}. "
+        if unclassified_tickers:
+            error_msg += f"Please manually select asset class for: {', '.join(unclassified_tickers)}"
         st.error(error_msg)
     else:
         with st.spinner("Analyzing your portfolio..."):
