@@ -88,25 +88,36 @@ def get_investment_name(ticker):
 
 def get_current_prices(tickers):
     """Get current prices for tickers to calculate portfolio weights."""
-    data = yf.download(tickers, period="1d", interval="1d", auto_adjust=True, prepost=True, threads=True)
+    # Filter out any invalid tickers (like asset class names)
+    asset_class_names = ['US Equities', 'International Equities', 'Core Fixed Income', 'Alternatives']
+    valid_tickers = [t for t in tickers if t not in asset_class_names and t.strip()]
     
-    if len(tickers) == 1:
+    if not valid_tickers:
+        return {}
+    
+    data = yf.download(valid_tickers, period="1d", interval="1d", auto_adjust=True, prepost=True, threads=True)
+    
+    if len(valid_tickers) == 1:
         # For single ticker
         current_price = data['Close'].iloc[-1]
-        return {tickers[0]: current_price}
+        return {valid_tickers[0]: current_price}
     else:
         # For multiple tickers
         current_prices = {}
-        for ticker in tickers:
+        for ticker in valid_tickers:
             current_prices[ticker] = data['Close'][ticker].iloc[-1]
         return current_prices
 
 
 def get_expense_ratios(tickers):
     """Get expense ratios for ETFs, Mutual Funds, and SMAs from yfinance."""
+    # Filter out any invalid tickers (like asset class names)
+    asset_class_names = ['US Equities', 'International Equities', 'Core Fixed Income', 'Alternatives']
+    valid_tickers = [t for t in tickers if t not in asset_class_names and t.strip()]
+    
     expense_ratios = {}
     
-    for ticker in tickers:
+    for ticker in valid_tickers:
         try:
             stock = yf.Ticker(ticker)
             info = stock.info
