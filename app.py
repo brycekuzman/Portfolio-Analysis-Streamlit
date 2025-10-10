@@ -904,58 +904,83 @@ if st.session_state.analyzed:
         'Alternatives': '#8B5CF6'            # Purple
     }
 
+    # Define the standard order for asset classes
+    asset_class_order = ['US Equities', 'International Equities', 'Core Fixed Income', 'Alternatives']
+
     with col1:
         st.subheader("Your Portfolio")
         current_allocation = st.session_state.current_portfolio.asset_class_allocation
 
-        fig_current = px.pie(
-            values=list(current_allocation.values()),
-            names=list(current_allocation.keys()),
-            color_discrete_map=asset_class_colors
-        )
-        fig_current.update_traces(
-            textposition='inside', 
-            textinfo='percent+label', 
-            textfont_size=12,
-            textfont_color='white'
-        )
-        fig_current.update_layout(
-            showlegend=False, 
-            height=400,
-            plot_bgcolor='white',
-            paper_bgcolor='white',
-            font=dict(color='black')
-        )
-        st.plotly_chart(fig_current, use_container_width=True)
+        # Create ordered allocation with all asset classes
+        ordered_current = {ac: current_allocation.get(ac, 0) for ac in asset_class_order}
+        
+        # Filter out zero values for pie chart display
+        display_values = [v for v in ordered_current.values() if v > 0]
+        display_names = [k for k, v in ordered_current.items() if v > 0]
 
-        for asset_class, allocation in current_allocation.items():
+        if display_values:
+            fig_current = px.pie(
+                values=display_values,
+                names=display_names,
+                color=display_names,
+                color_discrete_map=asset_class_colors
+            )
+            fig_current.update_traces(
+                textposition='inside', 
+                textinfo='percent+label', 
+                textfont_size=12,
+                textfont_color='white'
+            )
+            fig_current.update_layout(
+                showlegend=False, 
+                height=400,
+                plot_bgcolor='white',
+                paper_bgcolor='white',
+                font=dict(color='black')
+            )
+            st.plotly_chart(fig_current, use_container_width=True)
+
+        # Display all asset classes in order, even if 0%
+        for asset_class in asset_class_order:
+            allocation = ordered_current[asset_class]
             st.write(f"**{asset_class}:** {allocation:.1%} (${allocation * total_value:,.0f})")
 
     with col2:
         st.subheader(f"{st.session_state.model_name} Portfolio")
         model_allocation = st.session_state.model_portfolio.asset_class_allocation
 
-        fig_model = px.pie(
-            values=list(model_allocation.values()),
-            names=list(model_allocation.keys()),
-            color_discrete_map=asset_class_colors
-        )
-        fig_model.update_traces(
-            textposition='inside', 
-            textinfo='percent+label', 
-            textfont_size=12,
-            textfont_color='white'
-        )
-        fig_model.update_layout(
-            showlegend=False, 
-            height=400,
-            plot_bgcolor='white',
-            paper_bgcolor='white',
-            font=dict(color='black')
-        )
-        st.plotly_chart(fig_model, use_container_width=True)
+        # Create ordered allocation with all asset classes
+        ordered_model = {ac: model_allocation.get(ac, 0) for ac in asset_class_order}
+        
+        # Filter out zero values for pie chart display
+        display_values = [v for v in ordered_model.values() if v > 0]
+        display_names = [k for k, v in ordered_model.items() if v > 0]
 
-        for asset_class, allocation in model_allocation.items():
+        if display_values:
+            fig_model = px.pie(
+                values=display_values,
+                names=display_names,
+                color=display_names,
+                color_discrete_map=asset_class_colors
+            )
+            fig_model.update_traces(
+                textposition='inside', 
+                textinfo='percent+label', 
+                textfont_size=12,
+                textfont_color='white'
+            )
+            fig_model.update_layout(
+                showlegend=False, 
+                height=400,
+                plot_bgcolor='white',
+                paper_bgcolor='white',
+                font=dict(color='black')
+            )
+            st.plotly_chart(fig_model, use_container_width=True)
+
+        # Display all asset classes in order, even if 0%
+        for asset_class in asset_class_order:
+            allocation = ordered_model[asset_class]
             st.write(f"**{asset_class}:** {allocation:.1%} (${allocation * total_value:,.0f})")
 
     st.markdown("---")
