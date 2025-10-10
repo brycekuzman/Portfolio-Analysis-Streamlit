@@ -923,7 +923,8 @@ if st.session_state.analyzed:
                 values=display_values,
                 names=display_names,
                 color=display_names,
-                color_discrete_map=asset_class_colors
+                color_discrete_map=asset_class_colors,
+                category_orders={'names': asset_class_order}
             )
             fig_current.update_traces(
                 textposition='inside', 
@@ -961,7 +962,8 @@ if st.session_state.analyzed:
                 values=display_values,
                 names=display_names,
                 color=display_names,
-                color_discrete_map=asset_class_colors
+                color_discrete_map=asset_class_colors,
+                category_orders={'names': asset_class_order}
             )
             fig_model.update_traces(
                 textposition='inside', 
