@@ -295,22 +295,27 @@ st.markdown("""
 
     /* Reduce sidebar spacing */
     div[data-testid="stSidebar"] .element-container {
-        margin-bottom: 0.5rem !important;
+        margin-bottom: 0.25rem !important;
     }
     div[data-testid="stSidebar"] h3 {
-        margin-top: 0.5rem !important;
-        margin-bottom: 0.5rem !important;
+        margin-top: 0.25rem !important;
+        margin-bottom: 0.25rem !important;
         font-size: 1.1rem !important;
     }
     div[data-testid="stSidebar"] .stMarkdown {
-        margin-bottom: 0.3rem !important;
+        margin-bottom: 0.15rem !important;
+        margin-top: 0.15rem !important;
     }
     div[data-testid="stSidebar"] hr {
-        margin-top: 0.5rem !important;
-        margin-bottom: 0.5rem !important;
+        margin-top: 0.25rem !important;
+        margin-bottom: 0.25rem !important;
     }
     div[data-testid="stSidebar"] div[data-testid="stMetric"] {
-        margin-bottom: 0.3rem !important;
+        margin-bottom: 0.15rem !important;
+        padding-bottom: 0 !important;
+    }
+    div[data-testid="stSidebar"] div[data-testid="stMetricValue"] {
+        margin-bottom: 0 !important;
     }
     </style>
     """, unsafe_allow_html=True)
