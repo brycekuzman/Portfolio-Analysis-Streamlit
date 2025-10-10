@@ -292,6 +292,26 @@ st.markdown("""
     .js-plotly-plot {
         background-color: #ffffff !important;
     }
+
+    /* Reduce sidebar spacing */
+    div[data-testid="stSidebar"] .element-container {
+        margin-bottom: 0.5rem !important;
+    }
+    div[data-testid="stSidebar"] h3 {
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
+        font-size: 1.1rem !important;
+    }
+    div[data-testid="stSidebar"] .stMarkdown {
+        margin-bottom: 0.3rem !important;
+    }
+    div[data-testid="stSidebar"] hr {
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    div[data-testid="stSidebar"] div[data-testid="stMetric"] {
+        margin-bottom: 0.3rem !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -303,10 +323,16 @@ if 'analyzed' not in st.session_state:
 
 # Sidebar Navigation
 with st.sidebar:
-    st.title("Navigation")
-    st.markdown("### Quick Links")
+    # Portfolio Summary first
+    st.markdown("### Portfolio Summary")
+    total_value = sum(st.session_state.portfolio.values())
+    st.metric("Total Value", f"${total_value:,.0f}")
+    st.metric("Holdings", len([t for t in st.session_state.portfolio.keys() if t.strip()]))
+    
+    st.markdown("---")
     
     # Navigation links
+    st.markdown("### Navigation")
     st.markdown("[📝 Portfolio Input](#enter-portfolio-information)")
     
     if st.session_state.analyzed:
@@ -316,12 +342,6 @@ with st.sidebar:
         st.markdown("[📊 Historical Performance](#historical-performance)")
         st.markdown("[🎯 Asset Allocation](#asset-allocation)")
         st.markdown("[📚 All Model Portfolios](#view-all-model-portfolios)")
-    
-    st.markdown("---")
-    st.markdown("### Portfolio Summary")
-    total_value = sum(st.session_state.portfolio.values())
-    st.metric("Total Value", f"${total_value:,.0f}")
-    st.metric("Holdings", len([t for t in st.session_state.portfolio.keys() if t.strip()]))
 
 # Professional Header
 st.markdown("""
