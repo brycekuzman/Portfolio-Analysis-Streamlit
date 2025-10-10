@@ -12,14 +12,11 @@ class Portfolio:
         self.advisory_fee = advisory_fee
         self.total_value = sum(portfolio_dollars.values())
         
-        # Get only valid tickers (filter out any asset class names that might have been passed)
-        valid_tickers = [ticker for ticker in portfolio_dollars.keys() if ticker.strip()]
-        
         # Calculate weights and get data
-        self.current_prices = get_current_prices(valid_tickers)
+        self.current_prices = get_current_prices(list(portfolio_dollars.keys()))
         self.portfolio_weights = self._calculate_weights()
-        self.expense_ratios = get_expense_ratios(valid_tickers)
-        self.classifications = get_investment_classifications(valid_tickers, asset_class_overrides)
+        self.expense_ratios = get_expense_ratios(portfolio_dollars.keys())
+        self.classifications = get_investment_classifications(portfolio_dollars.keys(), asset_class_overrides)
         self.weighted_avg_er = self._calculate_weighted_avg_er()
         self.asset_class_allocation = self._calculate_asset_class_allocation()
     
