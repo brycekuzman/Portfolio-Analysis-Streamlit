@@ -342,11 +342,11 @@ with st.sidebar:
     
     if st.session_state.analyzed:
         st.markdown("[🎯 Recommended Portfolio](#recommended-" + st.session_state.model_name.lower().replace(" ", "-") + "-portfolio)")
-        st.markdown("[📈 10-Year Projections](#10-year-forward-projections)")
-        st.markdown("[💰 Fee Comparison](#fee-comparison-savings)")
-        st.markdown("[📊 Historical Performance](#historical-performance)")
+        st.markdown("[📚 All Model Portfolios](#all-model-portfolios)")
         st.markdown("[🎯 Asset Allocation](#asset-allocation)")
-        st.markdown("[📚 All Model Portfolios](#view-all-model-portfolios)")
+        st.markdown("[📈 10-Year Projections](#10-year-forward-projections)")
+        st.markdown("[💰 Fee Comparison](#projected-fees-savings)")
+        st.markdown("[📊 Historical Performance](#historical-performance)")
 
 # Professional Header
 st.markdown("""
@@ -618,6 +618,133 @@ if st.session_state.analyzed:
         with cols[i % 5]:
             st.metric(ticker, f"{weight:.1%}")
 
+    st.markdown("---")
+
+    # All Model Portfolios Reference
+    st.markdown("""
+        <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
+            <h2 style="font-size: 1.8rem; font-weight: 400; color: #1a1a1a; margin: 0;">
+                📚 All Model Portfolios
+            </h2>
+            <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
+                Review all available model portfolios to see alternative allocations
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    for name, allocations in model_portfolios.items():
+        indicator = " ⭐ (Recommended)" if name == st.session_state.model_name else ""
+        st.markdown(f"### {name}{indicator}")
+
+        cols = st.columns(len(allocations))
+        for i, (ticker, weight) in enumerate(allocations.items()):
+            with cols[i]:
+                st.metric(ticker, f"{weight:.0%}")
+
+        st.markdown("")
+
+    st.markdown("""
+        <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
+            <h2 style="font-size: 1.8rem; font-weight: 400; color: #1a1a1a; margin: 0;">
+                🎯 Asset Allocation
+            </h2>
+            <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
+                Compare your current portfolio allocation with the recommended model portfolio
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    col1, col2 = st.columns(2)
+
+    # Define consistent colors for asset classes
+    asset_class_colors = {
+        'US Equities': '#3B82F6',           # Blue
+        'International Equities': '#10B981', # Green
+        'Core Fixed Income': '#F59E0B',      # Orange
+        'Alternatives': '#8B5CF6'            # Purple
+    }
+
+    # Define the standard order for asset classes
+    asset_class_order = ['US Equities', 'International Equities', 'Core Fixed Income', 'Alternatives']
+
+    with col1:
+        st.subheader("Your Portfolio")
+        current_allocation = st.session_state.current_portfolio.asset_class_allocation
+
+        # Create ordered allocation with all asset classes
+        ordered_current = {ac: current_allocation.get(ac, 0) for ac in asset_class_order}
+        
+        # Filter out zero values for pie chart display
+        display_values = [v for v in ordered_current.values() if v > 0]
+        display_names = [k for k, v in ordered_current.items() if v > 0]
+
+        if display_values:
+            fig_current = px.pie(
+                values=display_values,
+                names=display_names,
+                color=display_names,
+                color_discrete_map=asset_class_colors,
+                category_orders={'names': asset_class_order}
+            )
+            fig_current.update_traces(
+                textposition='inside', 
+                textinfo='percent+label', 
+                textfont_size=12,
+                textfont_color='white'
+            )
+            fig_current.update_layout(
+                showlegend=False, 
+                height=400,
+                plot_bgcolor='white',
+                paper_bgcolor='white',
+                font=dict(color='black')
+            )
+            st.plotly_chart(fig_current, use_container_width=True)
+
+        # Display all asset classes in order, even if 0%
+        for asset_class in asset_class_order:
+            allocation = ordered_current[asset_class]
+            st.write(f"**{asset_class}:** {allocation:.1%} (${allocation * total_value:,.0f})")
+
+    with col2:
+        st.subheader(f"{st.session_state.model_name} Portfolio")
+        model_allocation = st.session_state.model_portfolio.asset_class_allocation
+
+        # Create ordered allocation with all asset classes
+        ordered_model = {ac: model_allocation.get(ac, 0) for ac in asset_class_order}
+        
+        # Filter out zero values for pie chart display
+        display_values = [v for v in ordered_model.values() if v > 0]
+        display_names = [k for k, v in ordered_model.items() if v > 0]
+
+        if display_values:
+            fig_model = px.pie(
+                values=display_values,
+                names=display_names,
+                color=display_names,
+                color_discrete_map=asset_class_colors,
+                category_orders={'names': asset_class_order}
+            )
+            fig_model.update_traces(
+                textposition='inside', 
+                textinfo='percent+label', 
+                textfont_size=12,
+                textfont_color='white'
+            )
+            fig_model.update_layout(
+                showlegend=False, 
+                height=400,
+                plot_bgcolor='white',
+                paper_bgcolor='white',
+                font=dict(color='black')
+            )
+            st.plotly_chart(fig_model, use_container_width=True)
+
+        # Display all asset classes in order, even if 0%
+        for asset_class in asset_class_order:
+            allocation = ordered_model[asset_class]
+            st.write(f"**{asset_class}:** {allocation:.1%} (${allocation * total_value:,.0f})")
+
     st.markdown("""
         <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
             <h2 style="font-size: 1.8rem; font-weight: 400; color: #1a1a1a; margin: 0;">
@@ -818,41 +945,6 @@ if st.session_state.analyzed:
     current_res = st.session_state.current_results
     model_res = st.session_state.model_results
 
-    # Performance Metrics Table
-    metrics_data = {
-        'Metric': ['Total Return', 'Annualized Return', 'Volatility', 'Sharpe Ratio', 'Max Drawdown'],
-        'Your Portfolio': [
-            f"{current_res['stats_with_fees']['Total Return']:.2%}",
-            f"{current_res['stats_with_fees']['Annualized Return']:.2%}",
-            f"{current_res['stats_with_fees']['Volatility']:.2%}",
-            f"{current_res['stats_with_fees']['Sharpe Ratio']:.2f}",
-            f"{current_res['stats_with_fees']['Max Drawdown']:.2%}"
-        ],
-        st.session_state.model_name: [
-            f"{model_res['stats_with_fees']['Total Return']:.2%}",
-            f"{model_res['stats_with_fees']['Annualized Return']:.2%}",
-            f"{model_res['stats_with_fees']['Volatility']:.2%}",
-            f"{model_res['stats_with_fees']['Sharpe Ratio']:.2f}",
-            f"{model_res['stats_with_fees']['Max Drawdown']:.2%}"
-        ]
-    }
-
-    df_metrics = pd.DataFrame(metrics_data)
-
-    # Display the dataframe with Streamlit's native styling
-    st.dataframe(
-        df_metrics, 
-        hide_index=True, 
-        use_container_width=True,
-        column_config={
-            'Metric': st.column_config.TextColumn('Metric', width='medium'),
-            'Your Portfolio': st.column_config.TextColumn('Your Portfolio', width='medium'),
-            st.session_state.model_name: st.column_config.TextColumn(st.session_state.model_name, width='medium')
-        }
-    )
-
-    st.caption(f"*Historical period: {current_res['actual_start_date']} to {current_res['actual_end_date']}*")
-
     # Historical Growth Chart
     fig_hist = go.Figure()
 
@@ -895,124 +987,40 @@ if st.session_state.analyzed:
 
     st.plotly_chart(fig_hist, use_container_width=True)
 
-    st.markdown("""
-        <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
-            <h2 style="font-size: 1.8rem; font-weight: 400; color: #1a1a1a; margin: 0;">
-                🎯 Asset Allocation
-            </h2>
-            <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
-                Compare your current portfolio allocation with the recommended model portfolio
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
-
-    col1, col2 = st.columns(2)
-
-    # Define consistent colors for asset classes
-    asset_class_colors = {
-        'US Equities': '#3B82F6',           # Blue
-        'International Equities': '#10B981', # Green
-        'Core Fixed Income': '#F59E0B',      # Orange
-        'Alternatives': '#8B5CF6'            # Purple
+    # Performance Metrics Table
+    metrics_data = {
+        'Metric': ['Total Return', 'Annualized Return', 'Volatility', 'Sharpe Ratio', 'Max Drawdown'],
+        'Your Portfolio': [
+            f"{current_res['stats_with_fees']['Total Return']:.2%}",
+            f"{current_res['stats_with_fees']['Annualized Return']:.2%}",
+            f"{current_res['stats_with_fees']['Volatility']:.2%}",
+            f"{current_res['stats_with_fees']['Sharpe Ratio']:.2f}",
+            f"{current_res['stats_with_fees']['Max Drawdown']:.2%}"
+        ],
+        st.session_state.model_name: [
+            f"{model_res['stats_with_fees']['Total Return']:.2%}",
+            f"{model_res['stats_with_fees']['Annualized Return']:.2%}",
+            f"{model_res['stats_with_fees']['Volatility']:.2%}",
+            f"{model_res['stats_with_fees']['Sharpe Ratio']:.2f}",
+            f"{model_res['stats_with_fees']['Max Drawdown']:.2%}"
+        ]
     }
 
-    # Define the standard order for asset classes
-    asset_class_order = ['US Equities', 'International Equities', 'Core Fixed Income', 'Alternatives']
+    df_metrics = pd.DataFrame(metrics_data)
 
-    with col1:
-        st.subheader("Your Portfolio")
-        current_allocation = st.session_state.current_portfolio.asset_class_allocation
+    # Display the dataframe with Streamlit's native styling
+    st.dataframe(
+        df_metrics, 
+        hide_index=True, 
+        use_container_width=True,
+        column_config={
+            'Metric': st.column_config.TextColumn('Metric', width='medium'),
+            'Your Portfolio': st.column_config.TextColumn('Your Portfolio', width='medium'),
+            st.session_state.model_name: st.column_config.TextColumn(st.session_state.model_name, width='medium')
+        }
+    )
 
-        # Create ordered allocation with all asset classes
-        ordered_current = {ac: current_allocation.get(ac, 0) for ac in asset_class_order}
-        
-        # Filter out zero values for pie chart display
-        display_values = [v for v in ordered_current.values() if v > 0]
-        display_names = [k for k, v in ordered_current.items() if v > 0]
-
-        if display_values:
-            fig_current = px.pie(
-                values=display_values,
-                names=display_names,
-                color=display_names,
-                color_discrete_map=asset_class_colors,
-                category_orders={'names': asset_class_order}
-            )
-            fig_current.update_traces(
-                textposition='inside', 
-                textinfo='percent+label', 
-                textfont_size=12,
-                textfont_color='white'
-            )
-            fig_current.update_layout(
-                showlegend=False, 
-                height=400,
-                plot_bgcolor='white',
-                paper_bgcolor='white',
-                font=dict(color='black')
-            )
-            st.plotly_chart(fig_current, use_container_width=True)
-
-        # Display all asset classes in order, even if 0%
-        for asset_class in asset_class_order:
-            allocation = ordered_current[asset_class]
-            st.write(f"**{asset_class}:** {allocation:.1%} (${allocation * total_value:,.0f})")
-
-    with col2:
-        st.subheader(f"{st.session_state.model_name} Portfolio")
-        model_allocation = st.session_state.model_portfolio.asset_class_allocation
-
-        # Create ordered allocation with all asset classes
-        ordered_model = {ac: model_allocation.get(ac, 0) for ac in asset_class_order}
-        
-        # Filter out zero values for pie chart display
-        display_values = [v for v in ordered_model.values() if v > 0]
-        display_names = [k for k, v in ordered_model.items() if v > 0]
-
-        if display_values:
-            fig_model = px.pie(
-                values=display_values,
-                names=display_names,
-                color=display_names,
-                color_discrete_map=asset_class_colors,
-                category_orders={'names': asset_class_order}
-            )
-            fig_model.update_traces(
-                textposition='inside', 
-                textinfo='percent+label', 
-                textfont_size=12,
-                textfont_color='white'
-            )
-            fig_model.update_layout(
-                showlegend=False, 
-                height=400,
-                plot_bgcolor='white',
-                paper_bgcolor='white',
-                font=dict(color='black')
-            )
-            st.plotly_chart(fig_model, use_container_width=True)
-
-        # Display all asset classes in order, even if 0%
-        for asset_class in asset_class_order:
-            allocation = ordered_model[asset_class]
-            st.write(f"**{asset_class}:** {allocation:.1%} (${allocation * total_value:,.0f})")
-
-    st.markdown("---")
-
-    # All Model Portfolios Reference
-    with st.expander("📚 View All Model Portfolios"):
-        st.subheader("Available Model Portfolios")
-
-        for name, allocations in model_portfolios.items():
-            indicator = " ⭐ (Recommended)" if name == st.session_state.model_name else ""
-            st.markdown(f"### {name}{indicator}")
-
-            cols = st.columns(len(allocations))
-            for i, (ticker, weight) in enumerate(allocations.items()):
-                with cols[i]:
-                    st.metric(ticker, f"{weight:.0%}")
-
-            st.markdown("")
+    st.caption(f"*Historical period: {current_res['actual_start_date']} to {current_res['actual_end_date']}*")
 
     # Footer
     st.markdown("""
