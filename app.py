@@ -355,7 +355,7 @@ st.markdown("""
             📊 Portfolio Analyzer
         </h1>
         <p style="font-size: 1.2rem; color: #6a6a6a; margin-top: 0;">
-            Professional Investment Portfolio Analysis & Optimization
+            Backtest your portfolio, find the best model, and optimize your fees
         </p>
     </div>
 """, unsafe_allow_html=True)
@@ -369,7 +369,7 @@ st.markdown("""
             📝 Portfolio Input
         </h2>
         <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
-            Enter your current holdings and advisory fee information
+            Enter your investment holdings and the advisory fee paid to manage these investments. The analysis will determine the best matching model portfolio and provide a detailed comparison.
         </p>
     </div>
 """, unsafe_allow_html=True)
@@ -381,14 +381,14 @@ if 'asset_class_overrides' not in st.session_state:
 # Settings Section
 st.markdown("""
     <h3 style="font-size: 1.3rem; font-weight: 500; color: #2a2a2a; margin-top: 1.5rem; margin-bottom: 1rem;">
-        ⚙️ Fee Settings
+        ⚙️ Advisory Fee
     </h3>
 """, unsafe_allow_html=True)
 col_settings1, col_settings2, col_settings3 = st.columns([1, 1, 2])
 
 with col_settings1:
     advisory_fee = st.number_input(
-        "Advisory Fee (%)", 
+        "Annual Advisory Fee (%)", 
         min_value=0.0, 
         max_value=5.0, 
         value=1.0, 
@@ -699,10 +699,10 @@ if st.session_state.analyzed:
     st.markdown("""
         <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
             <h2 style="font-size: 1.8rem; font-weight: 400; color: #1a1a1a; margin: 0;">
-                💰 Fee Comparison & Savings
+                💰 Projected Fees & Savings
             </h2>
             <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
-                Annual and cumulative fee analysis
+                Compare projected annual and 10-year cumulative fees between your portfolio and the recommended model portfolio to determine potential savings 
             </p>
         </div>
     """, unsafe_allow_html=True)
@@ -810,7 +810,7 @@ if st.session_state.analyzed:
                 📊 Historical Performance
             </h2>
             <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
-                Actual performance comparison using historical market data
+                Compare actual performance and risk statistics of your portfolio vs the recommended model portfolio over the past 10 years
             </p>
         </div>
     """, unsafe_allow_html=True)
@@ -901,7 +901,7 @@ if st.session_state.analyzed:
                 🎯 Asset Allocation
             </h2>
             <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
-                Portfolio composition by asset class
+                Compare your current portfolio allocation with the recommended model portfolio
             </p>
         </div>
     """, unsafe_allow_html=True)
