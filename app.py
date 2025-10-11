@@ -563,8 +563,10 @@ if analyze_clicked:
                 model_portfolio_dollars = {ticker: total_value * weight for ticker, weight in model_allocations.items()}
                 model_portfolio = Portfolio(model_portfolio_dollars, model_name, model_fee)
 
-            # Historical analysis
-                start_date, end_date = "2015-09-30", "2025-08-29"
+            # Historical analysis - 10 years from today
+                from datetime import datetime, timedelta
+                end_date = datetime.today().strftime('%Y-%m-%d')
+                start_date = (datetime.today() - timedelta(days=365*10)).strftime('%Y-%m-%d')
                 current_results = current_portfolio.analyze_historical_performance(start_date, end_date)
                 model_results = model_portfolio.analyze_historical_performance(current_results['actual_start_date'], end_date)
 
