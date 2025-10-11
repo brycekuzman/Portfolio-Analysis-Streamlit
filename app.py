@@ -741,13 +741,7 @@ if st.session_state.analyzed:
             font=dict(family="Arial, sans-serif", size=12)
         )
 
-        fig_annual.update_yaxes(
-            showgrid=True, 
-            gridwidth=1, 
-            gridcolor='#E5E5E5', 
-            tickformat='$,.0f',
-            range=[0, max(current_annual_fee, model_annual_fee) * 1.15]
-        )
+        fig_annual.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#E5E5E5', tickformat='$,.0f')
 
         st.plotly_chart(fig_annual, use_container_width=True)
 
@@ -776,13 +770,7 @@ if st.session_state.analyzed:
             font=dict(family="Arial, sans-serif", size=12)
         )
 
-        fig_cumulative.update_yaxes(
-            showgrid=True, 
-            gridwidth=1, 
-            gridcolor='#E5E5E5', 
-            tickformat='$,.0f',
-            range=[0, max(current_cumulative_fees, model_cumulative_fees) * 1.15]
-        )
+        fig_cumulative.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#E5E5E5', tickformat='$,.0f')
 
         st.plotly_chart(fig_cumulative, use_container_width=True)
 
