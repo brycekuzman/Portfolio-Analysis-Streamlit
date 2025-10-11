@@ -91,3 +91,53 @@ def project_portfolio_returns(asset_class_allocation, growth_rates, years=10):
         'final_portfolio_value': portfolio_value,
         'yearly_projections': yearly_projections
     }
+
+
+def project_portfolio_with_fees(asset_class_allocation, growth_rates, total_fee_rate, years=10):
+    """
+    Project portfolio returns with year-by-year fee calculations.
+    
+    Args:
+        asset_class_allocation: Dict of asset class -> weight
+        growth_rates: Dict of asset class -> annual growth rate
+        total_fee_rate: Combined expense ratio + advisory fee
+        years: Number of years to project
+    
+    Returns:
+        Dict with detailed year-by-year projections including fees
+    """
+    # Calculate weighted average annual return (before fees)
+    weighted_annual_return = sum(
+        asset_class_allocation.get(asset_class, 0) * growth_rate
+        for asset_class, growth_rate in growth_rates.items()
+    )
+    
+    # Calculate year-by-year projections with fees
+    yearly_projections = []
+    portfolio_value = 1.0  # Start with $1
+    total_fees = 0.0
+    
+    for year in range(1, years + 1):
+        starting_value = portfolio_value
+        growth = starting_value * weighted_annual_return
+        fees = (starting_value + growth) * total_fee_rate
+        ending_value = starting_value + growth - fees
+        
+        portfolio_value = ending_value
+        total_fees += fees
+        
+        yearly_projections.append({
+            'year': year,
+            'starting_value': starting_value,
+            'growth': growth,
+            'fees': fees,
+            'ending_value': ending_value,
+            'annual_return': weighted_annual_return
+        })
+    
+    return {
+        'weighted_annual_return': weighted_annual_return,
+        'final_portfolio_value': portfolio_value,
+        'total_fees': total_fees,
+        'yearly_projections': yearly_projections
+    }

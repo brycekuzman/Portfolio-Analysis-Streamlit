@@ -1,7 +1,7 @@
 
 import numpy as np
 from .data import get_current_prices, get_expense_ratios, get_investment_classifications, get_price_data
-from .performance import calculate_portfolio_returns, performance_stats, calculate_individual_returns, project_portfolio_returns
+from .performance import calculate_portfolio_returns, performance_stats, calculate_individual_returns, project_portfolio_returns, project_portfolio_with_fees
 from .models import growth_rates, asset_volatility
 
 
@@ -73,6 +73,11 @@ class Portfolio:
     def project_future_returns(self, years=10):
         """Project future portfolio returns."""
         return project_portfolio_returns(self.asset_class_allocation, growth_rates, years)
+    
+    def project_future_with_fees(self, years=10):
+        """Project future portfolio returns with detailed fee calculations."""
+        total_fee_rate = self.weighted_avg_er + self.advisory_fee
+        return project_portfolio_with_fees(self.asset_class_allocation, growth_rates, total_fee_rate, years)
     
     def calculate_forward_metrics(self, risk_free_rate=0.02):
         """Calculate estimated forward volatility and Sharpe ratio."""

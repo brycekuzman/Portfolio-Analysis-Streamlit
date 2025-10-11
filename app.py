@@ -573,6 +573,10 @@ if analyze_clicked:
                 # Future projections
                 current_projections = current_portfolio.project_future_returns(10)
                 model_projections = model_portfolio.project_future_returns(10)
+                
+                # Future projections with fees
+                current_projections_with_fees = current_portfolio.project_future_with_fees(10)
+                model_projections_with_fees = model_portfolio.project_future_with_fees(10)
 
                 # Store in session state
                 st.session_state.current_portfolio = current_portfolio
@@ -583,6 +587,8 @@ if analyze_clicked:
                 st.session_state.model_results = model_results
                 st.session_state.current_projections = current_projections
                 st.session_state.model_projections = model_projections
+                st.session_state.current_projections_with_fees = current_projections_with_fees
+                st.session_state.model_projections_with_fees = model_projections_with_fees
                 st.session_state.analyzed = True
 
                 st.success(f"Analysis complete! Best match: **{model_name}** Portfolio ({similarity:.1%} similarity)")
@@ -759,13 +765,13 @@ if st.session_state.analyzed:
         </div>
     """, unsafe_allow_html=True)
 
-    current_proj = st.session_state.current_projections
-    model_proj = st.session_state.model_projections
+    current_proj_fees = st.session_state.current_projections_with_fees
+    model_proj_fees = st.session_state.model_projections_with_fees
 
-    # Create projection data
-    years = [0] + [p['year'] for p in current_proj['yearly_projections']]
-    current_values = [total_value] + [p['portfolio_value'] * total_value for p in current_proj['yearly_projections']]
-    model_values = [total_value] + [p['portfolio_value'] * total_value for p in model_proj['yearly_projections']]
+    # Create projection data with fees
+    years = [0] + [p['year'] for p in current_proj_fees['yearly_projections']]
+    current_values = [total_value] + [p['ending_value'] * total_value for p in current_proj_fees['yearly_projections']]
+    model_values = [total_value] + [p['ending_value'] * total_value for p in model_proj_fees['yearly_projections']]
 
     fig_proj = go.Figure()
 
@@ -788,7 +794,7 @@ if st.session_state.analyzed:
     ))
 
     fig_proj.update_layout(
-        title="Projected Portfolio Growth Over 10 Years",
+        title="Projected Portfolio Growth Over 10 Years (After Fees)",
         xaxis_title="Years",
         yaxis_title="Portfolio Value ($)",
         height=500,
@@ -810,13 +816,13 @@ if st.session_state.analyzed:
         st.metric(
             "Your Portfolio (10 yr)", 
             f"${current_values[-1]:,.0f}",
-            f"{current_proj['weighted_annual_return']:.2%} annual"
+            f"{current_proj_fees['weighted_annual_return']:.2%} annual return"
         )
     with col2:
         st.metric(
             f"{st.session_state.model_name} (10 yr)", 
             f"${model_values[-1]:,.0f}",
-            f"{model_proj['weighted_annual_return']:.2%} annual"
+            f"{model_proj_fees['weighted_annual_return']:.2%} annual return"
         )
     with col3:
         difference = model_values[-1] - current_values[-1]
@@ -825,6 +831,45 @@ if st.session_state.analyzed:
             f"${difference:,.0f}",
             f"{(difference/current_values[-1]*100):+.1f}%"
         )
+
+    # Year-by-year projection tables
+    with st.expander("📊 View Year-by-Year Projection Details"):
+        st.markdown("#### Your Portfolio")
+        
+        # Build current portfolio table
+        current_table_data = {
+            'Year': list(range(1, 11)),
+            'Starting Value': [f"${p['starting_value'] * total_value:,.0f}" for p in current_proj_fees['yearly_projections']],
+            'Growth': [f"${p['growth'] * total_value:,.0f}" for p in current_proj_fees['yearly_projections']],
+            'Fees': [f"${p['fees'] * total_value:,.0f}" for p in current_proj_fees['yearly_projections']],
+            'Ending Value': [f"${p['ending_value'] * total_value:,.0f}" for p in current_proj_fees['yearly_projections']]
+        }
+        
+        df_current = pd.DataFrame(current_table_data)
+        st.dataframe(df_current, hide_index=True, use_container_width=True)
+        
+        st.markdown(f"**Total Fees Over 10 Years:** ${current_proj_fees['total_fees'] * total_value:,.0f}")
+        
+        st.markdown("---")
+        st.markdown(f"#### {st.session_state.model_name} Portfolio")
+        
+        # Build model portfolio table
+        model_table_data = {
+            'Year': list(range(1, 11)),
+            'Starting Value': [f"${p['starting_value'] * total_value:,.0f}" for p in model_proj_fees['yearly_projections']],
+            'Growth': [f"${p['growth'] * total_value:,.0f}" for p in model_proj_fees['yearly_projections']],
+            'Fees': [f"${p['fees'] * total_value:,.0f}" for p in model_proj_fees['yearly_projections']],
+            'Ending Value': [f"${p['ending_value'] * total_value:,.0f}" for p in model_proj_fees['yearly_projections']]
+        }
+        
+        df_model = pd.DataFrame(model_table_data)
+        st.dataframe(df_model, hide_index=True, use_container_width=True)
+        
+        st.markdown(f"**Total Fees Over 10 Years:** ${model_proj_fees['total_fees'] * total_value:,.0f}")
+        
+        # Show fee savings
+        fee_savings = (current_proj_fees['total_fees'] - model_proj_fees['total_fees']) * total_value
+        st.markdown(f"**💰 10-Year Fee Savings:** ${fee_savings:,.0f}")
 
     st.markdown("""
         <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
@@ -841,9 +886,9 @@ if st.session_state.analyzed:
     model_annual_fee = (st.session_state.model_portfolio.weighted_avg_er + st.session_state.model_portfolio.advisory_fee) * total_value
     annual_savings = current_annual_fee - model_annual_fee
 
-    # Calculate 10-year cumulative fees
-    current_cumulative_fees = current_annual_fee * 10
-    model_cumulative_fees = model_annual_fee * 10
+    # Calculate 10-year cumulative fees from projections
+    current_cumulative_fees = st.session_state.current_projections_with_fees['total_fees'] * total_value
+    model_cumulative_fees = st.session_state.model_projections_with_fees['total_fees'] * total_value
     cumulative_savings = current_cumulative_fees - model_cumulative_fees
 
     col1, col2 = st.columns(2)
