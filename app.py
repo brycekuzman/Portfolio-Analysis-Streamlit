@@ -836,14 +836,18 @@ if st.session_state.analyzed:
     with st.expander("📊 View Year-by-Year Projection Details"):
         st.markdown("#### Your Portfolio")
         
-        # Build current portfolio table
+        # Build current portfolio table with years as columns
         current_table_data = {
-            'Year': list(range(1, 11)),
-            'Starting Value': [f"${p['starting_value'] * total_value:,.0f}" for p in current_proj_fees['yearly_projections']],
-            'Growth': [f"${p['growth'] * total_value:,.0f}" for p in current_proj_fees['yearly_projections']],
-            'Fees': [f"${p['fees'] * total_value:,.0f}" for p in current_proj_fees['yearly_projections']],
-            'Ending Value': [f"${p['ending_value'] * total_value:,.0f}" for p in current_proj_fees['yearly_projections']]
+            'Metric': ['Starting Value', 'Growth', 'Fees', 'Ending Value']
         }
+        
+        for i, p in enumerate(current_proj_fees['yearly_projections'], 1):
+            current_table_data[f'Year {i}'] = [
+                f"${p['starting_value'] * total_value:,.0f}",
+                f"${p['growth'] * total_value:,.0f}",
+                f"${p['fees'] * total_value:,.0f}",
+                f"${p['ending_value'] * total_value:,.0f}"
+            ]
         
         df_current = pd.DataFrame(current_table_data)
         st.dataframe(df_current, hide_index=True, use_container_width=True)
@@ -853,14 +857,18 @@ if st.session_state.analyzed:
         st.markdown("---")
         st.markdown(f"#### {st.session_state.model_name} Portfolio")
         
-        # Build model portfolio table
+        # Build model portfolio table with years as columns
         model_table_data = {
-            'Year': list(range(1, 11)),
-            'Starting Value': [f"${p['starting_value'] * total_value:,.0f}" for p in model_proj_fees['yearly_projections']],
-            'Growth': [f"${p['growth'] * total_value:,.0f}" for p in model_proj_fees['yearly_projections']],
-            'Fees': [f"${p['fees'] * total_value:,.0f}" for p in model_proj_fees['yearly_projections']],
-            'Ending Value': [f"${p['ending_value'] * total_value:,.0f}" for p in model_proj_fees['yearly_projections']]
+            'Metric': ['Starting Value', 'Growth', 'Fees', 'Ending Value']
         }
+        
+        for i, p in enumerate(model_proj_fees['yearly_projections'], 1):
+            model_table_data[f'Year {i}'] = [
+                f"${p['starting_value'] * total_value:,.0f}",
+                f"${p['growth'] * total_value:,.0f}",
+                f"${p['fees'] * total_value:,.0f}",
+                f"${p['ending_value'] * total_value:,.0f}"
+            ]
         
         df_model = pd.DataFrame(model_table_data)
         st.dataframe(df_model, hide_index=True, use_container_width=True)
