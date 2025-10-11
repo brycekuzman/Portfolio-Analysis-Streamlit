@@ -852,8 +852,6 @@ if st.session_state.analyzed:
         df_current = pd.DataFrame(current_table_data)
         st.dataframe(df_current, hide_index=True, use_container_width=True)
         
-        st.markdown(f"**Total Fees Over 10 Years:** ${current_proj_fees['total_fees'] * total_value:,.0f}")
-        
         st.markdown("---")
         st.markdown(f"#### {st.session_state.model_name} Portfolio")
         
@@ -872,12 +870,6 @@ if st.session_state.analyzed:
         
         df_model = pd.DataFrame(model_table_data)
         st.dataframe(df_model, hide_index=True, use_container_width=True)
-        
-        st.markdown(f"**Total Fees Over 10 Years:** ${model_proj_fees['total_fees'] * total_value:,.0f}")
-        
-        # Show fee savings
-        fee_savings = (current_proj_fees['total_fees'] - model_proj_fees['total_fees']) * total_value
-        st.markdown(f"**💰 10-Year Fee Savings:** ${fee_savings:,.0f}")
 
     st.markdown("""
         <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
