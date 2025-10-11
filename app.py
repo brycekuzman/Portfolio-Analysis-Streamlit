@@ -632,16 +632,17 @@ if st.session_state.analyzed:
         </div>
     """, unsafe_allow_html=True)
 
-    for name, allocations in model_portfolios.items():
-        indicator = " ⭐ (Recommended)" if name == st.session_state.model_name else ""
-        st.markdown(f"### {name}{indicator}")
+    with st.expander("📊 View All Model Portfolios"):
+        for name, allocations in model_portfolios.items():
+            indicator = " ⭐ (Recommended)" if name == st.session_state.model_name else ""
+            st.markdown(f"### {name}{indicator}")
 
-        cols = st.columns(len(allocations))
-        for i, (ticker, weight) in enumerate(allocations.items()):
-            with cols[i]:
-                st.metric(ticker, f"{weight:.0%}")
+            cols = st.columns(len(allocations))
+            for i, (ticker, weight) in enumerate(allocations.items()):
+                with cols[i]:
+                    st.metric(ticker, f"{weight:.0%}")
 
-        st.markdown("")
+            st.markdown("")
 
     st.markdown("""
         <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
