@@ -765,9 +765,9 @@ if st.session_state.analyzed:
             current_table_data = {
                 'Ticker': [h['ticker'] for h in current_details],
                 'Dollar Value': [f"${h['dollar_value']:,.0f}" for h in current_details],
-                'Yield': [f"{h['yield']:.2%}" if h['yield'] else "N/A" for h in current_details],
+                'Yield': [f"{h['yield']:.2%}" for h in current_details],
                 'Expense Ratio': [f"{h['expense_ratio']:.2%}" for h in current_details],
-                'Category': [h['category'] for h in current_details]
+                'Category/Industry': [h['category'] for h in current_details]
             }
             
             df_current_details = pd.DataFrame(current_table_data)
@@ -780,9 +780,9 @@ if st.session_state.analyzed:
             model_table_data = {
                 'Ticker': [h['ticker'] for h in model_details],
                 'Dollar Value': [f"${h['dollar_value']:,.0f}" for h in model_details],
-                'Yield': [f"{h['yield']:.2%}" if h['yield'] else "N/A" for h in model_details],
+                'Yield': [f"{h['yield']:.2%}" for h in model_details],
                 'Expense Ratio': [f"{h['expense_ratio']:.2%}" for h in model_details],
-                'Category': [h['category'] for h in model_details]
+                'Category/Industry': [h['category'] for h in model_details]
             }
             
             df_model_details = pd.DataFrame(model_table_data)
