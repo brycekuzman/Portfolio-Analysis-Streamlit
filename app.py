@@ -425,8 +425,9 @@ with header_cols[3]:
 with header_cols[4]:
     st.markdown("**Delete**")
 
-# Display current holdings
-for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
+# Display current holdings - use a stable list with unique identifiers
+portfolio_items = list(st.session_state.portfolio.items())
+for i, (ticker, amount) in enumerate(portfolio_items):
     # Validate ticker only if it's not empty
     is_valid = False
     ticker_info = None
@@ -437,19 +438,19 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
     cols = st.columns([1.5, 2, 2, 2, 0.5])
 
     with cols[0]:
-        new_ticker = st.text_input("Ticker", value=ticker, key=f"ticker_{i}", label_visibility="collapsed", placeholder="Enter ticker...")
+        new_ticker = st.text_input("Ticker", value=ticker, key=f"ticker_{ticker}_{i}", label_visibility="collapsed", placeholder="Enter ticker...", on_change=lambda t=ticker: st.session_state.pop(f'ticker_changed_{t}', None))
 
     with cols[1]:
         if is_valid:
             investment_name = get_investment_name(ticker)
             st.markdown(f'<input type="text" value="{investment_name}" disabled style="width: 100%; padding: 0.5rem 1rem; border: 1px solid #d0d0d0; border-radius: 6px; background-color: #f5f5f5; color: #000000; font-size: 0.95rem; height: 38px; box-sizing: border-box;">', unsafe_allow_html=True)
         elif ticker.strip():  # Only show invalid message for non-empty tickers
-            st.text_input("Name", value="⚠️ Invalid Ticker", key=f"name_{i}", label_visibility="collapsed", disabled=True)
+            st.text_input("Name", value="⚠️ Invalid Ticker", key=f"name_{ticker}_{i}", label_visibility="collapsed", disabled=True)
         else:
-            st.text_input("Name", value="", key=f"name_{i}", label_visibility="collapsed", disabled=True, placeholder="Enter ticker first...")
+            st.text_input("Name", value="", key=f"name_{ticker}_{i}", label_visibility="collapsed", disabled=True, placeholder="Enter ticker first...")
 
     with cols[2]:
-        new_amount = st.number_input("Amount", value=float(amount), min_value=0.0, step=1000.0, key=f"amount_{i}", label_visibility="collapsed", format="%.0f")
+        new_amount = st.number_input("Amount", value=float(amount), min_value=0.0, step=1000.0, key=f"amount_{ticker}_{i}", label_visibility="collapsed", format="%.0f")
 
     with cols[3]:
         if is_valid:
@@ -472,7 +473,7 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
                 "Asset Class",
                 options=asset_classes,
                 index=default_index,
-                key=f"asset_class_{i}",
+                key=f"asset_class_{ticker}_{i}",
                 label_visibility="collapsed"
             )
 
@@ -483,11 +484,11 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
                 # Remove override if user changed back to automatic classification
                 del st.session_state.asset_class_overrides[ticker]
         else:
-            st.text_input("Asset Class", value="N/A" if ticker.strip() else "", key=f"asset_class_{i}", label_visibility="collapsed", disabled=True)
+            st.text_input("Asset Class", value="N/A" if ticker.strip() else "", key=f"asset_class_{ticker}_{i}", label_visibility="collapsed", disabled=True)
 
     with cols[4]:
-        # Use markdown with custom CSS to create a properly sized delete button
-        if st.button("🗑️", key=f"remove_{i}", help="Remove this holding"):
+        # Use the actual ticker as the key to ensure proper alignment
+        if st.button("🗑️", key=f"remove_{ticker}_{i}", help="Remove this holding"):
             del st.session_state.portfolio[ticker]
             if ticker in st.session_state.asset_class_overrides:
                 del st.session_state.asset_class_overrides[ticker]
@@ -497,23 +498,28 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
     if ticker.strip() and not is_valid:
         st.warning(f"⚠️ '{ticker}' is not a valid investment symbol. Please correct it or remove this holding.")
 
-    # Update portfolio
+    # Update portfolio when ticker changes
     if new_ticker.upper() != ticker:
-        del st.session_state.portfolio[ticker]
-        if ticker in st.session_state.asset_class_overrides:
-            if new_ticker.strip():  # Only transfer override if new ticker is not empty
-                st.session_state.asset_class_overrides[new_ticker.upper()] = st.session_state.asset_class_overrides.pop(ticker)
-            else:
-                del st.session_state.asset_class_overrides[ticker]
+        # Create new entry first
         st.session_state.portfolio[new_ticker.upper()] = new_amount
+        # Transfer asset class override if applicable
+        if ticker in st.session_state.asset_class_overrides:
+            if new_ticker.strip():
+                st.session_state.asset_class_overrides[new_ticker.upper()] = st.session_state.asset_class_overrides[ticker]
+            del st.session_state.asset_class_overrides[ticker]
+        # Delete old entry
+        del st.session_state.portfolio[ticker]
+        st.rerun()
     else:
         st.session_state.portfolio[ticker] = new_amount
 
-# Add new holding
+# Add new holding - allow multiple empty holdings
 st.markdown("")
 if st.button("➕ Add Holding", use_container_width=True):
-    # Use empty string as ticker placeholder instead of NEWx
-    st.session_state.portfolio[""] = 1000.0
+    # Generate unique empty key to allow multiple empty holdings
+    import time
+    unique_key = f"_empty_{int(time.time() * 1000000)}"
+    st.session_state.portfolio[unique_key] = 1000.0
     st.rerun()
 
 # Analyze Portfolio button below
@@ -530,7 +536,10 @@ if analyze_clicked:
     empty_tickers = []
     
     for ticker in st.session_state.portfolio.keys():
-        if not ticker.strip():
+        # Skip temporary empty keys created for new holdings
+        if ticker.startswith("_empty_"):
+            empty_tickers.append("(empty)")
+        elif not ticker.strip():
             empty_tickers.append("(empty)")
         else:
             is_valid, _ = validate_ticker(ticker)
