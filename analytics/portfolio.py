@@ -147,7 +147,7 @@ class Portfolio:
                 'dollar_value': self.portfolio_dollars[ticker],
                 'weight': self.portfolio_weights[ticker],
                 'yield': details[ticker]['yield'],
-                'expense_ratio': details[ticker]['expense_ratio'],
+                'expense_ratio': self.expense_ratios[ticker],  # Use pre-fetched expense ratios
                 'category': details[ticker]['category']
             })
         
