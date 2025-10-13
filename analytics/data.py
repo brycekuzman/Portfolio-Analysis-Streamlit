@@ -1,5 +1,6 @@
 import yfinance as yf
 import pandas as pd
+from .cache import cache_with_ttl, get_ticker_info_batch
 
 
 def get_available_date_range(tickers, start, end):
@@ -17,6 +18,7 @@ def get_available_date_range(tickers, start, end):
     return latest_start, end
 
 
+@cache_with_ttl(ttl_seconds=3600)  # Cache for 1 hour
 def get_price_data(tickers, start, end):
     """Download adjusted close prices for tickers."""
     # Find common date range
@@ -45,6 +47,7 @@ def get_price_data(tickers, start, end):
     return prices
 
 
+@cache_with_ttl(ttl_seconds=3600)  # Cache for 1 hour
 def validate_ticker(ticker):
     """Validate if a ticker exists and return its info."""
     try:
@@ -60,6 +63,7 @@ def validate_ticker(ticker):
         return False, None
 
 
+@cache_with_ttl(ttl_seconds=3600)  # Cache for 1 hour
 def get_investment_name(ticker):
     """Get the full name of an investment."""
     try:
@@ -79,6 +83,7 @@ def get_investment_name(ticker):
         return ticker
 
 
+@cache_with_ttl(ttl_seconds=300)  # Cache for 5 minutes (prices change frequently)
 def get_current_prices(tickers):
     """Get current prices for tickers to calculate portfolio weights."""
     data = yf.download(tickers, period="1d", interval="1d", auto_adjust=True, prepost=True, threads=True)
@@ -95,6 +100,7 @@ def get_current_prices(tickers):
         return current_prices
 
 
+@cache_with_ttl(ttl_seconds=86400)  # Cache for 24 hours (expense ratios rarely change)
 def get_expense_ratios(tickers):
     """Get expense ratios for ETFs, Mutual Funds, and SMAs from yfinance."""
     expense_ratios = {}
@@ -127,6 +133,7 @@ def get_expense_ratios(tickers):
     return expense_ratios
 
 
+@cache_with_ttl(ttl_seconds=86400)  # Cache for 24 hours
 def classify_investment(ticker):
     """Classify investment into US Equities, International Equities, Core Fixed Income, or Alternatives."""
     
@@ -218,6 +225,7 @@ def get_investment_classifications(tickers, overrides=None):
     return classifications
 
 
+@cache_with_ttl(ttl_seconds=3600)  # Cache for 1 hour
 def get_investment_details(tickers):
     """Get detailed information about investments including yield, fees, and other metrics."""
     details = {}

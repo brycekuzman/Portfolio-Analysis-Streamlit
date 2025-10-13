@@ -349,16 +349,23 @@ with st.sidebar:
         st.markdown("[📊 Historical Performance](#historical-performance)")
 
 # Professional Header
-st.markdown("""
-    <div style="text-align: center; padding: 2rem 0 1rem 0; border-bottom: 2px solid #4A90E2;">
-        <h1 style="font-size: 3rem; font-weight: 300; margin-bottom: 0.5rem; color: #1a1a1a;">
-            📊 Portfolio Analyzer
-        </h1>
-        <p style="font-size: 1.2rem; color: #6a6a6a; margin-top: 0;">
-            Backtest your portfolio, find the best model, and optimize your fees
-        </p>
-    </div>
-""", unsafe_allow_html=True)
+col_header1, col_header2 = st.columns([5, 1])
+with col_header1:
+    st.markdown("""
+        <div style="text-align: center; padding: 2rem 0 1rem 0; border-bottom: 2px solid #4A90E2;">
+            <h1 style="font-size: 3rem; font-weight: 300; margin-bottom: 0.5rem; color: #1a1a1a;">
+                📊 Portfolio Analyzer
+            </h1>
+            <p style="font-size: 1.2rem; color: #6a6a6a; margin-top: 0;">
+                Backtest your portfolio, find the best model, and optimize your fees
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+with col_header2:
+    from analytics.cache import clear_cache
+    if st.button("🔄 Clear Cache", help="Refresh all data from market"):
+        clear_cache()
+        st.success("Cache cleared!")
 
 st.markdown("<br>", unsafe_allow_html=True)
 
