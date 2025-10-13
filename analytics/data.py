@@ -95,22 +95,6 @@ def get_current_prices(tickers):
         return current_prices
 
 
-def get_current_prices(tickers):
-    """Get current prices for tickers to calculate portfolio weights."""
-    data = yf.download(tickers, period="1d", interval="1d", auto_adjust=True, prepost=True, threads=True)
-    
-    if len(tickers) == 1:
-        # For single ticker
-        current_price = data['Close'].iloc[-1]
-        return {tickers[0]: current_price}
-    else:
-        # For multiple tickers
-        current_prices = {}
-        for ticker in tickers:
-            current_prices[ticker] = data['Close'][ticker].iloc[-1]
-        return current_prices
-
-
 def get_expense_ratios(tickers):
     """Get expense ratios for ETFs, Mutual Funds, and SMAs from yfinance."""
     expense_ratios = {}
@@ -243,22 +227,13 @@ def get_investment_details(tickers):
             stock = yf.Ticker(ticker)
             info = stock.info
             
-            # Determine if it's a stock or fund
-            quote_type = info.get('quoteType', '')
-            
-            # For stocks, use industry/sector; for funds, use category
-            if quote_type == 'EQUITY':
-                category = info.get('industry', info.get('sector', 'N/A'))
-            else:
-                category = info.get('category', 'N/A')
-            
             # Extract relevant information - expense ratio is already in percentage form
             expense_ratio = info.get('expenseRatio', info.get('annualReportExpenseRatio', 0)) or 0
             
             details[ticker] = {
                 'yield': info.get('yield', info.get('dividendYield', 0)) or 0,
                 'expense_ratio': expense_ratio,
-                'category': category,
+                'category': info.get('category', 'N/A'),
                 'name': info.get('longName', info.get('shortName', ticker))
             }
             
