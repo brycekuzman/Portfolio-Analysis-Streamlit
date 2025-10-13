@@ -148,8 +148,6 @@ class Portfolio:
                 'weight': self.portfolio_weights[ticker],
                 'yield': details[ticker]['yield'],
                 'expense_ratio': details[ticker]['expense_ratio'],
-                'beta': details[ticker]['beta'],
-                'pe_ratio': details[ticker]['pe_ratio'],
                 'category': details[ticker]['category']
             })
         

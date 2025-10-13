@@ -767,7 +767,6 @@ if st.session_state.analyzed:
                 'Dollar Value': [f"${h['dollar_value']:,.0f}" for h in current_details],
                 'Yield': [f"{h['yield']:.2%}" if h['yield'] else "N/A" for h in current_details],
                 'Expense Ratio': [f"{h['expense_ratio']:.2%}" for h in current_details],
-                'Beta': [f"{h['beta']:.2f}" if h['beta'] is not None else "N/A" for h in current_details],
                 'Category': [h['category'] for h in current_details]
             }
             
@@ -783,7 +782,6 @@ if st.session_state.analyzed:
                 'Dollar Value': [f"${h['dollar_value']:,.0f}" for h in model_details],
                 'Yield': [f"{h['yield']:.2%}" if h['yield'] else "N/A" for h in model_details],
                 'Expense Ratio': [f"{h['expense_ratio']:.2%}" for h in model_details],
-                'Beta': [f"{h['beta']:.2f}" if h['beta'] is not None else "N/A" for h in model_details],
                 'Category': [h['category'] for h in model_details]
             }
             

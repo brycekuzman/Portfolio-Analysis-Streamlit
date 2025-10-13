@@ -227,13 +227,12 @@ def get_investment_details(tickers):
             stock = yf.Ticker(ticker)
             info = stock.info
             
-            # Extract relevant information
+            # Extract relevant information - expense ratio is already in percentage form
+            expense_ratio = info.get('expenseRatio', info.get('annualReportExpenseRatio', 0)) or 0
+            
             details[ticker] = {
                 'yield': info.get('yield', info.get('dividendYield', 0)) or 0,
-                'expense_ratio': (info.get('expenseRatio', info.get('annualReportExpenseRatio', 0)) or 0) / 100.0,
-                'beta': info.get('beta', None),
-                'pe_ratio': info.get('trailingPE', None),
-                'market_cap': info.get('marketCap', None),
+                'expense_ratio': expense_ratio,
                 'category': info.get('category', 'N/A'),
                 'name': info.get('longName', info.get('shortName', ticker))
             }
@@ -243,9 +242,6 @@ def get_investment_details(tickers):
             details[ticker] = {
                 'yield': 0,
                 'expense_ratio': 0,
-                'beta': None,
-                'pe_ratio': None,
-                'market_cap': None,
                 'category': 'N/A',
                 'name': ticker
             }
