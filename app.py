@@ -846,17 +846,25 @@ if st.session_state.analyzed:
 
     # Show projection details
     col1, col2, col3 = st.columns(3)
+    
+    # Calculate net annual returns (after fees)
+    current_total_fee_rate = st.session_state.current_portfolio.weighted_avg_er + st.session_state.current_portfolio.advisory_fee
+    model_total_fee_rate = st.session_state.model_portfolio.weighted_avg_er + st.session_state.model_portfolio.advisory_fee
+    
+    current_net_return = current_proj_fees['weighted_annual_return'] - current_total_fee_rate
+    model_net_return = model_proj_fees['weighted_annual_return'] - model_total_fee_rate
+    
     with col1:
         st.metric(
             "Your Portfolio (10 yr)", 
             f"${current_values[-1]:,.0f}",
-            f"{current_proj_fees['weighted_annual_return']:.2%} annual return"
+            f"{current_net_return:.2%} annual return (after fees)"
         )
     with col2:
         st.metric(
             f"{st.session_state.model_name} (10 yr)", 
             f"${model_values[-1]:,.0f}",
-            f"{model_proj_fees['weighted_annual_return']:.2%} annual return"
+            f"{model_net_return:.2%} annual return (after fees)"
         )
     with col3:
         difference = model_values[-1] - current_values[-1]
