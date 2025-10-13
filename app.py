@@ -385,6 +385,11 @@ st.markdown("""
 if 'asset_class_overrides' not in st.session_state:
     st.session_state.asset_class_overrides = {}
 
+# Callback function to handle ticker changes
+def handle_ticker_change(old_ticker):
+    """Handle when a ticker is changed to trigger rerun."""
+    pass  # The rerun will happen in the main logic
+
 # Settings Section
 st.markdown("""
     <h3 style="font-size: 1.3rem; font-weight: 500; color: #2a2a2a; margin-top: 1.5rem; margin-bottom: 1rem;">
@@ -444,19 +449,19 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
     cols = st.columns([1.5, 2, 2, 2, 0.5])
 
     with cols[0]:
-        new_ticker = st.text_input("Ticker", value=ticker, key=f"ticker_{i}", label_visibility="collapsed", placeholder="Enter ticker...")
+        new_ticker = st.text_input("Ticker", value=ticker, key=f"ticker_{ticker}_{i}", label_visibility="collapsed", placeholder="Enter ticker...", on_change=lambda t=ticker: handle_ticker_change(t))
 
     with cols[1]:
         if is_valid:
             investment_name = get_investment_name(ticker)
             st.markdown(f'<input type="text" value="{investment_name}" disabled style="width: 100%; padding: 0.5rem 1rem; border: 1px solid #d0d0d0; border-radius: 6px; background-color: #f5f5f5; color: #000000; font-size: 0.95rem; height: 38px; box-sizing: border-box;">', unsafe_allow_html=True)
         elif ticker.strip():  # Only show invalid message for non-empty tickers
-            st.text_input("Name", value="⚠️ Invalid Ticker", key=f"name_{i}", label_visibility="collapsed", disabled=True)
+            st.text_input("Name", value="⚠️ Invalid Ticker", key=f"name_{ticker}_{i}", label_visibility="collapsed", disabled=True)
         else:
-            st.text_input("Name", value="", key=f"name_{i}", label_visibility="collapsed", disabled=True, placeholder="Enter ticker first...")
+            st.text_input("Name", value="", key=f"name_{ticker}_{i}", label_visibility="collapsed", disabled=True, placeholder="Enter ticker first...")
 
     with cols[2]:
-        new_amount = st.number_input("Amount", value=float(amount), min_value=0.0, step=1000.0, key=f"amount_{i}", label_visibility="collapsed", format="%.0f")
+        new_amount = st.number_input("Amount", value=float(amount), min_value=0.0, step=1000.0, key=f"amount_{ticker}_{i}", label_visibility="collapsed", format="%.0f")
 
     with cols[3]:
         if is_valid:
@@ -479,7 +484,7 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
                 "Asset Class",
                 options=asset_classes,
                 index=default_index,
-                key=f"asset_class_{i}",
+                key=f"asset_class_{ticker}_{i}",
                 label_visibility="collapsed"
             )
 
@@ -490,11 +495,11 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
                 # Remove override if user changed back to automatic classification
                 del st.session_state.asset_class_overrides[ticker]
         else:
-            st.text_input("Asset Class", value="N/A" if ticker.strip() else "", key=f"asset_class_{i}", label_visibility="collapsed", disabled=True)
+            st.text_input("Asset Class", value="N/A" if ticker.strip() else "", key=f"asset_class_{ticker}_{i}", label_visibility="collapsed", disabled=True)
 
     with cols[4]:
-        # Use markdown with custom CSS to create a properly sized delete button
-        if st.button("🗑️", key=f"remove_{i}", help="Remove this holding"):
+        # Use ticker in key to ensure proper alignment
+        if st.button("🗑️", key=f"remove_{ticker}_{i}", help="Remove this holding"):
             del st.session_state.portfolio[ticker]
             if ticker in st.session_state.asset_class_overrides:
                 del st.session_state.asset_class_overrides[ticker]
@@ -513,6 +518,7 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
             else:
                 del st.session_state.asset_class_overrides[ticker]
         st.session_state.portfolio[new_ticker.upper()] = new_amount
+        st.rerun()  # Force rerun when ticker changes
     else:
         st.session_state.portfolio[ticker] = new_amount
 
