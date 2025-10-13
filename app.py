@@ -425,8 +425,8 @@ with header_cols[3]:
 with header_cols[4]:
     st.markdown("**Delete**")
 
-# Display current holdings - use a stable list with unique identifiers
-portfolio_items = list(st.session_state.portfolio.items())
+# Display current holdings - filter out temporary empty keys
+portfolio_items = [(t, a) for t, a in st.session_state.portfolio.items() if not t.startswith('_empty_')]
 for i, (ticker, amount) in enumerate(portfolio_items):
     # Validate ticker only if it's not empty
     is_valid = False
@@ -530,16 +530,18 @@ st.markdown("")
 
 # Analyze Button
 if analyze_clicked:
+    # Clean up any empty placeholder keys before analysis
+    keys_to_remove = [k for k in st.session_state.portfolio.keys() if k.startswith("_empty_")]
+    for key in keys_to_remove:
+        del st.session_state.portfolio[key]
+    
     # Validate all tickers before analysis
     from analytics.data import validate_ticker
     invalid_tickers = []
     empty_tickers = []
     
     for ticker in st.session_state.portfolio.keys():
-        # Skip temporary empty keys created for new holdings
-        if ticker.startswith("_empty_"):
-            empty_tickers.append("(empty)")
-        elif not ticker.strip():
+        if not ticker.strip():
             empty_tickers.append("(empty)")
         else:
             is_valid, _ = validate_ticker(ticker)
