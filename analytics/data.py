@@ -230,9 +230,19 @@ def get_investment_details(tickers):
             # Determine if it's a stock or fund
             quote_type = info.get('quoteType', '')
             
-            # For stocks, use industry/sector; for funds, use category
+            # For stocks, use sector/industry format; for funds, use category
             if quote_type == 'EQUITY':
-                category = info.get('industry', info.get('sector', 'N/A'))
+                sector = info.get('sector', '')
+                industry = info.get('industry', '')
+                
+                if sector and industry:
+                    category = f"{sector}/{industry}"
+                elif sector:
+                    category = sector
+                elif industry:
+                    category = industry
+                else:
+                    category = 'N/A'
             else:
                 category = info.get('category', 'N/A')
             
