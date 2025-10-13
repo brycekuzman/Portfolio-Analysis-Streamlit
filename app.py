@@ -754,6 +754,42 @@ if st.session_state.analyzed:
             allocation = ordered_model[asset_class]
             st.write(f"**{asset_class}:** {allocation:.1%} (${allocation * total_value:,.0f})")
 
+    # Investment Details Table
+    with st.expander("📋 View Investment Details"):
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("#### Your Portfolio Holdings")
+            current_details = st.session_state.current_portfolio.get_detailed_holdings()
+            
+            current_table_data = {
+                'Ticker': [h['ticker'] for h in current_details],
+                'Dollar Value': [f"${h['dollar_value']:,.0f}" for h in current_details],
+                'Yield': [f"{h['yield']:.2%}" if h['yield'] else "N/A" for h in current_details],
+                'Expense Ratio': [f"{h['expense_ratio']:.2%}" for h in current_details],
+                'Beta': [f"{h['beta']:.2f}" if h['beta'] is not None else "N/A" for h in current_details],
+                'Category': [h['category'] for h in current_details]
+            }
+            
+            df_current_details = pd.DataFrame(current_table_data)
+            st.dataframe(df_current_details, hide_index=True, use_container_width=True)
+        
+        with col2:
+            st.markdown(f"#### {st.session_state.model_name} Portfolio Holdings")
+            model_details = st.session_state.model_portfolio.get_detailed_holdings()
+            
+            model_table_data = {
+                'Ticker': [h['ticker'] for h in model_details],
+                'Dollar Value': [f"${h['dollar_value']:,.0f}" for h in model_details],
+                'Yield': [f"{h['yield']:.2%}" if h['yield'] else "N/A" for h in model_details],
+                'Expense Ratio': [f"{h['expense_ratio']:.2%}" for h in model_details],
+                'Beta': [f"{h['beta']:.2f}" if h['beta'] is not None else "N/A" for h in model_details],
+                'Category': [h['category'] for h in model_details]
+            }
+            
+            df_model_details = pd.DataFrame(model_table_data)
+            st.dataframe(df_model_details, hide_index=True, use_container_width=True)
+
     st.markdown("""
         <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
             <h2 style="font-size: 1.8rem; font-weight: 400; color: #1a1a1a; margin: 0;">

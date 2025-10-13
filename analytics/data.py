@@ -216,3 +216,38 @@ def get_investment_classifications(tickers, overrides=None):
                 classifications[ticker] = "US Equities"
     
     return classifications
+
+
+def get_investment_details(tickers):
+    """Get detailed information about investments including yield, fees, and other metrics."""
+    details = {}
+    
+    for ticker in tickers:
+        try:
+            stock = yf.Ticker(ticker)
+            info = stock.info
+            
+            # Extract relevant information
+            details[ticker] = {
+                'yield': info.get('yield', info.get('dividendYield', 0)) or 0,
+                'expense_ratio': (info.get('expenseRatio', info.get('annualReportExpenseRatio', 0)) or 0) / 100.0,
+                'beta': info.get('beta', None),
+                'pe_ratio': info.get('trailingPE', None),
+                'market_cap': info.get('marketCap', None),
+                'category': info.get('category', 'N/A'),
+                'name': info.get('longName', info.get('shortName', ticker))
+            }
+            
+        except Exception as e:
+            print(f"Could not fetch details for {ticker}: {e}")
+            details[ticker] = {
+                'yield': 0,
+                'expense_ratio': 0,
+                'beta': None,
+                'pe_ratio': None,
+                'market_cap': None,
+                'category': 'N/A',
+                'name': ticker
+            }
+    
+    return details

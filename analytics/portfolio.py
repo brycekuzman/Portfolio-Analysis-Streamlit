@@ -1,6 +1,6 @@
 
 import numpy as np
-from .data import get_current_prices, get_expense_ratios, get_investment_classifications, get_price_data
+from .data import get_current_prices, get_expense_ratios, get_investment_classifications, get_price_data, get_investment_details
 from .performance import calculate_portfolio_returns, performance_stats, calculate_individual_returns, project_portfolio_returns, project_portfolio_with_fees
 from .models import growth_rates, asset_volatility
 
@@ -134,3 +134,23 @@ class Portfolio:
             })
         
         return summary
+    
+    def get_detailed_holdings(self):
+        """Get detailed information about portfolio holdings."""
+        details = get_investment_details(list(self.portfolio_dollars.keys()))
+        
+        holdings_info = []
+        for ticker in self.portfolio_weights.keys():
+            holdings_info.append({
+                'ticker': ticker,
+                'name': details[ticker]['name'],
+                'dollar_value': self.portfolio_dollars[ticker],
+                'weight': self.portfolio_weights[ticker],
+                'yield': details[ticker]['yield'],
+                'expense_ratio': details[ticker]['expense_ratio'],
+                'beta': details[ticker]['beta'],
+                'pe_ratio': details[ticker]['pe_ratio'],
+                'category': details[ticker]['category']
+            })
+        
+        return holdings_info
