@@ -520,7 +520,18 @@ if st.button("➕ Add Holding", use_container_width=True):
     import time
     unique_key = f"_empty_{int(time.time() * 1000000)}"
     st.session_state.portfolio[unique_key] = 1000.0
+    # Mark that we just added a holding to scroll to it after rerun
+    st.session_state.just_added_holding = True
     st.rerun()
+
+# Scroll to bottom if we just added a holding
+if st.session_state.get('just_added_holding', False):
+    st.markdown("""
+        <script>
+        window.scrollTo(0, document.body.scrollHeight);
+        </script>
+    """, unsafe_allow_html=True)
+    st.session_state.just_added_holding = False
 
 # Analyze Portfolio button below
 st.markdown("<br>", unsafe_allow_html=True)
