@@ -514,7 +514,7 @@ for i, (ticker, amount) in enumerate(portfolio_items):
         st.session_state.portfolio[ticker] = new_amount
 
 # Add new holding - allow multiple empty holdings
-st.markdown("")
+st.markdown("<br>", unsafe_allow_html=True)
 if st.button("➕ Add Holding", use_container_width=True):
     # Generate unique empty key to allow multiple empty holdings
     import time
@@ -523,10 +523,10 @@ if st.button("➕ Add Holding", use_container_width=True):
     st.rerun()
 
 # Analyze Portfolio button below
-st.markdown("")
+st.markdown("<br>", unsafe_allow_html=True)
 analyze_clicked = st.button("🔍 Analyze Portfolio", use_container_width=True, type="primary")
 
-st.markdown("")
+st.markdown("<br><br>", unsafe_allow_html=True)
 
 # Analyze Button
 if analyze_clicked:
