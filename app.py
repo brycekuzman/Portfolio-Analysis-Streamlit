@@ -449,7 +449,9 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
     cols = st.columns([1.5, 2, 2, 2, 0.5])
 
     with cols[0]:
-        new_ticker = st.text_input("Ticker", value=ticker, key=f"ticker_{ticker}_{i}", label_visibility="collapsed", placeholder="Enter ticker...", on_change=lambda t=ticker: handle_ticker_change(t))
+        # Show empty value for NEW_ placeholders, otherwise show the ticker
+        display_value = "" if ticker.startswith("NEW_") else ticker
+        new_ticker = st.text_input("Ticker", value=display_value, key=f"ticker_{ticker}_{i}", label_visibility="collapsed", placeholder="Enter ticker...", on_change=lambda t=ticker: handle_ticker_change(t))
 
     with cols[1]:
         if is_valid:
@@ -510,23 +512,34 @@ for i, (ticker, amount) in enumerate(list(st.session_state.portfolio.items())):
         st.warning(f"⚠️ '{ticker}' is not a valid investment symbol. Please correct it or remove this holding.")
 
     # Update portfolio
-    if new_ticker.upper() != ticker:
+    # For NEW_ placeholders, treat any non-empty input as a change
+    ticker_changed = (ticker.startswith("NEW_") and new_ticker.strip()) or (not ticker.startswith("NEW_") and new_ticker.upper() != ticker)
+    
+    if ticker_changed:
         del st.session_state.portfolio[ticker]
         if ticker in st.session_state.asset_class_overrides:
             if new_ticker.strip():  # Only transfer override if new ticker is not empty
                 st.session_state.asset_class_overrides[new_ticker.upper()] = st.session_state.asset_class_overrides.pop(ticker)
             else:
                 del st.session_state.asset_class_overrides[ticker]
-        st.session_state.portfolio[new_ticker.upper()] = new_amount
-        st.rerun()  # Force rerun when ticker changes
+        # Only add if ticker is not empty
+        if new_ticker.strip():
+            st.session_state.portfolio[new_ticker.upper()] = new_amount
+            st.rerun()  # Force rerun when ticker changes
+        else:
+            # If cleared to empty, add back the placeholder
+            st.session_state.portfolio[ticker] = new_amount
     else:
         st.session_state.portfolio[ticker] = new_amount
 
 # Add new holding
 st.markdown("")
 if st.button("➕ Add Holding", use_container_width=True):
-    # Use empty string as ticker placeholder instead of NEWx
-    st.session_state.portfolio[""] = 1000.0
+    # Find a unique placeholder key for new empty holdings
+    i = 0
+    while f"NEW_{i}" in st.session_state.portfolio:
+        i += 1
+    st.session_state.portfolio[f"NEW_{i}"] = 1000.0
     st.rerun()
 
 # Analyze Portfolio button below
@@ -543,8 +556,8 @@ if analyze_clicked:
     empty_tickers = []
     
     for ticker in st.session_state.portfolio.keys():
-        if not ticker.strip():
-            empty_tickers.append("(empty)")
+        if not ticker.strip() or ticker.startswith("NEW_"):
+            empty_tickers.append(ticker if ticker.strip() else "(empty)")
         else:
             is_valid, _ = validate_ticker(ticker)
             if not is_valid:
