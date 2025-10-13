@@ -227,13 +227,22 @@ def get_investment_details(tickers):
             stock = yf.Ticker(ticker)
             info = stock.info
             
+            # Determine if it's a stock or fund
+            quote_type = info.get('quoteType', '')
+            
+            # For stocks, use industry/sector; for funds, use category
+            if quote_type == 'EQUITY':
+                category = info.get('industry', info.get('sector', 'N/A'))
+            else:
+                category = info.get('category', 'N/A')
+            
             # Extract relevant information - expense ratio is already in percentage form
             expense_ratio = info.get('expenseRatio', info.get('annualReportExpenseRatio', 0)) or 0
             
             details[ticker] = {
                 'yield': info.get('yield', info.get('dividendYield', 0)) or 0,
                 'expense_ratio': expense_ratio,
-                'category': info.get('category', 'N/A'),
+                'category': category,
                 'name': info.get('longName', info.get('shortName', ticker))
             }
             
