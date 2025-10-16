@@ -885,14 +885,23 @@ if st.session_state.analyzed:
             
             current_table_data = {
                 'Ticker': [h['ticker'] for h in current_details],
-                'Dollar Value': [f"${h['dollar_value']:,.0f}" for h in current_details],
-                'Yield': [f"{h['yield']:.2%}" for h in current_details],
-                'Expense Ratio': [f"{h['expense_ratio']:.2%}" for h in current_details],
+                'Dollar Value': [h['dollar_value'] for h in current_details],
+                'Yield': [h['yield'] for h in current_details],
+                'Expense Ratio': [h['expense_ratio'] for h in current_details],
                 'Category/Industry': [h['category'] for h in current_details]
             }
             
             df_current_details = pd.DataFrame(current_table_data)
-            st.dataframe(df_current_details, hide_index=True, use_container_width=True)
+            st.dataframe(
+                df_current_details, 
+                hide_index=True, 
+                use_container_width=True,
+                column_config={
+                    'Dollar Value': st.column_config.NumberColumn('Dollar Value', format="$%,.0f"),
+                    'Yield': st.column_config.NumberColumn('Yield', format="%.2f%%"),
+                    'Expense Ratio': st.column_config.NumberColumn('Expense Ratio', format="%.2f%%")
+                }
+            )
         
         with col2:
             st.markdown(f"#### {st.session_state.model_name} Portfolio Holdings")
@@ -900,14 +909,23 @@ if st.session_state.analyzed:
             
             model_table_data = {
                 'Ticker': [h['ticker'] for h in model_details],
-                'Dollar Value': [f"${h['dollar_value']:,.0f}" for h in model_details],
-                'Yield': [f"{h['yield']:.2%}" for h in model_details],
-                'Expense Ratio': [f"{h['expense_ratio']:.2%}" for h in model_details],
+                'Dollar Value': [h['dollar_value'] for h in model_details],
+                'Yield': [h['yield'] for h in model_details],
+                'Expense Ratio': [h['expense_ratio'] for h in model_details],
                 'Category/Industry': [h['category'] for h in model_details]
             }
             
             df_model_details = pd.DataFrame(model_table_data)
-            st.dataframe(df_model_details, hide_index=True, use_container_width=True)
+            st.dataframe(
+                df_model_details, 
+                hide_index=True, 
+                use_container_width=True,
+                column_config={
+                    'Dollar Value': st.column_config.NumberColumn('Dollar Value', format="$%,.0f"),
+                    'Yield': st.column_config.NumberColumn('Yield', format="%.2f%%"),
+                    'Expense Ratio': st.column_config.NumberColumn('Expense Ratio', format="%.2f%%")
+                }
+            )
 
     st.markdown("""
         <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">

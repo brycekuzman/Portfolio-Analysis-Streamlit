@@ -146,7 +146,7 @@ class Portfolio:
                 'name': details[ticker]['name'],
                 'dollar_value': self.portfolio_dollars[ticker],
                 'weight': self.portfolio_weights[ticker],
-                'yield': details[ticker]['yield'],
+                'yield': details[ticker]['yield'] / 100 if details[ticker]['yield'] > 1 else details[ticker]['yield'],  # Fix yield if already in percentage form
                 'expense_ratio': self.expense_ratios[ticker],  # Use pre-fetched expense ratios
                 'category': details[ticker]['category']
             })
