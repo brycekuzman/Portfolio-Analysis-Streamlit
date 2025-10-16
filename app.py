@@ -897,7 +897,7 @@ if st.session_state.analyzed:
                 hide_index=True, 
                 use_container_width=True,
                 column_config={
-                    'Dollar Value': st.column_config.NumberColumn('Dollar Value', format="$%,.0f"),
+                    'Dollar Value': st.column_config.NumberColumn('Dollar Value', format="$%.0f"),
                     'Yield': st.column_config.NumberColumn('Yield', format="%.2f%%"),
                     'Expense Ratio': st.column_config.NumberColumn('Expense Ratio', format="%.2f%%")
                 }
@@ -910,8 +910,8 @@ if st.session_state.analyzed:
             model_table_data = {
                 'Ticker': [h['ticker'] for h in model_details],
                 'Dollar Value': [h['dollar_value'] for h in model_details],
-                'Yield': [h['yield'] for h in model_details],
-                'Expense Ratio': [h['expense_ratio'] for h in model_details],
+                'Yield': [h['yield'] * 100 for h in model_details],  # Convert to percentage
+                'Expense Ratio': [h['expense_ratio'] * 100 for h in model_details],  # Convert to percentage
                 'Category/Industry': [h['category'] for h in model_details]
             }
             
@@ -921,7 +921,7 @@ if st.session_state.analyzed:
                 hide_index=True, 
                 use_container_width=True,
                 column_config={
-                    'Dollar Value': st.column_config.NumberColumn('Dollar Value', format="$%,.0f"),
+                    'Dollar Value': st.column_config.NumberColumn('Dollar Value', format="$%.0f"),
                     'Yield': st.column_config.NumberColumn('Yield', format="%.2f%%"),
                     'Expense Ratio': st.column_config.NumberColumn('Expense Ratio', format="%.2f%%")
                 }
