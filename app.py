@@ -886,8 +886,8 @@ if st.session_state.analyzed:
             current_table_data = {
                 'Ticker': [h['ticker'] for h in current_details],
                 'Dollar Value': [h['dollar_value'] for h in current_details],
-                'Yield': [h['yield'] for h in current_details],
-                'Expense Ratio': [h['expense_ratio'] for h in current_details],
+                'Yield': [h['yield'] * 100 for h in current_details],  # Convert to percentage
+                'Expense Ratio': [h['expense_ratio'] * 100 for h in current_details],  # Convert to percentage
                 'Category/Industry': [h['category'] for h in current_details]
             }
             
