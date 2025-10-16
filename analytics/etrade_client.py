@@ -140,7 +140,18 @@ class ETradeClient:
             response = self.session.get(url, params=params)
             response.raise_for_status()
             data = response.json()
+            
+            # Validate response structure
+            if not data or 'PortfolioResponse' not in data:
+                print(f"Warning: Unexpected response structure for account {account_id_key}")
+                return {'PortfolioResponse': {'AccountPortfolio': []}}
+            
             return data
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 401:
+                print(f"Authentication error for account {account_id_key}. Token may have expired.")
+            print(f"HTTP Error getting portfolio for account {account_id_key}: {e}")
+            raise
         except Exception as e:
             print(f"Error getting portfolio for account {account_id_key}: {e}")
             raise
@@ -167,10 +178,22 @@ class ETradeClient:
     @staticmethod
     def _extract_money_value(money_field):
         if isinstance(money_field, dict):
+            # Try to get value from different possible keys
             value = money_field.get('value')
+            if value is None:
+                value = money_field.get('amount')
+            if value is None:
+                value = money_field.get('total')
             return float(value) if value is not None else 0.0
+        elif isinstance(money_field, (int, float)):
+            return float(money_field)
+        elif isinstance(money_field, str):
+            try:
+                return float(money_field.replace(',', '').replace('$', ''))
+            except:
+                return 0.0
         else:
-            return float(money_field) if money_field else 0.0
+            return 0.0
 
     def get_holdings_summary(self, account_id_keys):
         holdings_summary = []

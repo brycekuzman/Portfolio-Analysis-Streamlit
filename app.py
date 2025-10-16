@@ -407,6 +407,121 @@ with col_settings2:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
+# E*TRADE Account Integration Section
+st.markdown("""
+    <h3 style="font-size: 1.3rem; font-weight: 500; color: #2a2a2a; margin-top: 1.5rem; margin-bottom: 1rem;">
+        🔗 Import from E*TRADE
+    </h3>
+""", unsafe_allow_html=True)
+
+# Initialize session state for E*TRADE
+if 'etrade_accounts' not in st.session_state:
+    st.session_state.etrade_accounts = []
+if 'etrade_authenticated' not in st.session_state:
+    st.session_state.etrade_authenticated = False
+
+import os
+from analytics.etrade_client import ETradeClient
+
+# E*TRADE Authentication
+consumer_key = os.getenv("ETRADE_CONSUMER_KEY")
+consumer_secret = os.getenv("ETRADE_CONSUMER_SECRET")
+oauth_token = os.getenv("ETRADE_OAUTH_TOKEN")
+oauth_token_secret = os.getenv("ETRADE_OAUTH_TOKEN_SECRET")
+use_sandbox = os.getenv("ETRADE_SANDBOX", "true").lower() == "true"
+
+if consumer_key and consumer_secret:
+    try:
+        etrade_client = ETradeClient(consumer_key, consumer_secret, sandbox=use_sandbox)
+        
+        # If we have saved tokens, use them
+        if oauth_token and oauth_token_secret:
+            etrade_client.set_access_token(oauth_token, oauth_token_secret)
+            st.session_state.etrade_authenticated = True
+        
+        # Fetch accounts if authenticated
+        if st.session_state.etrade_authenticated and not st.session_state.etrade_accounts:
+            try:
+                accounts_data = etrade_client.list_accounts()
+                if 'AccountListResponse' in accounts_data:
+                    accounts = accounts_data['AccountListResponse'].get('Accounts', {}).get('Account', [])
+                    if not isinstance(accounts, list):
+                        accounts = [accounts]
+                    
+                    st.session_state.etrade_accounts = [
+                        {
+                            'account_id': acc.get('accountId', 'Unknown'),
+                            'account_id_key': acc.get('accountIdKey', ''),
+                            'account_name': acc.get('accountName', 'Unknown'),
+                            'account_type': acc.get('accountType', 'Unknown')
+                        }
+                        for acc in accounts
+                    ]
+            except Exception as e:
+                st.error(f"Error fetching E*TRADE accounts: {str(e)}")
+        
+        # Display account selector if we have accounts
+        if st.session_state.etrade_accounts:
+            account_options = [
+                f"{acc['account_name']} ({acc['account_id']}) - {acc['account_type']}"
+                for acc in st.session_state.etrade_accounts
+            ]
+            
+            selected_accounts = st.multiselect(
+                "Select E*TRADE Account(s)",
+                options=account_options,
+                help="Select one or more accounts to import holdings"
+            )
+            
+            if st.button("📥 Import Holdings from E*TRADE", use_container_width=True):
+                if selected_accounts:
+                    with st.spinner("Importing holdings from E*TRADE..."):
+                        try:
+                            # Get selected account keys
+                            selected_indices = [account_options.index(acc) for acc in selected_accounts]
+                            selected_account_keys = [
+                                st.session_state.etrade_accounts[i]['account_id_key']
+                                for i in selected_indices
+                            ]
+                            
+                            # Fetch holdings
+                            holdings = etrade_client.get_holdings_summary(selected_account_keys)
+                            
+                            # Clear current portfolio
+                            st.session_state.portfolio = {}
+                            st.session_state.asset_class_overrides = {}
+                            
+                            # Aggregate holdings by symbol
+                            symbol_values = {}
+                            for holding in holdings:
+                                symbol = holding['symbol']
+                                market_value = round(holding['market_value'])  # Round to nearest whole number
+                                
+                                if symbol in symbol_values:
+                                    symbol_values[symbol] += market_value
+                                else:
+                                    symbol_values[symbol] = market_value
+                            
+                            # Update portfolio
+                            st.session_state.portfolio = symbol_values
+                            
+                            st.success(f"Successfully imported {len(symbol_values)} holdings from {len(selected_accounts)} account(s)!")
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Error importing holdings: {str(e)}")
+                else:
+                    st.warning("Please select at least one account to import holdings.")
+        elif st.session_state.etrade_authenticated:
+            st.info("No E*TRADE accounts found.")
+        else:
+            st.info("E*TRADE authentication required. Please configure your OAuth tokens in Secrets.")
+    except Exception as e:
+        st.error(f"Error initializing E*TRADE client: {str(e)}")
+else:
+    st.info("E*TRADE API credentials not found. Add ETRADE_CONSUMER_KEY and ETRADE_CONSUMER_SECRET to Secrets to enable account import.")
+
+st.markdown("<br>", unsafe_allow_html=True)
+
 # Holdings Section
 st.markdown("""
     <h3 style="font-size: 1.3rem; font-weight: 500; color: #2a2a2a; margin-top: 1.5rem; margin-bottom: 1rem;">
