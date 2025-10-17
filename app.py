@@ -428,6 +428,10 @@ if 'etrade_auth_url' not in st.session_state:
     st.session_state.etrade_auth_url = None
 if 'etrade_awaiting_verifier' not in st.session_state:
     st.session_state.etrade_awaiting_verifier = False
+if 'etrade_request_token' not in st.session_state:
+    st.session_state.etrade_request_token = None
+if 'etrade_request_token_secret' not in st.session_state:
+    st.session_state.etrade_request_token_secret = None
 
 # E*TRADE Authentication
 consumer_key = os.getenv("ETRADE_CONSUMER_KEY")
@@ -439,6 +443,11 @@ use_sandbox = os.getenv("ETRADE_SANDBOX", "true").lower() == "true"
 if consumer_key and consumer_secret:
     try:
         etrade_client = ETradeClient(consumer_key, consumer_secret, sandbox=use_sandbox)
+        
+        # Restore request token if we're in the middle of auth flow
+        if st.session_state.etrade_request_token and st.session_state.etrade_request_token_secret:
+            etrade_client.oauth_token = st.session_state.etrade_request_token
+            etrade_client.oauth_token_secret = st.session_state.etrade_request_token_secret
         
         # If we have saved tokens, try to use them
         if oauth_token and oauth_token_secret and not st.session_state.etrade_awaiting_verifier:
@@ -482,7 +491,10 @@ if consumer_key and consumer_secret:
                 if st.button("🔄 Start Authentication", use_container_width=True):
                     try:
                         # Get request token
-                        etrade_client.get_request_token()
+                        request_token, request_token_secret = etrade_client.get_request_token()
+                        # Store in session state
+                        st.session_state.etrade_request_token = request_token
+                        st.session_state.etrade_request_token_secret = request_token_secret
                         # Get authorization URL
                         auth_url = etrade_client.get_authorization_url()
                         st.session_state.etrade_auth_url = auth_url
@@ -501,7 +513,7 @@ if consumer_key and consumer_secret:
                 
                 if st.button("✅ Complete Authentication", disabled=not verifier_code, use_container_width=True):
                     try:
-                        # Exchange verifier for access token
+                        # Exchange verifier for access token (using stored request token)
                         new_token, new_token_secret = etrade_client.get_access_token(verifier_code)
                         
                         st.success(f"✅ Authentication successful! Please update your Secrets:")
@@ -511,6 +523,8 @@ if consumer_key and consumer_secret:
                         # Reset auth flow
                         st.session_state.etrade_auth_url = None
                         st.session_state.etrade_awaiting_verifier = False
+                        st.session_state.etrade_request_token = None
+                        st.session_state.etrade_request_token_secret = None
                     except Exception as e:
                         st.error(f"Error completing authentication: {str(e)}")
         
