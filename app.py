@@ -518,7 +518,14 @@ if consumer_key and consumer_secret:
                         
                         st.success(f"✅ Authentication successful! Please update your Secrets:")
                         st.code(f"ETRADE_OAUTH_TOKEN: {new_token}\nETRADE_OAUTH_TOKEN_SECRET: {new_token_secret}")
-                        st.info("💡 After updating Secrets, refresh the page to use the new tokens.")
+                        
+                        st.warning("📝 **Next Steps:**")
+                        st.markdown("1. Copy the tokens above")
+                        st.markdown("2. Open the Secrets tool (🔒 in the left sidebar)")
+                        st.markdown("3. Update `ETRADE_OAUTH_TOKEN` and `ETRADE_OAUTH_TOKEN_SECRET`")
+                        st.markdown("4. **Stop and restart the app** using the Stop/Run buttons at the top")
+                        
+                        st.info("⚠️ The app must be restarted to load the new tokens from Secrets.")
                         
                         # Reset auth flow
                         st.session_state.etrade_auth_url = None
