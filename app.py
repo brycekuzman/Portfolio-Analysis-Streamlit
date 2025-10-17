@@ -423,6 +423,12 @@ if 'etrade_authenticated' not in st.session_state:
 import os
 from analytics.etrade_client import ETradeClient
 
+# Initialize session state for E*TRADE auth flow
+if 'etrade_auth_url' not in st.session_state:
+    st.session_state.etrade_auth_url = None
+if 'etrade_awaiting_verifier' not in st.session_state:
+    st.session_state.etrade_awaiting_verifier = False
+
 # E*TRADE Authentication
 consumer_key = os.getenv("ETRADE_CONSUMER_KEY")
 consumer_secret = os.getenv("ETRADE_CONSUMER_SECRET")
@@ -434,8 +440,8 @@ if consumer_key and consumer_secret:
     try:
         etrade_client = ETradeClient(consumer_key, consumer_secret, sandbox=use_sandbox)
         
-        # If we have saved tokens, use them
-        if oauth_token and oauth_token_secret:
+        # If we have saved tokens, try to use them
+        if oauth_token and oauth_token_secret and not st.session_state.etrade_awaiting_verifier:
             etrade_client.set_access_token(oauth_token, oauth_token_secret)
             st.session_state.etrade_authenticated = True
         
@@ -458,10 +464,58 @@ if consumer_key and consumer_secret:
                         for acc in accounts
                     ]
             except Exception as e:
-                st.error(f"Error fetching E*TRADE accounts: {str(e)}")
+                error_msg = str(e)
+                if "401" in error_msg:
+                    st.warning("⚠️ E*TRADE session expired. Please re-authenticate below.")
+                    st.session_state.etrade_authenticated = False
+                    st.session_state.etrade_accounts = []
+                else:
+                    st.error(f"Error fetching E*TRADE accounts: {error_msg}")
+        
+        # Re-authentication flow
+        if not st.session_state.etrade_authenticated or not st.session_state.etrade_accounts:
+            st.info("🔑 E*TRADE authentication required or expired")
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                if st.button("🔄 Start Authentication", use_container_width=True):
+                    try:
+                        # Get request token
+                        etrade_client.get_request_token()
+                        # Get authorization URL
+                        auth_url = etrade_client.get_authorization_url()
+                        st.session_state.etrade_auth_url = auth_url
+                        st.session_state.etrade_awaiting_verifier = True
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Error starting authentication: {str(e)}")
+            
+            # Show authorization URL and verifier input if we're in auth flow
+            if st.session_state.etrade_awaiting_verifier and st.session_state.etrade_auth_url:
+                st.markdown("**Step 1:** Click the link below to authorize:")
+                st.markdown(f"[Open E*TRADE Authorization]({st.session_state.etrade_auth_url})")
+                
+                st.markdown("**Step 2:** After authorizing, enter the verification code:")
+                verifier_code = st.text_input("Verification Code", key="etrade_verifier")
+                
+                if st.button("✅ Complete Authentication", disabled=not verifier_code, use_container_width=True):
+                    try:
+                        # Exchange verifier for access token
+                        new_token, new_token_secret = etrade_client.get_access_token(verifier_code)
+                        
+                        st.success(f"✅ Authentication successful! Please update your Secrets:")
+                        st.code(f"ETRADE_OAUTH_TOKEN: {new_token}\nETRADE_OAUTH_TOKEN_SECRET: {new_token_secret}")
+                        st.info("💡 After updating Secrets, refresh the page to use the new tokens.")
+                        
+                        # Reset auth flow
+                        st.session_state.etrade_auth_url = None
+                        st.session_state.etrade_awaiting_verifier = False
+                    except Exception as e:
+                        st.error(f"Error completing authentication: {str(e)}")
         
         # Display account selector if we have accounts
-        if st.session_state.etrade_accounts:
+        elif st.session_state.etrade_accounts:
             account_options = [
                 f"{acc['account_name']} ({acc['account_id']}) - {acc['account_type']}"
                 for acc in st.session_state.etrade_accounts
@@ -511,10 +565,17 @@ if consumer_key and consumer_secret:
                             st.error(f"Error importing holdings: {str(e)}")
                 else:
                     st.warning("Please select at least one account to import holdings.")
-        elif st.session_state.etrade_authenticated:
-            st.info("No E*TRADE accounts found.")
-        else:
-            st.info("E*TRADE authentication required. Please configure your OAuth tokens in Secrets.")
+            
+            # Add token renewal option
+            st.markdown("---")
+            if st.button("🔄 Try Token Renewal", use_container_width=True, help="Attempt to renew tokens without full re-authentication"):
+                try:
+                    if etrade_client.renew_access_token():
+                        st.success("Token renewed successfully! Refresh the page to continue.")
+                    else:
+                        st.error("Token renewal failed. Please use full re-authentication above.")
+                except Exception as e:
+                    st.error(f"Token renewal error: {str(e)}")
     except Exception as e:
         st.error(f"Error initializing E*TRADE client: {str(e)}")
 else:
