@@ -745,58 +745,91 @@ if analyze_clicked:
             error_msg += f"Please correct or remove these invalid tickers: {', '.join(invalid_tickers)}"
         st.error(error_msg)
     else:
-        with st.spinner("Analyzing your portfolio..."):
-            try:
-                # Create current portfolio with asset class overrides
-                current_portfolio = Portfolio(
-                    st.session_state.portfolio, 
-                    "Current", 
-                    advisory_fee,
-                    st.session_state.asset_class_overrides
+        progress_bar = st.progress(0, text="Initializing analysis...")
+        try:
+            # Step 1: Create portfolios (20%)
+            progress_bar.progress(10, text="Creating portfolio objects...")
+            
+            from concurrent.futures import ThreadPoolExecutor
+            from datetime import datetime, timedelta
+            
+            # Create current portfolio with asset class overrides
+            current_portfolio = Portfolio(
+                st.session_state.portfolio, 
+                "Current", 
+                advisory_fee,
+                st.session_state.asset_class_overrides
+            )
+            
+            progress_bar.progress(20, text="Finding best matching model...")
+
+            # Find best matching model
+            best_match, similarity = find_best_matching_model(current_portfolio.asset_class_allocation)
+            model_name, model_allocations = best_match
+
+            # Create model portfolio
+            model_portfolio_dollars = {ticker: total_value * weight for ticker, weight in model_allocations.items()}
+            model_portfolio = Portfolio(model_portfolio_dollars, model_name, model_fee)
+            
+            progress_bar.progress(40, text="Analyzing historical performance...")
+
+            # Step 2: Historical analysis - 10 years from today (40%)
+            end_date = datetime.today().strftime('%Y-%m-%d')
+            start_date = (datetime.today() - timedelta(days=365*10)).strftime('%Y-%m-%d')
+            
+            # Run historical analysis in parallel
+            with ThreadPoolExecutor(max_workers=2) as executor:
+                current_future = executor.submit(
+                    current_portfolio.analyze_historical_performance, start_date, end_date
                 )
-
-                # Find best matching model
-                best_match, similarity = find_best_matching_model(current_portfolio.asset_class_allocation)
-                model_name, model_allocations = best_match
-
-                # Create model portfolio
-                model_portfolio_dollars = {ticker: total_value * weight for ticker, weight in model_allocations.items()}
-                model_portfolio = Portfolio(model_portfolio_dollars, model_name, model_fee)
-
-            # Historical analysis - 10 years from today
-                from datetime import datetime, timedelta
-                end_date = datetime.today().strftime('%Y-%m-%d')
-                start_date = (datetime.today() - timedelta(days=365*10)).strftime('%Y-%m-%d')
-                current_results = current_portfolio.analyze_historical_performance(start_date, end_date)
-                model_results = model_portfolio.analyze_historical_performance(current_results['actual_start_date'], end_date)
-
-                # Future projections
-                current_projections = current_portfolio.project_future_returns(10)
-                model_projections = model_portfolio.project_future_returns(10)
+                # Wait for current to get actual_start_date
+                current_results = current_future.result()
                 
-                # Future projections with fees
-                current_projections_with_fees = current_portfolio.project_future_with_fees(10)
-                model_projections_with_fees = model_portfolio.project_future_with_fees(10)
+                # Now analyze model with same start date
+                model_future = executor.submit(
+                    model_portfolio.analyze_historical_performance, 
+                    current_results['actual_start_date'], 
+                    end_date
+                )
+                model_results = model_future.result()
+            
+            progress_bar.progress(70, text="Projecting future returns...")
 
-                # Store in session state
-                st.session_state.current_portfolio = current_portfolio
-                st.session_state.model_portfolio = model_portfolio
-                st.session_state.model_name = model_name
-                st.session_state.similarity = similarity
-                st.session_state.current_results = current_results
-                st.session_state.model_results = model_results
-                st.session_state.current_projections = current_projections
-                st.session_state.model_projections = model_projections
-                st.session_state.current_projections_with_fees = current_projections_with_fees
-                st.session_state.model_projections_with_fees = model_projections_with_fees
-                st.session_state.analyzed = True
+            # Step 3: Future projections (70%)
+            with ThreadPoolExecutor(max_workers=4) as executor:
+                current_proj_future = executor.submit(current_portfolio.project_future_returns, 10)
+                model_proj_future = executor.submit(model_portfolio.project_future_returns, 10)
+                current_proj_fees_future = executor.submit(current_portfolio.project_future_with_fees, 10)
+                model_proj_fees_future = executor.submit(model_portfolio.project_future_with_fees, 10)
+                
+                current_projections = current_proj_future.result()
+                model_projections = model_proj_future.result()
+                current_projections_with_fees = current_proj_fees_future.result()
+                model_projections_with_fees = model_proj_fees_future.result()
+            
+            progress_bar.progress(90, text="Finalizing results...")
 
-                st.success(f"Analysis complete! Best match: **{model_name}** Portfolio ({similarity:.1%} similarity)")
-                st.rerun()
+                # Step 4: Store in session state (100%)
+            st.session_state.current_portfolio = current_portfolio
+            st.session_state.model_portfolio = model_portfolio
+            st.session_state.model_name = model_name
+            st.session_state.similarity = similarity
+            st.session_state.current_results = current_results
+            st.session_state.model_results = model_results
+            st.session_state.current_projections = current_projections
+            st.session_state.model_projections = model_projections
+            st.session_state.current_projections_with_fees = current_projections_with_fees
+            st.session_state.model_projections_with_fees = model_projections_with_fees
+            st.session_state.analyzed = True
 
-            except Exception as e:
-                st.error(f"Error during analysis: {str(e)}")
-                st.session_state.analyzed = False
+            progress_bar.progress(100, text="Complete!")
+            st.success(f"Analysis complete! Best match: **{model_name}** Portfolio ({similarity:.1%} similarity)")
+            st.rerun()
+
+        except Exception as e:
+            progress_bar.empty()
+            st.error(f"Error during analysis: {str(e)}")
+            st.session_state.analyzed = False
 
 # Results Section
 if st.session_state.analyzed:

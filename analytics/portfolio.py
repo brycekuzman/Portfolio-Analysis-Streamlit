@@ -12,11 +12,21 @@ class Portfolio:
         self.advisory_fee = advisory_fee
         self.total_value = sum(portfolio_dollars.values())
         
-        # Calculate weights and get data
-        self.current_prices = get_current_prices(list(portfolio_dollars.keys()))
+        # Calculate weights and get data - fetch in parallel
+        tickers = list(portfolio_dollars.keys())
+        
+        # Parallel data fetching
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            price_future = executor.submit(get_current_prices, tickers)
+            expense_future = executor.submit(get_expense_ratios, tickers)
+            classification_future = executor.submit(get_investment_classifications, tickers, asset_class_overrides)
+            
+            self.current_prices = price_future.result()
+            self.expense_ratios = expense_future.result()
+            self.classifications = classification_future.result()
+        
         self.portfolio_weights = self._calculate_weights()
-        self.expense_ratios = get_expense_ratios(portfolio_dollars.keys())
-        self.classifications = get_investment_classifications(portfolio_dollars.keys(), asset_class_overrides)
         self.weighted_avg_er = self._calculate_weighted_avg_er()
         self.asset_class_allocation = self._calculate_asset_class_allocation()
     
@@ -42,6 +52,13 @@ class Portfolio:
     
     def analyze_historical_performance(self, start_date, end_date):
         """Analyze historical portfolio performance."""
+        # Cache key based on portfolio composition and date range
+        cache_key = f"{self.name}_{start_date}_{end_date}_{hash(frozenset(self.portfolio_weights.items()))}"
+        
+        # Check if we have cached results
+        if hasattr(self, '_performance_cache') and cache_key in self._performance_cache:
+            return self._performance_cache[cache_key]
+        
         # Load historical data
         prices = get_price_data(list(self.portfolio_dollars.keys()), start_date, end_date)
         
@@ -60,7 +77,7 @@ class Portfolio:
         # Individual asset returns
         individual_returns = calculate_individual_returns(prices)
         
-        return {
+        result = {
             'stats_with_fees': stats_with_fees,
             'stats_no_advisory': stats_no_advisory,
             'cumulative_with_fees': cumulative_with_fees,
@@ -69,6 +86,13 @@ class Portfolio:
             'actual_start_date': prices.index[0].strftime('%Y-%m-%d'),
             'actual_end_date': prices.index[-1].strftime('%Y-%m-%d')
         }
+        
+        # Cache the result
+        if not hasattr(self, '_performance_cache'):
+            self._performance_cache = {}
+        self._performance_cache[cache_key] = result
+        
+        return result
     
     def project_future_returns(self, years=10):
         """Project future portfolio returns."""
