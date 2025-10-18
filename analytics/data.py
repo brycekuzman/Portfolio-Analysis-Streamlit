@@ -1,7 +1,7 @@
 import yfinance as yf
 import pandas as pd
 from datetime import datetime
-from .cache import cache_with_ttl
+from .cache import cache_with_ttl, get_ticker_info_batch
 
 
 def get_available_date_range(tickers, start, end):
