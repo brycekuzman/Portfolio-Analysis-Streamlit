@@ -874,16 +874,28 @@ if st.session_state.analyzed:
     """, unsafe_allow_html=True)
 
     with st.expander("📊 View All Model Portfolios"):
+        # Get all unique tickers across all models
+        all_tickers = sorted(set(ticker for allocations in model_portfolios.values() for ticker in allocations.keys()))
+        
+        # Build table data
+        table_data = {'Portfolio': []}
+        for ticker in all_tickers:
+            table_data[ticker] = []
+        
         for name, allocations in model_portfolios.items():
-            indicator = " ⭐ (Recommended)" if name == st.session_state.model_name else ""
-            st.markdown(f"### {name}{indicator}")
-
-            cols = st.columns(len(allocations))
-            for i, (ticker, weight) in enumerate(allocations.items()):
-                with cols[i]:
-                    st.metric(ticker, f"{weight:.0%}")
-
-            st.markdown("")
+            indicator = " ⭐" if name == st.session_state.model_name else ""
+            table_data['Portfolio'].append(f"{name}{indicator}")
+            for ticker in all_tickers:
+                weight = allocations.get(ticker, 0)
+                table_data[ticker].append(f"{weight:.0%}" if weight > 0 else "-")
+        
+        df_models = pd.DataFrame(table_data)
+        st.dataframe(
+            df_models, 
+            hide_index=True, 
+            use_container_width=True,
+            height=250
+        )
 
     st.markdown("""
         <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
