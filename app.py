@@ -890,11 +890,21 @@ if st.session_state.analyzed:
                 table_data[ticker].append(f"{weight:.0%}" if weight > 0 else "-")
         
         df_models = pd.DataFrame(table_data)
+        
+        # Style the dataframe to make recommended portfolio bold
+        def highlight_recommended(row):
+            if '⭐' in str(row['Portfolio']):
+                return ['font-weight: bold'] * len(row)
+            else:
+                return [''] * len(row)
+        
+        styled_df = df_models.style.apply(highlight_recommended, axis=1)
+        
         st.dataframe(
-            df_models, 
+            styled_df, 
             hide_index=True, 
             use_container_width=True,
-            height=250
+            height=220
         )
 
     st.markdown("""
