@@ -483,12 +483,7 @@ if consumer_key and consumer_secret:
         
         # Re-authentication flow
         if not st.session_state.etrade_authenticated or not st.session_state.etrade_accounts:
-            st.info("🔑 E*TRADE authentication required or expired")
-            
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                if st.button("🔄 Start Authentication", use_container_width=True):
+            if st.button("🔄 Start Authentication", use_container_width=True):
                     try:
                         # Get request token
                         request_token, request_token_secret = etrade_client.get_request_token()
