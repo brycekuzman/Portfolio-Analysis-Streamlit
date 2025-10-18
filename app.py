@@ -545,40 +545,42 @@ if consumer_key and consumer_secret:
             
             if st.button("📥 Import Holdings from E*TRADE", use_container_width=True):
                 if selected_accounts:
-                    with st.spinner("Importing holdings from E*TRADE..."):
-                        try:
-                            # Get selected account keys
-                            selected_indices = [account_options.index(acc) for acc in selected_accounts]
-                            selected_account_keys = [
-                                st.session_state.etrade_accounts[i]['account_id_key']
-                                for i in selected_indices
-                            ]
+                    import_placeholder = st.empty()
+                    import_placeholder.info("🔄 Importing holdings from E*TRADE...")
+                    
+                    try:
+                        # Get selected account keys
+                        selected_indices = [account_options.index(acc) for acc in selected_accounts]
+                        selected_account_keys = [
+                            st.session_state.etrade_accounts[i]['account_id_key']
+                            for i in selected_indices
+                        ]
+                        
+                        # Fetch holdings
+                        holdings = etrade_client.get_holdings_summary(selected_account_keys)
+                        
+                        # Clear current portfolio
+                        st.session_state.portfolio = {}
+                        st.session_state.asset_class_overrides = {}
+                        
+                        # Aggregate holdings by symbol
+                        symbol_values = {}
+                        for holding in holdings:
+                            symbol = holding['symbol']
+                            market_value = round(holding['market_value'])  # Round to nearest whole number
                             
-                            # Fetch holdings
-                            holdings = etrade_client.get_holdings_summary(selected_account_keys)
-                            
-                            # Clear current portfolio
-                            st.session_state.portfolio = {}
-                            st.session_state.asset_class_overrides = {}
-                            
-                            # Aggregate holdings by symbol
-                            symbol_values = {}
-                            for holding in holdings:
-                                symbol = holding['symbol']
-                                market_value = round(holding['market_value'])  # Round to nearest whole number
-                                
-                                if symbol in symbol_values:
-                                    symbol_values[symbol] += market_value
-                                else:
-                                    symbol_values[symbol] = market_value
-                            
-                            # Update portfolio
-                            st.session_state.portfolio = symbol_values
-                            
-                            st.success(f"Successfully imported {len(symbol_values)} holdings from {len(selected_accounts)} account(s)!")
-                            st.rerun()
-                        except Exception as e:
-                            st.error(f"Error importing holdings: {str(e)}")
+                            if symbol in symbol_values:
+                                symbol_values[symbol] += market_value
+                            else:
+                                symbol_values[symbol] = market_value
+                        
+                        # Update portfolio
+                        st.session_state.portfolio = symbol_values
+                        
+                        import_placeholder.success(f"✅ Successfully imported {len(symbol_values)} holdings from {len(selected_accounts)} account(s)!")
+                        st.rerun()
+                    except Exception as e:
+                        import_placeholder.error(f"❌ Error importing holdings: {str(e)}")
                 else:
                     st.warning("Please select at least one account to import holdings.")
             

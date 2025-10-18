@@ -104,11 +104,15 @@ def get_current_prices(tickers):
 def get_expense_ratios(tickers):
     """Get expense ratios for ETFs, Mutual Funds, and SMAs from yfinance."""
     expense_ratios = {}
+    
+    # Batch fetch all ticker info at once
+    info_dict = get_ticker_info_batch(list(tickers))
 
     for ticker in tickers:
         try:
-            stock = yf.Ticker(ticker)
-            info = stock.info
+            info = info_dict.get(ticker, {})
+            if not info:
+                raise Exception("No info available")
 
             # Try different possible keys for expense ratio
             expense_ratio = None
@@ -134,7 +138,7 @@ def get_expense_ratios(tickers):
 
 
 @cache_with_ttl(ttl_seconds=86400)  # Cache for 24 hours
-def classify_investment(ticker):
+def classify_investment(ticker, info=None):
     """Classify investment into US Equities, International Equities, Core Fixed Income, or Alternatives."""
 
     # Common patterns for automatic classification
@@ -155,8 +159,9 @@ def classify_investment(ticker):
 
     # Try to get info from yfinance
     try:
-        stock = yf.Ticker(ticker)
-        info = stock.info
+        if info is None:
+            stock = yf.Ticker(ticker)
+            info = stock.info
 
         # Check category based on yfinance data
         category = info.get('category', '').lower()
@@ -208,13 +213,18 @@ def get_investment_classifications(tickers, overrides=None):
     """Get classifications for all investments, using overrides if provided."""
     classifications = {}
     overrides = overrides or {}
+    
+    # Batch fetch info for tickers that need classification
+    tickers_to_fetch = [t for t in tickers if t not in overrides]
+    info_dict = get_ticker_info_batch(tickers_to_fetch) if tickers_to_fetch else {}
 
     for ticker in tickers:
         # Check if user has overridden the classification
         if ticker in overrides:
             classifications[ticker] = overrides[ticker]
         else:
-            auto_classification = classify_investment(ticker)
+            info = info_dict.get(ticker)
+            auto_classification = classify_investment(ticker, info)
 
             if auto_classification:
                 classifications[ticker] = auto_classification
@@ -229,11 +239,15 @@ def get_investment_classifications(tickers, overrides=None):
 def get_investment_details(tickers):
     """Get detailed information about investments including yield, fees, and other metrics."""
     details = {}
+    
+    # Batch fetch all ticker info at once
+    info_dict = get_ticker_info_batch(list(tickers))
 
     for ticker in tickers:
         try:
-            stock = yf.Ticker(ticker)
-            info = stock.info
+            info = info_dict.get(ticker, {})
+            if not info:
+                raise Exception("No info available")
 
             # Determine if it's a stock or fund
             quote_type = info.get('quoteType', '')

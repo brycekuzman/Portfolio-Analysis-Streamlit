@@ -37,14 +37,25 @@ def clear_cache():
     _cache_timestamps.clear()
 
 def get_ticker_info_batch(tickers):
-    """Fetch ticker info for multiple tickers in a single optimized call."""
+    """Fetch ticker info for multiple tickers with parallel processing."""
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    
     info_dict = {}
     
-    for ticker in tickers:
+    def fetch_ticker_info(ticker):
         try:
             stock = yf.Ticker(ticker)
-            info_dict[ticker] = stock.info
+            return ticker, stock.info
         except Exception as e:
-            info_dict[ticker] = None
+            print(f"Error fetching {ticker}: {e}")
+            return ticker, None
+    
+    # Use ThreadPoolExecutor for parallel API calls
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        futures = {executor.submit(fetch_ticker_info, ticker): ticker for ticker in tickers}
+        
+        for future in as_completed(futures):
+            ticker, info = future.result()
+            info_dict[ticker] = info
     
     return info_dict
