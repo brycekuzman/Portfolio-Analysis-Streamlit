@@ -1,6 +1,7 @@
 import yfinance as yf
 import pandas as pd
-from .cache import cache_with_ttl, get_ticker_info_batch
+from datetime import datetime
+from .cache import cache_with_ttl
 
 
 def get_available_date_range(tickers, start, end):
@@ -104,7 +105,7 @@ def get_current_prices(tickers):
 def get_expense_ratios(tickers):
     """Get expense ratios for ETFs, Mutual Funds, and SMAs from yfinance."""
     expense_ratios = {}
-    
+
     # Batch fetch all ticker info at once
     info_dict = get_ticker_info_batch(list(tickers))
 
@@ -137,7 +138,7 @@ def get_expense_ratios(tickers):
     return expense_ratios
 
 
-@cache_with_ttl(ttl_seconds=86400)  # Cache for 24 hours
+@cache_with_ttl(ttl_seconds=3600)  # Cache for 1 hour
 def classify_investment(ticker, info=None):
     """Classify investment into US Equities, International Equities, Core Fixed Income, or Alternatives."""
 
@@ -213,7 +214,7 @@ def get_investment_classifications(tickers, overrides=None):
     """Get classifications for all investments, using overrides if provided."""
     classifications = {}
     overrides = overrides or {}
-    
+
     # Batch fetch info for tickers that need classification
     tickers_to_fetch = [t for t in tickers if t not in overrides]
     info_dict = get_ticker_info_batch(tickers_to_fetch) if tickers_to_fetch else {}
@@ -239,7 +240,7 @@ def get_investment_classifications(tickers, overrides=None):
 def get_investment_details(tickers):
     """Get detailed information about investments including yield, fees, and other metrics."""
     details = {}
-    
+
     # Batch fetch all ticker info at once
     info_dict = get_ticker_info_batch(list(tickers))
 

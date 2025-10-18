@@ -6,6 +6,9 @@ from .models import growth_rates, asset_volatility
 
 
 class Portfolio:
+    # Class-level cache for portfolio data
+    _portfolio_cache = {}
+    
     def __init__(self, portfolio_dollars, name, advisory_fee=0.0, asset_class_overrides=None):
         self.portfolio_dollars = portfolio_dollars
         self.name = name
@@ -15,16 +18,33 @@ class Portfolio:
         # Calculate weights and get data - fetch in parallel
         tickers = list(portfolio_dollars.keys())
         
-        # Parallel data fetching
-        from concurrent.futures import ThreadPoolExecutor
-        with ThreadPoolExecutor(max_workers=3) as executor:
-            price_future = executor.submit(get_current_prices, tickers)
-            expense_future = executor.submit(get_expense_ratios, tickers)
-            classification_future = executor.submit(get_investment_classifications, tickers, asset_class_overrides)
+        # Create cache key based on tickers and overrides
+        cache_key = f"{sorted(tickers)}_{asset_class_overrides}"
+        
+        # Check if we have cached data for this exact set of tickers
+        if cache_key in Portfolio._portfolio_cache:
+            cached_data = Portfolio._portfolio_cache[cache_key]
+            self.current_prices = cached_data['prices']
+            self.expense_ratios = cached_data['expense_ratios']
+            self.classifications = cached_data['classifications']
+        else:
+            # Parallel data fetching
+            from concurrent.futures import ThreadPoolExecutor
+            with ThreadPoolExecutor(max_workers=3) as executor:
+                price_future = executor.submit(get_current_prices, tickers)
+                expense_future = executor.submit(get_expense_ratios, tickers)
+                classification_future = executor.submit(get_investment_classifications, tickers, asset_class_overrides)
+                
+                self.current_prices = price_future.result()
+                self.expense_ratios = expense_future.result()
+                self.classifications = classification_future.result()
             
-            self.current_prices = price_future.result()
-            self.expense_ratios = expense_future.result()
-            self.classifications = classification_future.result()
+            # Cache the results
+            Portfolio._portfolio_cache[cache_key] = {
+                'prices': self.current_prices,
+                'expense_ratios': self.expense_ratios,
+                'classifications': self.classifications
+            }
         
         self.portfolio_weights = self._calculate_weights()
         self.weighted_avg_er = self._calculate_weighted_avg_er()

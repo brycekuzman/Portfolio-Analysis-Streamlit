@@ -8,7 +8,7 @@ import time
 _cache = {}
 _cache_timestamps = {}
 
-def cache_with_ttl(ttl_seconds=300):
+def cache_with_ttl(ttl_seconds=3600):
     """Decorator to cache function results with time-to-live."""
     def decorator(func):
         @wraps(func)
