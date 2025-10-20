@@ -271,18 +271,11 @@ def get_investment_details(tickers):
 
             # Extract relevant information - values are in decimal form (e.g., 0.02 = 2%)
             expense_ratio = info.get('expenseRatio', info.get('annualReportExpenseRatio', 0)) or 0
-            
-            # Get yield - funds use 'yield', stocks use 'dividendYield'
-            yield_value = info.get('yield', info.get('dividendYield', 0)) or 0
-            
-            # DEBUG: Print yield information for specific tickers
-            if ticker in ['META', 'GOOGL', 'PULS', 'XLV', 'EXR', 'CUBE', 'VNQ', 'BND']:
-                print(f"\n=== DEBUG YIELD: {ticker} ===")
-                print(f"quoteType: {quote_type}")
-                print(f"yield field: {info.get('yield', 'NOT FOUND')}")
-                print(f"dividendYield field: {info.get('dividendYield', 'NOT FOUND')}")
-                print(f"final yield_value: {yield_value}")
-                print(f"===")
+
+            # Get yield - use dividendYield for all investments (stocks and ETFs)
+            # dividendYield comes in percentage form (e.g., 1.75 = 1.75%), so convert to decimal
+            dividend_yield = info.get('dividendYield', 0) or 0
+            yield_value = dividend_yield / 100.0 if dividend_yield else 0
 
             details[ticker] = {
                 'yield': yield_value,
