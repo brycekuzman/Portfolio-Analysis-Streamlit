@@ -1,17 +1,17 @@
 
 # Portfolio Analysis Web Application
 
-A modern, interactive financial portfolio analysis tool built with Streamlit that helps investors compare their current portfolios against optimized model portfolios.
+A clean, modern web app that helps you analyze your investment portfolio. It compares your portfolio against 5 professionally-designed model portfolios, shows how they've performed historically, projects future growth, and breaks down how much you're paying in fees.
 
 ## Overview
 
-This application provides comprehensive portfolio analysis including:
+This application provides:
 
-- **10-Year Forward Projections**: Monte Carlo simulations showing potential growth trajectories
-- **Fee Impact Analysis**: Detailed breakdown of advisory fees and expense ratios on long-term returns
-- **Historical Performance**: Compare actual portfolio performance using market data from 2015-2025
-- **Asset Allocation Analysis**: Visual comparison of current vs recommended portfolio allocations
-- **Model Portfolio Matching**: Automatic recommendation based on your current asset allocation
+- **10-Year Forward Projections**: Estimated future growth based on historical asset class returns
+- **Fee Impact Analysis**: Compare how much you're paying in advisory fees and expense ratios
+- **Historical Performance**: See actual portfolio performance from 2015-2025
+- **Asset Allocation Comparison**: Visual breakdown of your holdings vs recommended portfolio
+- **Smart Recommendations**: Automatic model matching based on your asset allocation
 
 ## Features
 
@@ -25,9 +25,9 @@ This application provides comprehensive portfolio analysis including:
 ### Comprehensive Analysis Tools
 
 **Forward Projections**
-- 10-year growth scenarios using Monte Carlo simulations
-- Asset class-specific growth rates and volatility assumptions
-- Compare current portfolio vs optimized model portfolios
+- 10-year growth estimates based on historical growth rates
+- Asset class growth rates: US Equities 9%, International 8%, Bonds 3.5%, Alternatives 11%
+- Compare current portfolio vs recommended model portfolio
 
 **Fee Comparison**
 - Annual fee breakdown (advisory fees + expense ratios)
@@ -49,19 +49,15 @@ This application provides comprehensive portfolio analysis including:
 
 ### Model Portfolios
 
-Five pre-configured risk-based portfolios using low-cost ETFs:
+Five risk-based portfolios using low-cost ETFs:
 
-- **Conservative**: 20% US Equities, 10% International, 60% Bonds, 10% Alternatives
-- **Moderately Conservative**: 30% US Equities, 20% International, 40% Bonds, 10% Alternatives
-- **Moderate**: 40% US Equities, 25% International, 25% Bonds, 10% Alternatives
-- **Moderately Aggressive**: 50% US Equities, 30% International, 10% Bonds, 10% Alternatives
-- **Aggressive**: 60% US Equities, 35% International, 0% Bonds, 5% Alternatives
+- **Conservative**: 15% VOO, 20% VXUS, 60% BND, 5% VNQ
+- **Moderately Conservative**: 25% VOO, 25% VXUS, 40% BND, 10% VNQ
+- **Balanced**: 30% VOO, 25% VXUS, 30% BND, 15% VNQ
+- **Moderately Aggressive**: 40% VOO, 20% VXUS, 15% BND, 25% VNQ
+- **Aggressive**: 50% VOO, 15% VXUS, 0% BND, 35% VNQ
 
-All model portfolios use standard low-cost ETFs:
-- VOO (S&P 500)
-- VXUS (International Equities)
-- BND (Core Bonds)
-- VNQ (Real Estate)
+All model portfolios use a 0.25% advisory fee.
 
 ## Technology Stack
 
@@ -99,9 +95,7 @@ Or simply click the **Run** button in Replit.
 │   ├── data.py               # Data retrieval and ticker validation
 │   ├── models.py             # Model portfolio definitions
 │   ├── user_input.py         # Portfolio matching algorithms
-│   ├── reporting.py          # Visualization utilities
-│   ├── cache.py              # Caching layer for performance
-│   └── etrade_client.py      # E*TRADE API integration (optional)
+│   └── reporting.py          # Visualization utilities
 └── README.md                  # This file
 ```
 
@@ -149,11 +143,6 @@ Or simply click the **Run** button in Replit.
 ## Disclaimers
 
 This tool is for educational and informational purposes only. It is not investment advice. Past performance does not guarantee future results. Consult with a qualified financial advisor before making investment decisions.
-
-## Optional Features
-
-### E*TRADE Integration
-The application includes optional E*TRADE API integration for importing portfolio data directly from your brokerage account. See `ETRADE_SETUP.md` for configuration instructions.
 
 ## Privacy & Data
 
