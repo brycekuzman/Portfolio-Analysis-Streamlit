@@ -3,7 +3,7 @@
 
 ## Overview
 
-This is a modern, interactive financial portfolio analysis web application built with Streamlit. The application compares user portfolios against optimized model portfolios, analyzing historical performance, projecting future returns, and providing detailed fee breakdowns to help users make informed investment decisions.
+A clean, modern web app that helps you analyze your investment portfolio. It compares your portfolio against 5 professionally-designed model portfolios, shows you how they've performed historically, projects future growth, and breaks down how much you're paying in fees.
 
 ## User Preferences
 
@@ -36,12 +36,12 @@ The application follows a separation of concerns pattern with specialized module
 - Add/remove holdings with live portfolio value updates
 - Adjustable advisory fee settings
 
-**Comprehensive Analysis**
-1. **10-Year Forward Projections**: Monte Carlo simulations showing portfolio growth trajectories
-2. **Fee Comparison**: Annual and cumulative fee analysis with potential savings calculations
-3. **Historical Performance**: Actual performance comparison using market data (2015-2025)
-4. **Asset Allocation**: Interactive pie charts comparing current vs recommended portfolios
-5. **Model Portfolio Matching**: Automatic recommendation based on asset allocation similarity
+**Core Analysis Features**
+1. **10-Year Projections**: Estimated future growth for your portfolio vs the recommended model
+2. **Fee Comparison**: See exactly how much you're paying in fees and potential savings
+3. **Historical Performance**: How each portfolio actually performed from 2015 to now
+4. **Asset Allocation**: Visual comparison of your holdings vs the recommended model
+5. **Smart Recommendations**: Automatically finds which model portfolio best matches your allocation
 
 **Professional Visualizations**
 - Plotly interactive charts with hover details
@@ -50,24 +50,15 @@ The application follows a separation of concerns pattern with specialized module
 - Fee impact visualizations
 - Asset allocation breakdowns
 
-### Data Processing Architecture
+### How It Works
 
-**Portfolio Analysis Workflow**
-1. User provides portfolio holdings as dollar amounts per ticker
-2. System validates tickers and fetches current prices from Yahoo Finance
-3. Portfolio weights calculated automatically
-4. Historical price data retrieved for performance analysis
-5. Returns calculated with fee adjustments (advisory fees + expense ratios)
-6. Performance statistics computed (returns, volatility, Sharpe ratio, drawdowns)
-7. Portfolio matched against five pre-defined model portfolios using cosine similarity
-8. Comparative analysis generated between current and recommended portfolios
-
-**Ticker Validation & Classification**
-- Real-time ticker validation using yfinance API
-- Automatic investment name lookup and display
-- Intelligent asset class classification (US Equities, International Equities, Core Fixed Income, Alternatives)
-- User override capability for asset class assignments
-- Persistent classification preferences during session
+1. You enter your portfolio holdings (tickers and dollar amounts)
+2. The app pulls current prices and historical data from Yahoo Finance
+3. Calculates your portfolio weights and asset allocation
+4. Compares your allocation to 5 model portfolios and recommends the best match
+5. Shows historical performance from 2015 to now with fee deductions
+6. Projects 10-year growth based on asset class growth rates
+7. Calculates fee savings if you switched to the recommended model
 
 **Fee Calculation Strategy**
 - Advisory fees applied as daily compounding deductions: `(1 - annual_fee)^(1/252)`
@@ -75,68 +66,38 @@ The application follows a separation of concerns pattern with specialized module
 - Separate tracking of returns with and without fees for transparency
 - Annual and 10-year cumulative fee comparisons
 
-**Asset Classification System**
-The application maps individual tickers to broader asset classes to:
-- Enable portfolio-level allocation analysis
-- Support model portfolio matching based on asset class similarity
-- Calculate asset class-specific projections using configured growth rates
-- Allow manual classification overrides when automatic detection is incorrect
+**Asset Classification**
+Tickers are automatically classified into: US Equities, International Equities, Core Fixed Income, or Alternatives. This enables better portfolio matching and growth projections based on asset class characteristics.
 
-### Data Handling Patterns
+### Projections & Models
 
-**Date Range Normalization**
-The system handles data availability mismatches by finding the common date range where all tickers have historical data. This prevents analysis failures when different assets have different data availability windows.
+**10-Year Projections**
+- Based on historical average growth rates for each asset class (US Equities: 9%, International: 8%, Bonds: 3.5%, Alternatives: 11%)
+- Accounts for advisory fees and expense ratios as they compound over time
+- Shows year-by-year estimated growth assuming current allocations continue
 
-**Single vs Multi-Ticker Handling**
-The yfinance API returns different data structures for single tickers vs multiple tickers. The data layer normalizes these differences to provide consistent downstream interfaces.
+**5 Model Portfolios**
+- **Conservative**: 15% VOO, 20% VXUS, 60% BND, 5% VNQ
+- **Moderately Conservative**: 25% VOO, 25% VXUS, 40% BND, 10% VNQ
+- **Balanced**: 30% VOO, 25% VXUS, 30% BND, 15% VNQ
+- **Moderately Aggressive**: 40% VOO, 20% VXUS, 15% BND, 25% VNQ
+- **Aggressive**: 50% VOO, 15% VXUS, 0% BND, 35% VNQ
 
-**Price Data Standardization**
-Uses adjusted close prices with auto-adjustment enabled to account for splits and dividends. Falls back to 'Close' when adjusted data unavailable.
+All model portfolios use a 0.25% advisory fee.
 
-### Projection and Modeling
+### Web Interface
 
-**Future Return Projections**
-- Uses configurable growth rates per asset class (defined in `models.py`)
-- Applies Monte Carlo simulation with asset class-specific volatility
-- Projects 10-year scenarios to compare current vs model portfolios
-- Accounts for ongoing fee impacts on long-term returns
-
-**Model Portfolio Strategy**
-The application defines five risk-based model portfolios (Conservative to Aggressive) using standard ETFs:
-- VOO: US Equities (S&P 500)
-- VXUS: International Equities
-- BND: Core Fixed Income (Bonds)
-- VNQ: Alternatives (Real Estate)
-
-Model portfolios use a standardized low advisory fee (0.25%) to demonstrate fee savings potential.
-
-### Streamlit Web Interface Features
-
-**Modern Minimalist Design**
-The web interface provides a clean, professional dashboard with:
-- Custom CSS styling for white background and modern typography
-- Wide layout optimized for data visualization
-- Responsive metric cards and expandable sections
-- Intuitive navigation with sidebar summary
-
-**Interactive Components**
-1. **Portfolio Input Panel**: Dynamic ticker management with validation feedback
-2. **Fee Settings**: Adjustable advisory fee with real-time impact calculations
-3. **Asset Class Overrides**: Manual classification adjustment when needed
-4. **Navigation Sidebar**: Quick links to all analysis sections with portfolio summary
-
-**Key Visualizations**
-1. **10-Year Forward Projections**: Line chart comparing portfolio growth trajectories
-2. **Fee Comparison Charts**: Bar charts showing annual and 10-year cumulative fee differences
-3. **Historical Performance**: Interactive growth chart with performance metrics table
-4. **Asset Allocation**: Side-by-side pie charts for current vs model portfolios with consistent color coding
-
-**User Experience**
-- Real-time ticker validation with helpful error messages
-- Automatic portfolio value calculations
-- One-click analysis with comprehensive results
+**Clean, Minimalist Design**
+- Simple input form to add/remove holdings and set advisory fee
+- Professional Plotly charts with hover details
+- One-click "Analyze Portfolio" button
 - Expandable sections for detailed breakdowns
-- Professional disclaimers and educational content
+
+**Visualizations**
+- 10-Year Growth Projection (line chart)
+- Annual & 10-Year Fee Comparison (bar charts)
+- Historical Performance Chart
+- Asset Allocation Pie Charts
 
 ## External Dependencies
 
@@ -165,15 +126,8 @@ The web interface provides a clean, professional dashboard with:
 
 ### Configuration Data
 
-**Model Portfolios**
-Hard-coded model portfolio allocations and parameters in `models.py`:
-- Five risk-based portfolio templates (Conservative to Aggressive)
-- Asset class growth rate assumptions
-- Asset class volatility parameters for Monte Carlo simulations
-- Model advisory fee configuration (0.25% standard)
-
-**No Database**
-The application operates entirely in-memory with no persistent storage. Portfolio data provided per-session by users, and all historical data fetched on-demand from external APIs. Session state managed through Streamlit's built-in session management.
+**Data Storage**
+No database - everything runs in-memory. Portfolio data is entered each session, and all historical data is fetched live from Yahoo Finance via API.
 
 ## Running the Application
 
