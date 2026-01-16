@@ -1,6 +1,8 @@
 
 # Portfolio Analysis Web Application
 
+![Dashboard Overview](attached_assets/screenshots/dashboard_overview.png)
+
 A clean, modern web app that helps you analyze your investment portfolio. It compares your portfolio against 5 professionally-designed model portfolios, shows how they've performed historically, projects future growth, and breaks down how much you're paying in fees.
 
 ## Overview
@@ -12,6 +14,21 @@ This application provides:
 - **Historical Performance**: See actual portfolio performance from 2015-2025
 - **Asset Allocation Comparison**: Visual breakdown of your holdings vs recommended portfolio
 - **Smart Recommendations**: Automatic model matching based on your asset allocation
+
+## Visualizations
+
+### Forward Projections
+![Forward Projections](attached_assets/screenshots/forward_projections.png)
+
+### Fee Comparison
+![Fee Comparison](attached_assets/screenshots/fee_comparison.png)
+
+### Historical Performance
+![Historical Performance](attached_assets/screenshots/historical_performance.png)
+
+### Asset Allocation
+![Asset Allocation](attached_assets/screenshots/asset_allocation.png)
+
 
 ## Features
 
