@@ -40,10 +40,6 @@ Thumbs.db
 # UV lock file (optional - depends on team preference)
 # uv.lock
 
-# Attached assets and temporary files
-attached_assets/
-!attached_assets/screenshots/
-
 # OS files
 .DS_Store
 .DS_Store?
