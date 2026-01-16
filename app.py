@@ -25,7 +25,7 @@ st.markdown("""
 
     /* Main content area */
     .main {
-        padding: 2rem 3rem;
+        padding: 1rem 2rem;
         background-color: #ffffff;
         color: #000000;
     }
@@ -33,24 +33,24 @@ st.markdown("""
     /* Typography */
     h1 {
         font-weight: 300;
-        font-size: 2.8rem;
-        margin-bottom: 0.5rem;
+        font-size: 2.2rem;
+        margin-bottom: 0.25rem;
         color: #000000;
         letter-spacing: -0.02em;
     }
     h2 {
         font-weight: 300;
-        font-size: 1.9rem;
-        margin-top: 3rem;
-        margin-bottom: 1.5rem;
+        font-size: 1.6rem;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
         color: #1a1a1a;
         border-bottom: 1px solid #e5e5e5;
-        padding-bottom: 0.5rem;
+        padding-bottom: 0.25rem;
     }
     h3 {
         font-weight: 400;
-        font-size: 1.4rem;
-        margin-top: 2rem;
+        font-size: 1.2rem;
+        margin-top: 1rem;
         color: #2a2a2a;
     }
 
@@ -83,23 +83,23 @@ st.markdown("""
 
     /* Metrics */
     div[data-testid="stMetricValue"] {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
         color: #000000;
         font-weight: 600;
     }
     div[data-testid="stMetricLabel"] {
         color: #4a4a4a;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         font-weight: 500;
     }
     div[data-testid="stMetricDelta"] {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
 
     /* Metric cards */
     .metric-card {
         background-color: #fafafa;
-        padding: 1.8rem;
+        padding: 1.2rem;
         border-radius: 8px;
         border-left: 3px solid #000000;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -242,7 +242,15 @@ st.markdown("""
 
     /* Clean spacing */
     .element-container {
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Reduce default streamlit vertical padding */
+    .block-container {
+        padding-top: 1.5rem !important;
+        padding-bottom: 1.5rem !important;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
     }
 
     /* Remove any dark theme remnants */
@@ -350,25 +358,26 @@ with st.sidebar:
 
 # Professional Header
 st.markdown("""
-    <div style="text-align: center; padding: 2rem 0 1rem 0; border-bottom: 2px solid #4A90E2;">
-        <h1 style="font-size: 3rem; font-weight: 300; margin-bottom: 0.5rem; color: #1a1a1a;">
+    <div style="text-align: center; padding: 1rem 0 0.5rem 0; border-bottom: 2px solid #4A90E2;">
+        <h1 style="font-size: 2.2rem; font-weight: 300; margin-bottom: 0.25rem; color: #1a1a1a;">
             📊 Portfolio Analyzer
         </h1>
-        <p style="font-size: 1.2rem; color: #6a6a6a; margin-top: 0;">
+        <p style="font-size: 1rem; color: #6a6a6a; margin-top: 0;">
             Backtest your portfolio, find the best model, and optimize your fees
         </p>
     </div>
 """, unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
+# Remove the extra <br>
+# st.markdown("<br>", unsafe_allow_html=True)
 
 # Portfolio Input Section
 st.markdown("""
-    <div style="margin-top: 2rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
-        <h2 style="font-size: 1.8rem; font-weight: 400; color: #1a1a1a; margin: 0;">
+    <div style="margin-top: 1rem; padding: 0.5rem 0; border-bottom: 1px solid #e5e5e5;">
+        <h2 style="font-size: 1.6rem; font-weight: 400; color: #1a1a1a; margin: 0;">
             📝 Portfolio Input
         </h2>
-        <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
+        <p style="color: #6a6a6a; margin-top: 0.25rem; font-size: 0.9rem;">
             Enter your investment holdings and the advisory fee paid to manage these investments. The analysis will determine the best matching model portfolio and provide a detailed comparison.
         </p>
     </div>
@@ -385,7 +394,7 @@ def handle_ticker_change(old_ticker):
 
 # Settings Section
 st.markdown("""
-    <h3 style="font-size: 1.3rem; font-weight: 500; color: #2a2a2a; margin-top: 1.5rem; margin-bottom: 1rem;">
+    <h3 style="font-size: 1.2rem; font-weight: 500; color: #2a2a2a; margin-top: 1rem; margin-bottom: 0.5rem;">
         ⚙️ Advisory Fee
     </h3>
 """, unsafe_allow_html=True)
@@ -409,7 +418,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 # E*TRADE Account Integration Section
 st.markdown("""
-    <h3 style="font-size: 1.3rem; font-weight: 500; color: #2a2a2a; margin-top: 1.5rem; margin-bottom: 1rem;">
+    <h3 style="font-size: 1.2rem; font-weight: 500; color: #2a2a2a; margin-top: 1rem; margin-bottom: 0.5rem;">
         🔗 Import from E*TRADE
     </h3>
 """, unsafe_allow_html=True)
@@ -603,7 +612,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 # Holdings Section
 st.markdown("""
-    <h3 style="font-size: 1.3rem; font-weight: 500; color: #2a2a2a; margin-top: 1.5rem; margin-bottom: 1rem;">
+    <h3 style="font-size: 1.2rem; font-weight: 500; color: #2a2a2a; margin-top: 1rem; margin-bottom: 0.5rem;">
         💼 Current Holdings
     </h3>
 """, unsafe_allow_html=True)
