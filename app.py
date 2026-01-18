@@ -25,7 +25,7 @@ st.markdown("""
 
     /* Main content area */
     .main {
-        padding: 1rem 2rem;
+        padding: 0.2rem 1rem !important;
         background-color: #ffffff;
         color: #000000;
     }
@@ -33,24 +33,26 @@ st.markdown("""
     /* Typography */
     h1 {
         font-weight: 300;
-        font-size: 2.2rem;
-        margin-bottom: 0.25rem;
+        font-size: 1.5rem !important;
+        margin-top: 0 !important;
+        margin-bottom: 0.05rem !important;
         color: #000000;
         letter-spacing: -0.02em;
     }
     h2 {
         font-weight: 300;
-        font-size: 1.6rem;
-        margin-top: 1.5rem;
-        margin-bottom: 0.75rem;
+        font-size: 1.2rem !important;
+        margin-top: 0.4rem !important;
+        margin-bottom: 0.2rem !important;
         color: #1a1a1a;
         border-bottom: 1px solid #e5e5e5;
-        padding-bottom: 0.25rem;
+        padding-bottom: 0.05rem !important;
     }
     h3 {
         font-weight: 400;
-        font-size: 1.2rem;
-        margin-top: 1rem;
+        font-size: 1rem !important;
+        margin-top: 0.2rem !important;
+        margin-bottom: 0.1rem !important;
         color: #2a2a2a;
     }
 
@@ -59,11 +61,11 @@ st.markdown("""
         background-color: #4A90E2;
         color: #ffffff;
         border-radius: 6px;
-        padding: 0.6rem 2.5rem;
+        padding: 0.3rem 1.5rem !important;
         font-weight: 500;
         border: none;
         transition: all 0.2s ease;
-        font-size: 0.95rem;
+        font-size: 0.85rem !important;
         letter-spacing: 0.02em;
     }
     .stButton>button:hover {
@@ -83,26 +85,28 @@ st.markdown("""
 
     /* Metrics */
     div[data-testid="stMetricValue"] {
-        font-size: 1.4rem;
+        font-size: 1.1rem !important;
         color: #000000;
         font-weight: 600;
+        line-height: 1 !important;
     }
     div[data-testid="stMetricLabel"] {
         color: #4a4a4a;
-        font-size: 0.85rem;
+        font-size: 0.75rem !important;
         font-weight: 500;
+        margin-bottom: 0 !important;
     }
     div[data-testid="stMetricDelta"] {
-        font-size: 0.8rem;
+        font-size: 0.7rem !important;
     }
 
     /* Metric cards */
     .metric-card {
         background-color: #fafafa;
-        padding: 1.2rem;
-        border-radius: 8px;
+        padding: 0.4rem !important;
+        border-radius: 6px;
         border-left: 3px solid #000000;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
     /* Input fields */
@@ -242,15 +246,31 @@ st.markdown("""
 
     /* Clean spacing */
     .element-container {
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.15rem !important;
     }
 
     /* Reduce default streamlit vertical padding */
     .block-container {
-        padding-top: 1.5rem !important;
-        padding-bottom: 1.5rem !important;
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
+        padding-top: 0.1rem !important;
+        padding-bottom: 0.1rem !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+
+    /* Streamlit specific spacing overrides */
+    div.stVerticalBlock > div {
+        padding-top: 0 !important;
+        padding-bottom: 0.05rem !important;
+    }
+    
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 0.25rem !important;
+    }
+    
+    /* Horizontal lines */
+    hr {
+        margin-top: 0.25rem !important;
+        margin-bottom: 0.25rem !important;
     }
 
     /* Remove any dark theme remnants */
