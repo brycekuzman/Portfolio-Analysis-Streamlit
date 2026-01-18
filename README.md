@@ -27,6 +27,7 @@ This application provides:
 
 ### Asset Allocation
 ![Asset Allocation](attached_assets/screenshots/asset_allocation.png)
+![Asset Allocation](attached_assets/screenshots/asset_allocation_holdings.png)
 
 
 ## Features
