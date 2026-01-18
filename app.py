@@ -17,7 +17,18 @@ st.set_page_config(
 # Custom CSS for modern minimalist design with balanced spacing
 st.markdown("""
     <style>
-    /* Force light theme */
+    /* Hide Streamlit header and footer */
+    header {visibility: hidden;}
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    .stAppDeployButton {display:none;}
+    div[data-testid="stStatusWidget"] {display:none;}
+    
+    /* Remove top margin/padding that creates the white bar area */
+    .stApp > header {
+        display: none;
+    }
+    
     .stApp {
         background-color: #ffffff;
         color: #1a1a1a;
