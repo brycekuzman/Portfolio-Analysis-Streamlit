@@ -14,59 +14,64 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for modern minimalist design with white background
+# Custom CSS for modern minimalist design with balanced spacing
 st.markdown("""
     <style>
     /* Force light theme */
     .stApp {
         background-color: #ffffff;
-        color: #000000;
+        color: #1a1a1a;
     }
 
-    /* Main content area */
+    /* Main content area - balanced padding */
     .main {
-        padding: 0.2rem 1rem !important;
+        padding: 1rem 2rem;
         background-color: #ffffff;
-        color: #000000;
     }
 
-    /* Typography */
+    /* Block container - comfortable spacing */
+    .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 2rem !important;
+        max-width: 1200px;
+    }
+
+    /* Typography - clear hierarchy */
     h1 {
         font-weight: 300;
-        font-size: 1.5rem !important;
-        margin-top: 0 !important;
-        margin-bottom: 0.05rem !important;
-        color: #000000;
+        font-size: 2rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        color: #1a1a1a;
         letter-spacing: -0.02em;
     }
     h2 {
-        font-weight: 300;
-        font-size: 1.2rem !important;
-        margin-top: 0.4rem !important;
-        margin-bottom: 0.2rem !important;
+        font-weight: 400;
+        font-size: 1.4rem;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
         color: #1a1a1a;
-        border-bottom: 1px solid #e5e5e5;
-        padding-bottom: 0.05rem !important;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 0.5rem;
     }
     h3 {
-        font-weight: 400;
-        font-size: 1rem !important;
-        margin-top: 0.2rem !important;
-        margin-bottom: 0.1rem !important;
+        font-weight: 500;
+        font-size: 1.1rem;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
         color: #2a2a2a;
     }
 
-    /* Buttons */
+    /* Buttons - professional styling */
     .stButton>button {
         background-color: #4A90E2;
-        color: #ffffff;
+        color: #ffffff !important;
         border-radius: 6px;
-        padding: 0.3rem 1.5rem !important;
+        padding: 0.6rem 2rem;
         font-weight: 500;
         border: none;
         transition: all 0.2s ease;
-        font-size: 0.85rem !important;
-        letter-spacing: 0.02em;
+        font-size: 0.95rem;
     }
     .stButton>button:hover {
         background-color: #357ABD;
@@ -74,276 +79,124 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
     }
 
-    /* Primary button styling */
-    .stButton>button[kind="primary"] {
-        background-color: #4A90E2;
-        color: #ffffff;
-    }
-    .stButton>button[kind="primary"]:hover {
-        background-color: #357ABD;
-    }
-
-    /* Metrics */
+    /* Metrics - readable sizing */
     div[data-testid="stMetricValue"] {
-        font-size: 1.1rem !important;
-        color: #000000;
+        font-size: 1.5rem;
+        color: #1a1a1a !important;
         font-weight: 600;
-        line-height: 1 !important;
     }
     div[data-testid="stMetricLabel"] {
-        color: #4a4a4a;
-        font-size: 0.75rem !important;
+        color: #666666 !important;
+        font-size: 0.875rem;
         font-weight: 500;
-        margin-bottom: 0 !important;
-    }
-    div[data-testid="stMetricDelta"] {
-        font-size: 0.7rem !important;
     }
 
-    /* Metric cards */
-    .metric-card {
-        background-color: #fafafa;
-        padding: 0.4rem !important;
-        border-radius: 6px;
-        border-left: 3px solid #000000;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-
-    /* Input fields */
-    .stTextInput>div>div>input {
-        background-color: #ffffff;
-        color: #000000;
-        border: 1px solid #d0d0d0;
-        border-radius: 6px;
-        padding: 0.75rem 1rem;
-        font-size: 0.95rem;
-        transition: border-color 0.2s ease;
-    }
-    .stTextInput>div>div>input:focus {
-        border-color: #4A90E2;
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
-    }
+    /* Input fields - clean styling */
+    .stTextInput>div>div>input,
     .stNumberInput>div>div>input {
         background-color: #ffffff !important;
-        color: #000000 !important;
-        border: 1px solid #d0d0d0 !important;
+        color: #1a1a1a !important;
+        border: 1px solid #d0d0d0;
         border-radius: 6px;
-        padding: 0.75rem 1rem;
+        padding: 0.6rem 0.75rem;
         font-size: 0.95rem;
-        transition: border-color 0.2s ease;
     }
+    .stTextInput>div>div>input:focus,
     .stNumberInput>div>div>input:focus {
-        border-color: #4A90E2 !important;
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+        border-color: #4A90E2;
+        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.15);
     }
 
-    /* Force number input controls to be visible */
+    /* Number input controls */
     .stNumberInput button {
-        color: #000000 !important;
-        background-color: #f0f0f0 !important;
+        color: #1a1a1a !important;
+        background-color: #f5f5f5 !important;
     }
 
-    /* Force number input text area to be white */
-    .stNumberInput input[type="number"] {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-    }
-
-    /* Target all input elements within number input containers */
-    div[data-baseweb="input"] input {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-    }
-
-    /* Fix selectbox/dropdown background */
-    div[data-baseweb="select"] {
-        background-color: #ffffff !important;
-    }
-    div[data-baseweb="select"] > div {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-    }
+    /* Selectbox/dropdown */
+    div[data-baseweb="select"],
+    div[data-baseweb="select"] > div,
     .stSelectbox > div > div {
         background-color: #ffffff !important;
-        color: #000000 !important;
+        color: #1a1a1a !important;
     }
 
-    /* Dataframes */
-    .stDataFrame {
+    /* Tables and dataframes */
+    .stDataFrame, div[data-testid="stDataFrame"] {
         background-color: #ffffff !important;
-        color: #000000 !important;
     }
-    .stDataFrame table {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-    }
-    .stDataFrame th {
-        background-color: #f0f0f0 !important;
-        color: #000000 !important;
+    .stDataFrame th, div[data-testid="stDataFrame"] thead th {
+        background-color: #f5f5f5 !important;
+        color: #1a1a1a !important;
         font-weight: 600;
     }
-    .stDataFrame td {
+    .stDataFrame td, div[data-testid="stDataFrame"] tbody td {
         background-color: #ffffff !important;
-        color: #000000 !important;
+        color: #1a1a1a !important;
     }
 
-    /* Additional dataframe selectors */
-    div[data-testid="stDataFrame"] {
-        background-color: #ffffff !important;
+    /* Sidebar - clean styling */
+    div[data-testid="stSidebar"] {
+        background-color: #fafafa;
+        padding: 1rem 0.5rem;
     }
-    div[data-testid="stDataFrame"] table {
-        background-color: #ffffff !important;
-    }
-    div[data-testid="stDataFrame"] tbody tr {
-        background-color: #ffffff !important;
-    }
-    div[data-testid="stDataFrame"] tbody td {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-    }
-    div[data-testid="stDataFrame"] thead th {
-        background-color: #f0f0f0 !important;
-        color: #000000 !important;
+    div[data-testid="stSidebar"] h3 {
+        font-size: 1rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
     }
 
-    /* Force all table elements to have white background and black text */
-    table, table * {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-    }
-    thead, thead * {
-        background-color: #f0f0f0 !important;
-        color: #000000 !important;
-    }
-
-    /* Target styled dataframes specifically */
-    [data-testid="stDataFrame"] div[class*="glideDataEditor"] {
-        background-color: #ffffff !important;
-    }
-    [data-testid="stDataFrame"] div[class*="glideDataEditor"] * {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-    }
-
-    /* Sidebar (if used) */
-    .css-1d391kg {
-        background-color: #f8f9fa;
-        color: #000000;
-    }
-
-    /* Expander */
+    /* Expander - subtle styling */
     .streamlit-expanderHeader {
-        background-color: #f8f9fa;
+        background-color: #fafafa;
         border: 1px solid #e5e5e5;
-        color: #000000;
+        border-radius: 6px;
     }
     .streamlit-expanderContent {
         background-color: #ffffff;
-        color: #000000;
+        border: 1px solid #e5e5e5;
+        border-top: none;
+        border-radius: 0 0 6px 6px;
     }
 
-    /* Clean spacing */
+    /* Element spacing - balanced */
     .element-container {
-        margin-bottom: 0.15rem !important;
+        margin-bottom: 0.5rem;
     }
 
-    /* Reduce default streamlit vertical padding */
-    .block-container {
-        padding-top: 0.1rem !important;
-        padding-bottom: 0.1rem !important;
-        padding-left: 0.5rem !important;
-        padding-right: 0.5rem !important;
-    }
-
-    /* Streamlit specific spacing overrides */
-    div.stVerticalBlock > div {
-        padding-top: 0 !important;
-        padding-bottom: 0.05rem !important;
-    }
-    
+    /* Tabs */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 0.25rem !important;
+        gap: 0.5rem;
     }
-    
-    /* Horizontal lines */
+    .stTabs [data-baseweb="tab"] {
+        padding: 0.5rem 1rem;
+    }
+
+    /* Dividers */
     hr {
-        margin-top: 0.25rem !important;
-        margin-bottom: 0.25rem !important;
+        margin: 1rem 0;
+        border-color: #e5e5e5;
     }
 
-    /* Remove any dark theme remnants */
-    div[data-testid="stSidebar"] {
-        background-color: #f8f9fa;
-        color: #000000;
+    /* Text colors */
+    .stMarkdown, .stMarkdown p {
+        color: #1a1a1a;
     }
 
-    /* All text elements */
-    .stMarkdown, .stMarkdown p, .stMarkdown div {
-        color: #000000;
-    }
-
-    /* Caption text */
-    .caption {
-        color: #6a6a6a;
-        font-size: 0.85rem;
-    }
-
-    /* Headers with better spacing */
-    .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
-        margin-top: 2rem;
-        color: #000000;
-    }
-
-    /* Remove button outlines on focus */
-    .stButton>button:focus {
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
-    }
-
-    /* Delete button sizing to match input fields */
-    .stButton button[kind="secondary"] {
-        height: 38px !important;
-        min-height: 38px !important;
-        max-height: 38px !important;
-        padding: 0.5rem 0.75rem !important;
-        line-height: 1 !important;
-    }
-
-    /* Fix all text to be black */
-    * {
-        color: #000000 !important;
-    }
-
-    /* Override plotly defaults */
+    /* Plotly charts */
     .js-plotly-plot {
         background-color: #ffffff !important;
     }
 
-    /* Reduce sidebar spacing */
-    div[data-testid="stSidebar"] .element-container {
-        margin-bottom: 0.25rem !important;
+    /* Focus states */
+    .stButton>button:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
     }
-    div[data-testid="stSidebar"] h3 {
-        margin-top: 0.25rem !important;
-        margin-bottom: 0.25rem !important;
-        font-size: 1.1rem !important;
-    }
-    div[data-testid="stSidebar"] .stMarkdown {
-        margin-bottom: 0.15rem !important;
-        margin-top: 0.15rem !important;
-    }
-    div[data-testid="stSidebar"] hr {
-        margin-top: 0.25rem !important;
-        margin-bottom: 0.25rem !important;
-    }
-    div[data-testid="stSidebar"] div[data-testid="stMetric"] {
-        margin-bottom: 0.15rem !important;
-        padding-bottom: 0 !important;
-    }
-    div[data-testid="stSidebar"] div[data-testid="stMetricValue"] {
-        margin-bottom: 0 !important;
+
+    /* Warning/Info boxes */
+    .stAlert {
+        border-radius: 6px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -378,12 +231,12 @@ with st.sidebar:
 
 # Professional Header
 st.markdown("""
-    <div style="text-align: center; padding: 1rem 0 0.5rem 0; border-bottom: 2px solid #4A90E2;">
-        <h1 style="font-size: 2.2rem; font-weight: 300; margin-bottom: 0.25rem; color: #1a1a1a;">
-            📊 Portfolio Analyzer
+    <div style="text-align: center; padding: 1.5rem 0; margin-bottom: 1rem; border-bottom: 2px solid #4A90E2;">
+        <h1 style="font-size: 2rem; font-weight: 300; margin: 0 0 0.5rem 0; color: #1a1a1a;">
+            Portfolio Analyzer
         </h1>
-        <p style="font-size: 1rem; color: #6a6a6a; margin-top: 0;">
-            Backtest your portfolio, find the best model, and optimize your fees
+        <p style="font-size: 0.95rem; color: #666666; margin: 0;">
+            Compare your portfolio to model portfolios, project growth, and optimize fees
         </p>
     </div>
 """, unsafe_allow_html=True)
@@ -392,16 +245,8 @@ st.markdown("""
 # st.markdown("<br>", unsafe_allow_html=True)
 
 # Portfolio Input Section
-st.markdown("""
-    <div style="margin-top: 1rem; padding: 0.5rem 0; border-bottom: 1px solid #e5e5e5;">
-        <h2 style="font-size: 1.6rem; font-weight: 400; color: #1a1a1a; margin: 0;">
-            📝 Portfolio Input
-        </h2>
-        <p style="color: #6a6a6a; margin-top: 0.25rem; font-size: 0.9rem;">
-            Enter your investment holdings and the advisory fee paid to manage these investments. The analysis will determine the best matching model portfolio and provide a detailed comparison.
-        </p>
-    </div>
-""", unsafe_allow_html=True)
+st.markdown("## Portfolio Input")
+st.markdown("Enter your holdings and advisory fee. We'll find the best matching model portfolio and compare performance.")
 
 # Initialize session state for asset class overrides
 if 'asset_class_overrides' not in st.session_state:
@@ -413,11 +258,7 @@ def handle_ticker_change(old_ticker):
     pass  # The rerun will happen in the main logic
 
 # Settings Section
-st.markdown("""
-    <h3 style="font-size: 1.2rem; font-weight: 500; color: #2a2a2a; margin-top: 1rem; margin-bottom: 0.5rem;">
-        ⚙️ Advisory Fee
-    </h3>
-""", unsafe_allow_html=True)
+st.markdown("### Settings")
 col_settings1, col_settings2, col_settings3 = st.columns([1, 1, 2])
 
 with col_settings1:
@@ -434,25 +275,14 @@ with col_settings2:
     total_value = sum(st.session_state.portfolio.values())
     st.metric("Total Portfolio Value", f"${total_value:,.0f}")
 
-st.markdown("<br>", unsafe_allow_html=True)
+# E*TRADE Session State Initialization (must be outside expander)
+import os
+from analytics.etrade_client import ETradeClient
 
-# E*TRADE Account Integration Section
-st.markdown("""
-    <h3 style="font-size: 1.2rem; font-weight: 500; color: #2a2a2a; margin-top: 1rem; margin-bottom: 0.5rem;">
-        🔗 Import from E*TRADE
-    </h3>
-""", unsafe_allow_html=True)
-
-# Initialize session state for E*TRADE
 if 'etrade_accounts' not in st.session_state:
     st.session_state.etrade_accounts = []
 if 'etrade_authenticated' not in st.session_state:
     st.session_state.etrade_authenticated = False
-
-import os
-from analytics.etrade_client import ETradeClient
-
-# Initialize session state for E*TRADE auth flow
 if 'etrade_auth_url' not in st.session_state:
     st.session_state.etrade_auth_url = None
 if 'etrade_awaiting_verifier' not in st.session_state:
@@ -462,180 +292,102 @@ if 'etrade_request_token' not in st.session_state:
 if 'etrade_request_token_secret' not in st.session_state:
     st.session_state.etrade_request_token_secret = None
 
-# E*TRADE Authentication
 consumer_key = os.getenv("ETRADE_CONSUMER_KEY")
 consumer_secret = os.getenv("ETRADE_CONSUMER_SECRET")
 oauth_token = os.getenv("ETRADE_OAUTH_TOKEN")
 oauth_token_secret = os.getenv("ETRADE_OAUTH_TOKEN_SECRET")
 use_sandbox = os.getenv("ETRADE_SANDBOX", "true").lower() == "true"
 
-if consumer_key and consumer_secret:
-    try:
-        etrade_client = ETradeClient(consumer_key, consumer_secret, sandbox=use_sandbox)
-        
-        # Restore request token if we're in the middle of auth flow
-        if st.session_state.etrade_request_token and st.session_state.etrade_request_token_secret:
-            etrade_client.oauth_token = st.session_state.etrade_request_token
-            etrade_client.oauth_token_secret = st.session_state.etrade_request_token_secret
-        
-        # If we have saved tokens, try to use them
-        if oauth_token and oauth_token_secret and not st.session_state.etrade_awaiting_verifier:
-            etrade_client.set_access_token(oauth_token, oauth_token_secret)
-            st.session_state.etrade_authenticated = True
-        
-        # Fetch accounts if authenticated
-        if st.session_state.etrade_authenticated and not st.session_state.etrade_accounts:
-            try:
-                accounts_data = etrade_client.list_accounts()
-                if 'AccountListResponse' in accounts_data:
-                    accounts = accounts_data['AccountListResponse'].get('Accounts', {}).get('Account', [])
-                    if not isinstance(accounts, list):
-                        accounts = [accounts]
-                    
-                    st.session_state.etrade_accounts = [
-                        {
-                            'account_id': acc.get('accountId', 'Unknown'),
-                            'account_id_key': acc.get('accountIdKey', ''),
-                            'account_name': acc.get('accountName', 'Unknown'),
-                            'account_type': acc.get('accountType', 'Unknown')
-                        }
-                        for acc in accounts
-                    ]
-            except Exception as e:
-                error_msg = str(e)
-                if "401" in error_msg:
-                    st.warning("⚠️ E*TRADE session expired. Please re-authenticate below.")
-                    st.session_state.etrade_authenticated = False
-                    st.session_state.etrade_accounts = []
-                else:
-                    st.error(f"Error fetching E*TRADE accounts: {error_msg}")
-        
-        # Re-authentication flow
-        if not st.session_state.etrade_authenticated or not st.session_state.etrade_accounts:
-            if st.button("🔄 Start Authentication", use_container_width=True):
+# E*TRADE Account Integration Section (collapsed by default)
+with st.expander("🔗 Import from E*TRADE (Optional)", expanded=False):
+    if consumer_key and consumer_secret:
+        try:
+            etrade_client = ETradeClient(consumer_key, consumer_secret, sandbox=use_sandbox)
+            
+            if st.session_state.etrade_request_token and st.session_state.etrade_request_token_secret:
+                etrade_client.oauth_token = st.session_state.etrade_request_token
+                etrade_client.oauth_token_secret = st.session_state.etrade_request_token_secret
+            
+            if oauth_token and oauth_token_secret and not st.session_state.etrade_awaiting_verifier:
+                etrade_client.set_access_token(oauth_token, oauth_token_secret)
+                st.session_state.etrade_authenticated = True
+            
+            if st.session_state.etrade_authenticated and not st.session_state.etrade_accounts:
+                try:
+                    accounts_data = etrade_client.list_accounts()
+                    if 'AccountListResponse' in accounts_data:
+                        accounts = accounts_data['AccountListResponse'].get('Accounts', {}).get('Account', [])
+                        if not isinstance(accounts, list):
+                            accounts = [accounts]
+                        st.session_state.etrade_accounts = [
+                            {'account_id': acc.get('accountId', 'Unknown'), 'account_id_key': acc.get('accountIdKey', ''),
+                             'account_name': acc.get('accountName', 'Unknown'), 'account_type': acc.get('accountType', 'Unknown')}
+                            for acc in accounts
+                        ]
+                except Exception as e:
+                    if "401" in str(e):
+                        st.warning("E*TRADE session expired. Please re-authenticate.")
+                        st.session_state.etrade_authenticated = False
+                        st.session_state.etrade_accounts = []
+                    else:
+                        st.error(f"Error fetching accounts: {str(e)}")
+            
+            if not st.session_state.etrade_authenticated or not st.session_state.etrade_accounts:
+                if st.button("Start Authentication", use_container_width=True):
                     try:
-                        # Get request token
                         request_token, request_token_secret = etrade_client.get_request_token()
-                        # Store in session state
                         st.session_state.etrade_request_token = request_token
                         st.session_state.etrade_request_token_secret = request_token_secret
-                        # Get authorization URL
-                        auth_url = etrade_client.get_authorization_url()
-                        st.session_state.etrade_auth_url = auth_url
+                        st.session_state.etrade_auth_url = etrade_client.get_authorization_url()
                         st.session_state.etrade_awaiting_verifier = True
                         st.rerun()
                     except Exception as e:
-                        st.error(f"Error starting authentication: {str(e)}")
-            
-            # Show authorization URL and verifier input if we're in auth flow
-            if st.session_state.etrade_awaiting_verifier and st.session_state.etrade_auth_url:
-                st.markdown("**Step 1:** Click the link below to authorize:")
-                st.markdown(f"[Open E*TRADE Authorization]({st.session_state.etrade_auth_url})")
+                        st.error(f"Error starting auth: {str(e)}")
                 
-                st.markdown("**Step 2:** After authorizing, enter the verification code:")
-                verifier_code = st.text_input("Verification Code", key="etrade_verifier")
-                
-                if st.button("✅ Complete Authentication", disabled=not verifier_code, use_container_width=True):
-                    try:
-                        # Exchange verifier for access token (using stored request token)
-                        new_token, new_token_secret = etrade_client.get_access_token(verifier_code)
-                        
-                        st.success(f"✅ Authentication successful! Please update your Secrets:")
-                        st.code(f"ETRADE_OAUTH_TOKEN: {new_token}\nETRADE_OAUTH_TOKEN_SECRET: {new_token_secret}")
-                        
-                        st.warning("📝 **Next Steps:**")
-                        st.markdown("1. Copy the tokens above")
-                        st.markdown("2. Open the Secrets tool (🔒 in the left sidebar)")
-                        st.markdown("3. Update `ETRADE_OAUTH_TOKEN` and `ETRADE_OAUTH_TOKEN_SECRET`")
-                        st.markdown("4. **Stop and restart the app** using the Stop/Run buttons at the top")
-                        
-                        st.info("⚠️ The app must be restarted to load the new tokens from Secrets.")
-                        
-                        # Reset auth flow
-                        st.session_state.etrade_auth_url = None
-                        st.session_state.etrade_awaiting_verifier = False
-                        st.session_state.etrade_request_token = None
-                        st.session_state.etrade_request_token_secret = None
-                    except Exception as e:
-                        st.error(f"Error completing authentication: {str(e)}")
-        
-        # Display account selector if we have accounts
-        elif st.session_state.etrade_accounts:
-            account_options = [
-                f"{acc['account_name']} ({acc['account_id']}) - {acc['account_type']}"
-                for acc in st.session_state.etrade_accounts
-            ]
-            
-            selected_accounts = st.multiselect(
-                "Select E*TRADE Account(s)",
-                options=account_options,
-                help="Select one or more accounts to import holdings"
-            )
-            
-            if st.button("📥 Import Holdings from E*TRADE", use_container_width=True):
-                if selected_accounts:
-                    import_placeholder = st.empty()
-                    import_placeholder.info("🔄 Importing holdings from E*TRADE...")
-                    
-                    try:
-                        # Get selected account keys
-                        selected_indices = [account_options.index(acc) for acc in selected_accounts]
-                        selected_account_keys = [
-                            st.session_state.etrade_accounts[i]['account_id_key']
-                            for i in selected_indices
-                        ]
-                        
-                        # Fetch holdings
-                        holdings = etrade_client.get_holdings_summary(selected_account_keys)
-                        
-                        # Clear current portfolio
-                        st.session_state.portfolio = {}
-                        st.session_state.asset_class_overrides = {}
-                        
-                        # Aggregate holdings by symbol
-                        symbol_values = {}
-                        for holding in holdings:
-                            symbol = holding['symbol']
-                            market_value = round(holding['market_value'])  # Round to nearest whole number
-                            
-                            if symbol in symbol_values:
-                                symbol_values[symbol] += market_value
-                            else:
-                                symbol_values[symbol] = market_value
-                        
-                        # Update portfolio
-                        st.session_state.portfolio = symbol_values
-                        
-                        import_placeholder.success(f"✅ Successfully imported {len(symbol_values)} holdings from {len(selected_accounts)} account(s)!")
-                        st.rerun()
-                    except Exception as e:
-                        import_placeholder.error(f"❌ Error importing holdings: {str(e)}")
-                else:
-                    st.warning("Please select at least one account to import holdings.")
-            
-            # Add token renewal option
-            st.markdown("---")
-            if st.button("🔄 Try Token Renewal", use_container_width=True, help="Attempt to renew tokens without full re-authentication"):
-                try:
-                    if etrade_client.renew_access_token():
-                        st.success("Token renewed successfully! Refresh the page to continue.")
+                if st.session_state.etrade_awaiting_verifier and st.session_state.etrade_auth_url:
+                    st.markdown(f"[Open E*TRADE Authorization]({st.session_state.etrade_auth_url})")
+                    verifier_code = st.text_input("Verification Code", key="etrade_verifier")
+                    if st.button("Complete Authentication", disabled=not verifier_code, use_container_width=True):
+                        try:
+                            new_token, new_token_secret = etrade_client.get_access_token(verifier_code)
+                            st.success("Authentication successful!")
+                            st.code(f"ETRADE_OAUTH_TOKEN: {new_token}\nETRADE_OAUTH_TOKEN_SECRET: {new_token_secret}")
+                            st.session_state.etrade_auth_url = None
+                            st.session_state.etrade_awaiting_verifier = False
+                            st.session_state.etrade_request_token = None
+                            st.session_state.etrade_request_token_secret = None
+                        except Exception as e:
+                            st.error(f"Error: {str(e)}")
+            elif st.session_state.etrade_accounts:
+                account_options = [f"{acc['account_name']} ({acc['account_id']})" for acc in st.session_state.etrade_accounts]
+                selected_accounts = st.multiselect("Select Account(s)", options=account_options)
+                if st.button("Import Holdings", use_container_width=True):
+                    if selected_accounts:
+                        try:
+                            selected_indices = [account_options.index(acc) for acc in selected_accounts]
+                            selected_account_keys = [st.session_state.etrade_accounts[i]['account_id_key'] for i in selected_indices]
+                            holdings = etrade_client.get_holdings_summary(selected_account_keys)
+                            st.session_state.portfolio = {}
+                            st.session_state.asset_class_overrides = {}
+                            symbol_values = {}
+                            for holding in holdings:
+                                symbol = holding['symbol']
+                                market_value = round(holding['market_value'])
+                                symbol_values[symbol] = symbol_values.get(symbol, 0) + market_value
+                            st.session_state.portfolio = symbol_values
+                            st.success(f"Imported {len(symbol_values)} holdings!")
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Error: {str(e)}")
                     else:
-                        st.error("Token renewal failed. Please use full re-authentication above.")
-                except Exception as e:
-                    st.error(f"Token renewal error: {str(e)}")
-    except Exception as e:
-        st.error(f"Error initializing E*TRADE client: {str(e)}")
-else:
-    st.info("E*TRADE API credentials not found. Add ETRADE_CONSUMER_KEY and ETRADE_CONSUMER_SECRET to Secrets to enable account import.")
-
-st.markdown("<br>", unsafe_allow_html=True)
+                        st.warning("Select at least one account.")
+        except Exception as e:
+            st.error(f"E*TRADE error: {str(e)}")
+    else:
+        st.info("Add ETRADE_CONSUMER_KEY and ETRADE_CONSUMER_SECRET to Secrets to enable.")
 
 # Holdings Section
-st.markdown("""
-    <h3 style="font-size: 1.2rem; font-weight: 500; color: #2a2a2a; margin-top: 1rem; margin-bottom: 0.5rem;">
-        💼 Current Holdings
-    </h3>
-""", unsafe_allow_html=True)
+st.markdown("### Current Holdings")
 
 # Import validation and name functions
 from analytics.data import validate_ticker, get_investment_name, classify_investment
@@ -838,7 +590,7 @@ if analyze_clicked:
             
             progress_bar.progress(90, text="Finalizing results...")
 
-                # Step 4: Store in session state (100%)
+            # Step 4: Store in session state (100%)
             st.session_state.current_portfolio = current_portfolio
             st.session_state.model_portfolio = model_portfolio
             st.session_state.model_name = model_name
@@ -862,25 +614,12 @@ if analyze_clicked:
 
 # Results Section
 if st.session_state.analyzed:
-    st.markdown("""
-        <div style="margin-top: 3rem; padding: 2rem 0 1rem 0; border-top: 3px solid #4A90E2; background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);">
-            <h2 style="font-size: 2rem; font-weight: 400; color: #1a1a1a; text-align: center; margin-bottom: 0.5rem;">
-                🎯 Analysis Results
-            </h2>
-        </div>
-    """, unsafe_allow_html=True)
-
+    st.markdown("---")
+    st.markdown("## Analysis Results")
+    
     # Model Portfolio Info
-    st.markdown(f"""
-        <div style="text-align: center; margin: 2rem 0 1.5rem 0;">
-            <h3 style="font-size: 1.6rem; font-weight: 500; color: #2a2a2a; margin-bottom: 0.5rem;">
-                Recommended: {st.session_state.model_name} Portfolio
-            </h3>
-            <p style="color: #6a6a6a; font-size: 0.95rem;">
-                Asset allocation similarity: {st.session_state.similarity:.1%}
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
+    st.markdown(f"### Recommended: {st.session_state.model_name} Portfolio")
+    st.markdown(f"Asset allocation similarity: **{st.session_state.similarity:.1%}**")
 
     # Display model allocations
     cols = st.columns(5)
@@ -891,16 +630,8 @@ if st.session_state.analyzed:
     st.markdown("---")
 
     # All Model Portfolios Reference
-    st.markdown("""
-        <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
-            <h2 style="font-size: 1.8rem; font-weight: 400; color: #1a1a1a; margin: 0;">
-                📚 All Model Portfolios
-            </h2>
-            <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
-                Review all available model portfolios to see alternative allocations
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
+    st.markdown("## All Model Portfolios")
+    st.markdown("Review all available model portfolios to see alternative allocations.")
 
     with st.expander("📊 View All Model Portfolios"):
         # Get all unique tickers across all models
@@ -936,16 +667,8 @@ if st.session_state.analyzed:
             height=220
         )
 
-    st.markdown("""
-        <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
-            <h2 style="font-size: 1.8rem; font-weight: 400; color: #1a1a1a; margin: 0;">
-                🎯 Asset Allocation
-            </h2>
-            <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
-                Compare your current portfolio allocation with the recommended model portfolio
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
+    st.markdown("## Asset Allocation")
+    st.markdown("Compare your current portfolio allocation with the recommended model portfolio.")
 
     col1, col2 = st.columns(2)
 
@@ -1090,16 +813,8 @@ if st.session_state.analyzed:
                 }
             )
 
-    st.markdown("""
-        <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
-            <h2 style="font-size: 1.8rem; font-weight: 400; color: #1a1a1a; margin: 0;">
-                📈 10-Year Forward Projections
-            </h2>
-            <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
-                Projected growth comparison based on historical performance and fees
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
+    st.markdown("## 10-Year Forward Projections")
+    st.markdown("Projected growth comparison based on historical performance and fees.")
 
     current_proj_fees = st.session_state.current_projections_with_fees
     model_proj_fees = st.session_state.model_projections_with_fees
@@ -1215,16 +930,8 @@ if st.session_state.analyzed:
         df_model = pd.DataFrame(model_table_data)
         st.dataframe(df_model, hide_index=True, use_container_width=True)
 
-    st.markdown("""
-        <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
-            <h2 style="font-size: 1.8rem; font-weight: 400; color: #1a1a1a; margin: 0;">
-                💰 Projected Fees & Savings
-            </h2>
-            <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
-                Compare projected annual and 10-year cumulative fees between your portfolio and the recommended model portfolio to determine potential savings 
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
+    st.markdown("## Projected Fees & Savings")
+    st.markdown("Compare projected annual and 10-year cumulative fees between your portfolio and the recommended model portfolio.")
 
     current_annual_fee = (st.session_state.current_portfolio.weighted_avg_er + st.session_state.current_portfolio.advisory_fee) * total_value
     model_annual_fee = (st.session_state.model_portfolio.weighted_avg_er + st.session_state.model_portfolio.advisory_fee) * total_value
@@ -1323,16 +1030,8 @@ if st.session_state.analyzed:
             st.write(f"**Advisory Fee:** {st.session_state.model_portfolio.advisory_fee:.3%}")
             st.write(f"**Total Annual Fee Rate:** {(st.session_state.model_portfolio.weighted_avg_er + st.session_state.model_portfolio.advisory_fee):.3%}")
 
-    st.markdown("""
-        <div style="margin-top: 2.5rem; padding: 1rem 0; border-bottom: 1px solid #e5e5e5;">
-            <h2 style="font-size: 1.8rem; font-weight: 400; color: #1a1a1a; margin: 0;">
-                📊 Historical Performance
-            </h2>
-            <p style="color: #6a6a6a; margin-top: 0.5rem; font-size: 0.95rem;">
-                Compare actual performance and risk statistics of your portfolio vs the recommended model portfolio over the past 10 years
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
+    st.markdown("## Historical Performance")
+    st.markdown("Compare actual performance and risk statistics of your portfolio vs the recommended model over the past 10 years.")
 
     current_res = st.session_state.current_results
     model_res = st.session_state.model_results
