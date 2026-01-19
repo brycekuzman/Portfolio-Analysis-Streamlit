@@ -3,13 +3,16 @@
 
 ## Overview
 
-This application analyzes your current portfolio and suggests a cheaper alternative from 5 hypothetical model portfolios. For both your current portfolio and the model, users can see how they've performed historically, projects future growth, and a break down how much you're paying in fees.
+This application analyzes your current portfolio and suggests a more cost-effective alternative from five professional model portfolios. For both your current portfolio and the recommended model, you can visualize historical performance, projected future growth, and a detailed breakdown of fees.
+
 This application provides:
 
 - **10-Year Forward Projections**: Estimated future growth based on historical asset class returns
-- **Fee Impact Analysis**: Compare how much you're paying in advisory fees and expense ratios
-- **Historical Performance**: See actual portfolio performance from 2015-2025
-- **Asset Allocation Comparison**: Visual breakdown of your holdings vs recommended portfolio
+- **Fee Impact Analysis**: Compare advisory fees and expense ratios to see their long-term impact
+- **Historical Performance**: Review actual portfolio performance from 2015 to 2025
+
+- **Asset Allocation Comparison**: Visualize your holdings vs. a recommended portfolio
+
 - **Smart Recommendations**: Automatic model matching based on your asset allocation
 
 
