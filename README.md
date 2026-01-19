@@ -3,8 +3,6 @@
 
 ## Overview
 
-![Dashboard Overview](attached_assets/screenshots/dashboard_overview.png)
-
 This application analyzes your current portfolio and suggests a cheaper alternative from 5 hypothetical model portfolios. For both your current portfolio and the model, users can see how they've performed historically, projects future growth, and a break down how much you're paying in fees.
 This application provides:
 
@@ -14,25 +12,12 @@ This application provides:
 - **Asset Allocation Comparison**: Visual breakdown of your holdings vs recommended portfolio
 - **Smart Recommendations**: Automatic model matching based on your asset allocation
 
-## Visualizations
-
-### Forward Projections
-![Forward Projections](attached_assets/screenshots/forward_projections.png)
-
-### Fee Comparison
-![Fee Comparison](attached_assets/screenshots/fee_comparison.png)
-
-### Historical Performance
-![Historical Performance](attached_assets/screenshots/historical_performance.png)
-
-### Asset Allocation
-![Asset Allocation](attached_assets/screenshots/asset_allocation.png)
-![Asset Allocation](attached_assets/screenshots/asset_allocation_holdings.png)
-
 
 ## Features
 
 ### Interactive Portfolio Input
+![Dashboard Overview](attached_assets/screenshots/dashboard_overview.png)
+
 - Add investments by ticker symbol with real-time validation
 - Automatic investment name lookup and classification
 - Manual asset class override capability
@@ -40,6 +25,7 @@ This application provides:
 - Adjustable advisory fee settings
 
 ### Comprehensive Analysis Tools
+![Forward Projections](attached_assets/screenshots/forward_projections.png)
 
 **Forward Projections**
 - 10-year growth estimates based on historical growth rates
@@ -47,12 +33,16 @@ This application provides:
 - Compare current portfolio vs recommended model portfolio
 
 **Fee Comparison**
+![Fee Comparison](attached_assets/screenshots/fee_comparison.png)
+
 - Annual fee breakdown (advisory fees + expense ratios)
 - 10-year cumulative fee impact
 - Potential savings calculations
 - Side-by-side fee structure comparisons
 
 **Historical Performance**
+![Historical Performance](attached_assets/screenshots/historical_performance.png)
+
 - Actual performance metrics from 2015-2025
 - Total return, annualized return, and volatility
 - Maximum drawdown analysis
@@ -60,13 +50,16 @@ This application provides:
 - Performance with and without advisory fees
 
 **Asset Allocation**
+![Asset Allocation](attached_assets/screenshots/asset_allocation.png)
+![Asset Allocation](attached_assets/screenshots/asset_allocation_holdings.png)
+
 - Interactive pie charts with consistent color coding
 - Side-by-side current vs model portfolio comparison
 - Detailed holdings breakdown with yields and expense ratios
 
 ### Model Portfolios
 
-Five risk-based portfolios using low-cost ETFs:
+Five hypothetical risk-based portfolios using low-cost ETFs:
 
 - **Conservative**: 15% VOO, 20% VXUS, 60% BND, 5% VNQ
 - **Moderately Conservative**: 25% VOO, 25% VXUS, 40% BND, 10% VNQ
@@ -74,7 +67,7 @@ Five risk-based portfolios using low-cost ETFs:
 - **Moderately Aggressive**: 40% VOO, 20% VXUS, 15% BND, 25% VNQ
 - **Aggressive**: 50% VOO, 15% VXUS, 0% BND, 35% VNQ
 
-All model portfolios use a 0.25% advisory fee.
+All model portfolios assume a 0.25% advisory fee.
 
 ## Technology Stack
 
@@ -156,18 +149,3 @@ Or simply click the **Run** button in Replit.
 - **International Equities**: Non-US stocks and international funds
 - **Core Fixed Income**: Bonds and bond funds
 - **Alternatives**: Real estate, commodities, and alternative investments
-
-## Disclaimers
-
-This tool is for educational and informational purposes only. It is not investment advice. Past performance does not guarantee future results. Consult with a qualified financial advisor before making investment decisions.
-
-## Privacy & Data
-
-- No data is stored permanently
-- All portfolio information is session-based
-- Historical data fetched on-demand from public APIs
-- No personal information is collected or transmitted
-
-## Support
-
-For issues or questions, refer to the Replit workspace or check the console logs for error messages.
