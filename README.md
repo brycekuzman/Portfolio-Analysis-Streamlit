@@ -137,11 +137,11 @@ Or simply click the **Run** button in Replit.
 
 ## Key Metrics Explained
 
-**Total Return**: Overall percentage gain/loss over the period
-**Annualized Return**: Average annual return (CAGR)
-**Volatility**: Standard deviation of returns (risk measure)
-**Sharpe Ratio**: Risk-adjusted return metric (higher is better)
-**Max Drawdown**: Largest peak-to-trough decline
+- **Total Return**: Overall percentage gain/loss over the period
+- **Annualized Return**: Average annual return (CAGR)
+- **Volatility**: Standard deviation of returns (risk measure)
+- **Sharpe Ratio**: Risk-adjusted return metric (higher is better)
+- **Max Drawdown**: Largest peak-to-trough decline
 
 ## Investment Classifications
 
