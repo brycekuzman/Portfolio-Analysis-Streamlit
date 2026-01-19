@@ -22,7 +22,5 @@ env/
 
 # Project specific
 attached_assets/
+replit.md
 
-# Keep replit config and documentation
-# !.replit
-# !replit.md
