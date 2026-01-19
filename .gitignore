@@ -1,26 +1,31 @@
-# Replit/Nix/Python specific
+# Replit / Environment Files
+.replit
+.streamlit/
+.pythonlibs/
+.upm/
 .cache/
 .config/
 .local/
-.pythonlibs/
-.upm/
 uv.lock
+
+# Python Junk
 __pycache__/
 *.py[cod]
 *$py.class
 .ipynb_checkpoints/
-
-# Streamlit
-.streamlit/
-
-# Environment/Secrets
-.env
-.secrets
 .venv/
 venv/
 env/
 
-# Project specific
-attached_assets/
+# Project / Metadata
 replit.md
+ETRADE_SETUP.md
+attached_assets/
+.env
+.secrets
 
+# Keep only the essentials:
+# app.py
+# analytics/
+# pyproject.toml
+# README.md
