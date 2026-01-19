@@ -1,50 +1,28 @@
-
-# Python
+# Replit/Nix/Python specific
+.cache/
+.config/
+.local/
+.pythonlibs/
+.upm/
+uv.lock
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-.Python
-
-# Virtual environments (if created)
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# IDE and Editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-Thumbs.db
+.ipynb_checkpoints/
 
 # Streamlit
-.streamlit/secrets.toml
+.streamlit/
 
-# Matplotlib configuration
-.config/
-
-# Cache and temporary files
-*.log
-*.tmp
-.cache/
-
-# Environment variables
+# Environment/Secrets
 .env
-.env.local
+.secrets
+.venv/
+venv/
+env/
 
-# UV lock file (optional - depends on team preference)
-# uv.lock
+# Project specific
+attached_assets/
 
-# OS files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+# Keep replit config and documentation
+# !.replit
+# !replit.md
