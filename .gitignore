@@ -20,7 +20,7 @@ env/
 # Project / Metadata
 replit.md
 ETRADE_SETUP.md
-attached_assets/
+!attached_assets/
 .env
 .secrets
 
